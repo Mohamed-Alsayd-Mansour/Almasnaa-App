@@ -1,0 +1,99 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+
+import '../models/daily_entry.dart';
+import '../repositories/daily_entry_repository.dart';
+import 'rooms_provider.dart';
+
+/// يدير حالة تبويب "السجل": البحث المتقدم الفوري، والتعديل المباشر
+/// على النواقص من داخل الجدول.
+class RecordsProvider extends ChangeNotifier {
+  final DailyEntryRepository _repository;
+
+  RecordsProvider({DailyEntryRepository? repository})
+      : _repository = repository ?? DailyEntryRepository();
+
+  LoadStatus status = LoadStatus.initial;
+  String? errorMessage;
+
+  List<RecordRow> results = [];
+  RecordSearchFilters filters = const RecordSearchFilters();
+
+  Timer? _debounce;
+
+  Future<void> load() => _runSearch();
+
+  /// بحث فوري مع Debounce بسيط لتفادي إرهاق قاعدة البيانات أثناء الكتابة
+  /// السريعة، مع الحفاظ على شعور "فوري" للمستخدم.
+  void searchWithKeyword(String keyword) {
+    filters = RecordSearchFilters(
+      keyword: keyword,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+      roomName: filters.roomName,
+      carpenter: filters.carpenter,
+      supervisor: filters.supervisor,
+      status: filters.status,
+    );
+    notifyListeners();
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 250), _runSearch);
+  }
+
+  Future<void> applyFilters(RecordSearchFilters newFilters) async {
+    filters = newFilters;
+    await _runSearch();
+  }
+
+  Future<void> clearFilters() async {
+    filters = const RecordSearchFilters();
+    await _runSearch();
+  }
+
+  Future<void> _runSearch() async {
+    status = LoadStatus.loading;
+    notifyListeners();
+    try {
+      results = await _repository.searchRecords(filters);
+      status = LoadStatus.loaded;
+    } catch (e) {
+      errorMessage = 'تعذر تنفيذ البحث: $e';
+      status = LoadStatus.error;
+    }
+    notifyListeners();
+  }
+
+  /// المسار الوحيد لتعديل النواقص من داخل جدول السجل مباشرة.
+  Future<String?> updateDeficiencies({
+    required String entryId,
+    required String newText,
+  }) async {
+    try {
+      final updated = await _repository.updateCurrentDeficiencies(
+        entryId: entryId,
+        newDeficiencyText: newText,
+      );
+      results = results
+          .map((r) => r.entry.id == entryId
+              ? RecordRow(
+                  entry: updated,
+                  dayName: r.dayName,
+                  date: r.date,
+                  sessionStatus: r.sessionStatus,
+                )
+              : r)
+          .toList();
+      notifyListeners();
+      return null;
+    } catch (e) {
+      return 'تعذر تحديث النواقص: $e';
+    }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+}
