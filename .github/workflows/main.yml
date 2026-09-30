@@ -1,0 +1,54 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - main # أو اسم الفرع الرئيسي لديك مثل master
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # يتيح لك تشغيل الـ Workflow يدوياً من موقع GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. جلب كود المشروع
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. ضبط إعدادات Java (تحديد الإصدار 17 وهو الأنسب مع إصدارات Gradle 8+)
+      - name: Set up Java Development Kit (JDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. إعداد بيئة عمل Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      # 4. جلب المكتبات الخاصة بالـ Flutter
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. رفع إصدار Gradle داخل الـ Runner تلقائياً لتجنب خطأ 8.10.2
+      - name: Upgrade Gradle Wrapper
+        run: |
+          cd android
+          ./gradlew wrapper --gradle-version 8.14 --distribution-type bin
+
+      # 6. بناء ملف الـ APK للمشروع
+      - name: Build APK
+        run: flutter build apk --release --android-skip-build-dependency-validation
+
+      # 7. حفظ ملف الـ APK كـ Artifact لتتمكن من تحميله بعد انتهاء البناء
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
