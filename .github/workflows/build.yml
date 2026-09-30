@@ -1,42 +1,9 @@
-name: Flutter Build - Android & Windows
+name: Flutter Build - Windows
 
 on:
   workflow_dispatch:
 
 jobs:
-
-  # =========================
-  # Android APK Release
-  # =========================
-  android:
-    name: Build Android APK
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      - name: Flutter Doctor
-        run: flutter doctor -v
-
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Build Android APK
-        run: flutter build apk --release --android-skip-build-dependency-validation
-
-      - name: Upload Android APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-
   # =========================
   # Windows Release
   # =========================
