@@ -3,11 +3,11 @@ name: Build Flutter APK
 on:
   push:
     branches:
-      - main # أو اسم الفرع الرئيسي لديك مثل master
+      - main # أو master
   pull_request:
     branches:
       - main
-  workflow_dispatch: # يتيح لك تشغيل الـ Workflow يدوياً من موقع GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. ضبط إعدادات Java (تحديد الإصدار 17 وهو الأنسب مع إصدارات Gradle 8+)
+      # 2. ضبط إعدادات Java (الإصدار 17)
       - name: Set up Java Development Kit (JDK)
         uses: actions/setup-java@v4
         with:
@@ -32,21 +32,20 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # 4. جلب المكتبات الخاصة بالـ Flutter
+      # 4. جلب مكتبات مشروع Flutter
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. رفع إصدار Gradle داخل الـ Runner تلقائياً لتجنب خطأ 8.10.2
-      - name: Upgrade Gradle Wrapper
+      # 5. تحديث رابط Gradle مباشرة في ملف gradle-wrapper.properties
+      - name: Update Gradle Version
         run: |
-          cd android
-          ./gradlew wrapper --gradle-version 8.14 --distribution-type bin
+          sed -i 's/gradle-.*-bin.zip/gradle-8.14-bin.zip/g' android/gradle/wrapper/gradle-wrapper.properties
 
-      # 6. بناء ملف الـ APK للمشروع
+      # 6. بناء ملف الـ APK
       - name: Build APK
         run: flutter build apk --release --android-skip-build-dependency-validation
 
-      # 7. حفظ ملف الـ APK كـ Artifact لتتمكن من تحميله بعد انتهاء البناء
+      # 7. رفع الـ APK المبنيلتحميله من GitHub
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
