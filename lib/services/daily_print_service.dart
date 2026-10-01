@@ -65,10 +65,15 @@ class DailyPrintService {
             child: pw.TableHelper.fromTextArray(
               headers: headers,
               data: rows,
+              // ترتيب الأعمدة هنا منطقي (اسم الغرفة أولًا)؛ tableDirection
+              // هو ما يعكس عرضها بصريًا بحيث يبدأ "اسم الغرفة" من أقصى
+              // اليمين، وهو الترتيب الصحيح للقراءة بالعربية.
+              tableDirection: pw.TextDirection.rtl,
+              headerDirection: pw.TextDirection.rtl,
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11),
               cellStyle: const pw.TextStyle(fontSize: 10),
               headerDecoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xffe0e4e5)),
-              cellAlignment: pw.Alignment.centerRight,
+              cellAlignment: pw.Alignment.center,
               headerAlignment: pw.Alignment.center,
               cellHeight: 26,
               border: pw.TableBorder.all(color: PdfColor.fromInt(0xff9aa5a7), width: 0.6),
