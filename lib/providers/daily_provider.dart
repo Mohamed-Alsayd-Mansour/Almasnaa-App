@@ -65,10 +65,17 @@ class DailyProvider extends ChangeNotifier {
     required String supervisor,
     required String repairer,
     required String deficiencies,
+    String wrapLocation = '',
+    bool hasSpecifications = false,
+    String specificationsText = '',
+    int specialPieceCount = 0,
   }) async {
     if (activeSession == null) return 'لا توجد يومية نشطة حاليًا.';
     if (numbering.trim().isEmpty) return 'حقل الترقيم مطلوب.';
     if (carpenter.trim().isEmpty) return 'اسم النجار مطلوب.';
+    if (hasSpecifications && specialPieceCount < 0) {
+      return 'عدد قطع غرفة المواصفات لا يمكن أن يكون سالبًا.';
+    }
 
     try {
       final entry = await _entryRepository.addEntry(
@@ -81,6 +88,10 @@ class DailyProvider extends ChangeNotifier {
         supervisor: supervisor,
         repairer: repairer,
         deficiencies: deficiencies,
+        wrapLocation: wrapLocation,
+        hasSpecifications: hasSpecifications,
+        specificationsText: specificationsText,
+        specialPieceCount: specialPieceCount,
       );
       entries = [...entries, entry];
       notifyListeners();

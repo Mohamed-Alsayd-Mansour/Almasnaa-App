@@ -36,19 +36,39 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   String? _installer;
   String? _supervisor;
   String? _repairer;
+  final _wrapLocationCtrl = TextEditingController();
   final _deficienciesCtrl = TextEditingController();
+
+  bool _hasSpecifications = false;
+  final _specificationsCtrl = TextEditingController();
+  final _specialPieceCountCtrl = TextEditingController();
 
   bool _saving = false;
 
   @override
   void dispose() {
     _numberingCtrl.dispose();
+    _wrapLocationCtrl.dispose();
     _deficienciesCtrl.dispose();
+    _specificationsCtrl.dispose();
+    _specialPieceCountCtrl.dispose();
     super.dispose();
   }
 
   int get _liveMissingCount =>
       calculateMissingPiecesCount(_deficienciesCtrl.text);
+
+  void _onToggleSpecifications(bool value) {
+    setState(() {
+      _hasSpecifications = value;
+      // عند التفعيل نملأ العدد تلقائيًا بالعدد القياسي الحالي للغرفة
+      // كنقطة بداية مناسبة فقط؛ القيمة بعدها مستقلة تمامًا وقابلة
+      // للتعديل بحرية دون أي تأثير على عدد القطع القياسي للغرفة.
+      if (value && _specialPieceCountCtrl.text.trim().isEmpty) {
+        _specialPieceCountCtrl.text = (_selectedRoom?.pieceCount ?? 0).toString();
+      }
+    });
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -67,6 +87,12 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
           supervisor: _supervisor ?? '',
           repairer: _repairer ?? '',
           deficiencies: _deficienciesCtrl.text,
+          wrapLocation: _wrapLocationCtrl.text,
+          hasSpecifications: _hasSpecifications,
+          specificationsText: _specificationsCtrl.text,
+          specialPieceCount: _hasSpecifications
+              ? (int.tryParse(_specialPieceCountCtrl.text.trim()) ?? 0)
+              : 0,
         );
 
     if (!mounted) return;
@@ -148,6 +174,54 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   onChanged: (v) => setState(() => _repairer = v),
                 ),
                 const SizedBox(height: 14),
+                TextFormField(
+                  controller: _wrapLocationCtrl,
+                  decoration: const InputDecoration(labelText: 'مكان اللف'),
+                ),
+                const SizedBox(height: 14),
+                const Divider(),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('وسم "مواصفات"',
+                      style: TextStyle(fontWeight: FontWeight.w800)),
+                  subtitle: const Text(
+                      'غرفة بمواصفات وتعديلات شكلية خاصة، وعدد قطع مستقل تمامًا عن العدد القياسي للغرفة.'),
+                  value: _hasSpecifications,
+                  onChanged: _onToggleSpecifications,
+                ),
+                if (_hasSpecifications) ...[
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: _specificationsCtrl,
+                    maxLines: 4,
+                    minLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: 'المواصفات والتعديلات الشكلية',
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _specialPieceCountCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'عدد قطع غرفة المواصفات *',
+                      helperText:
+                          'مستقل تمامًا عن عدد القطع القياسي للغرفة العادية.',
+                    ),
+                    validator: (v) {
+                      if (!_hasSpecifications) return null;
+                      final n = int.tryParse((v ?? '').trim());
+                      if (n == null || n < 0) {
+                        return 'أدخل عددًا صحيحًا غير سالب';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+                const SizedBox(height: 14),
+                const Divider(),
+                const SizedBox(height: 6),
                 TextFormField(
                   controller: _deficienciesCtrl,
                   maxLines: 5,

@@ -10,6 +10,7 @@ import '../../widgets/common_widgets.dart';
 import '../../widgets/deficiency_cell.dart';
 import '../../widgets/scrollable_table.dart';
 import '../../widgets/status_badge.dart';
+import '../../services/daily_print_service.dart';
 import 'add_entry_dialog.dart';
 import 'edit_entry_dialog.dart';
 
@@ -66,6 +67,28 @@ class _DailyScreenState extends State<DailyScreen> {
       showErrorSnackBar(context, error);
     } else {
       showSuccessSnackBar(context, 'تم الحذف.');
+    }
+  }
+
+  Future<void> _printSession() async {
+    final provider = context.read<DailyProvider>();
+    final session = provider.activeSession;
+    if (session == null) return;
+    if (provider.entries.isEmpty) {
+      showErrorSnackBar(context, 'لا توجد غرف في اليومية لطباعتها.');
+      return;
+    }
+    try {
+      await DailyPrintService.printSession(
+        session: session,
+        entries: provider.entries,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      showErrorSnackBar(
+        context,
+        'تعذّر تجهيز الطباعة. تأكد من الاتصال بالإنترنت ثم أعد المحاولة.',
+      );
     }
   }
 
@@ -130,6 +153,12 @@ class _DailyScreenState extends State<DailyScreen> {
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w800)),
                   const Spacer(),
+                  OutlinedButton.icon(
+                    onPressed: _printSession,
+                    icon: const Icon(Icons.print_outlined),
+                    label: const Text('طباعة اليومية'),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
                   ElevatedButton.icon(
                     onPressed: _addEntry,
                     icon: const Icon(Icons.add),
@@ -158,6 +187,8 @@ class _DailyScreenState extends State<DailyScreen> {
                                 DataColumn(label: Text('الرصيص')),
                                 DataColumn(label: Text('المشرف')),
                                 DataColumn(label: Text('الرميم')),
+                                DataColumn(label: Text('مكان اللف')),
+                                DataColumn(label: Text('المواصفات')),
                                 DataColumn(label: Text('النواقص')),
                                 DataColumn(label: Text('عدد الناقص'), numeric: true),
                                 DataColumn(label: Text('إجراءات')),
@@ -177,6 +208,19 @@ class _DailyScreenState extends State<DailyScreen> {
                                       DataCell(Text(entries[i].installer)),
                                       DataCell(Text(entries[i].supervisor)),
                                       DataCell(Text(entries[i].repairer)),
+                                      DataCell(Text(entries[i].wrapLocation)),
+                                      DataCell(
+                                        SizedBox(
+                                          width: 180,
+                                          child: Text(
+                                            entries[i].hasSpecifications
+                                                ? entries[i].specificationsText
+                                                : '',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
                                       DataCell(
                                         SizedBox(
                                           width: 220,

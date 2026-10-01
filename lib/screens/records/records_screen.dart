@@ -46,7 +46,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
       dateTo: result.dateTo,
       roomName: result.roomName,
       carpenter: result.carpenter,
+      installer: result.installer,
       supervisor: result.supervisor,
+      wrapLocation: result.wrapLocation,
       status: result.status,
     ));
   }
@@ -104,8 +106,12 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       Chip(label: Text('الغرفة: ${provider.filters.roomName}')),
                     if ((provider.filters.carpenter ?? '').isNotEmpty)
                       Chip(label: Text('النجار: ${provider.filters.carpenter}')),
+                    if ((provider.filters.installer ?? '').isNotEmpty)
+                      Chip(label: Text('الرصيص: ${provider.filters.installer}')),
                     if ((provider.filters.supervisor ?? '').isNotEmpty)
                       Chip(label: Text('المشرف: ${provider.filters.supervisor}')),
+                    if ((provider.filters.wrapLocation ?? '').isNotEmpty)
+                      Chip(label: Text('مكان اللف: ${provider.filters.wrapLocation}')),
                     if (provider.filters.status != null)
                       Chip(label: Text('الحالة: ${provider.filters.status!.label}')),
                   ],
@@ -152,6 +158,8 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           DataColumn(label: Text('الرصيص')),
                           DataColumn(label: Text('المشرف')),
                           DataColumn(label: Text('الرميم')),
+                          DataColumn(label: Text('مكان اللف')),
+                          DataColumn(label: Text('المواصفات')),
                           DataColumn(label: Text('النواقص')),
                           DataColumn(label: Text('عدد الناقص'), numeric: true),
                           DataColumn(label: Text('الحالة')),
@@ -173,6 +181,19 @@ class _RecordsScreenState extends State<RecordsScreen> {
                                 DataCell(Text(rows[i].entry.installer)),
                                 DataCell(Text(rows[i].entry.supervisor)),
                                 DataCell(Text(rows[i].entry.repairer)),
+                                DataCell(Text(rows[i].entry.wrapLocation)),
+                                DataCell(
+                                  SizedBox(
+                                    width: 180,
+                                    child: Text(
+                                      rows[i].entry.hasSpecifications
+                                          ? rows[i].entry.specificationsText
+                                          : '',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
                                 DataCell(
                                   SizedBox(
                                     width: 220,

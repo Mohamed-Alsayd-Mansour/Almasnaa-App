@@ -33,7 +33,9 @@ class RecordsProvider extends ChangeNotifier {
       dateTo: filters.dateTo,
       roomName: filters.roomName,
       carpenter: filters.carpenter,
+      installer: filters.installer,
       supervisor: filters.supervisor,
+      wrapLocation: filters.wrapLocation,
       status: filters.status,
     );
     notifyListeners();

@@ -32,6 +32,18 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   late String? _installer = _nullIfEmpty(widget.entry.installer);
   late String? _supervisor = _nullIfEmpty(widget.entry.supervisor);
   late String? _repairer = _nullIfEmpty(widget.entry.repairer);
+  late final TextEditingController _wrapLocationCtrl =
+      TextEditingController(text: widget.entry.wrapLocation);
+
+  late bool _hasSpecifications = widget.entry.hasSpecifications;
+  late final TextEditingController _specificationsCtrl =
+      TextEditingController(text: widget.entry.specificationsText);
+  late final TextEditingController _specialPieceCountCtrl =
+      TextEditingController(
+          text: widget.entry.hasSpecifications
+              ? widget.entry.specialPieceCount.toString()
+              : '');
+
   bool _saving = false;
 
   static String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v;
@@ -39,7 +51,19 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   @override
   void dispose() {
     _numberingCtrl.dispose();
+    _wrapLocationCtrl.dispose();
+    _specificationsCtrl.dispose();
+    _specialPieceCountCtrl.dispose();
     super.dispose();
+  }
+
+  void _onToggleSpecifications(bool value) {
+    setState(() {
+      _hasSpecifications = value;
+      if (value && _specialPieceCountCtrl.text.trim().isEmpty) {
+        _specialPieceCountCtrl.text = widget.entry.pieceCountSnapshot.toString();
+      }
+    });
   }
 
   Future<void> _submit() async {
@@ -51,6 +75,12 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
       installer: _installer ?? '',
       supervisor: _supervisor ?? '',
       repairer: _repairer ?? '',
+      wrapLocation: _wrapLocationCtrl.text.trim(),
+      hasSpecifications: _hasSpecifications,
+      specificationsText: _specificationsCtrl.text.trim(),
+      specialPieceCount: _hasSpecifications
+          ? (int.tryParse(_specialPieceCountCtrl.text.trim()) ?? 0)
+          : widget.entry.specialPieceCount,
     );
     final error = await context.read<DailyProvider>().updateEntry(updated);
     if (!mounted) return;
@@ -106,6 +136,44 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 value: _repairer,
                 onChanged: (v) => setState(() => _repairer = v),
               ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: _wrapLocationCtrl,
+                decoration: const InputDecoration(labelText: 'مكان اللف'),
+              ),
+              const SizedBox(height: 14),
+              const Divider(),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('وسم "مواصفات"',
+                    style: TextStyle(fontWeight: FontWeight.w800)),
+                subtitle: const Text(
+                    'غرفة بمواصفات وتعديلات شكلية خاصة، وعدد قطع مستقل تمامًا عن العدد القياسي للغرفة.'),
+                value: _hasSpecifications,
+                onChanged: _onToggleSpecifications,
+              ),
+              if (_hasSpecifications) ...[
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _specificationsCtrl,
+                  maxLines: 4,
+                  minLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'المواصفات والتعديلات الشكلية',
+                    alignLabelWithHint: true,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: _specialPieceCountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'عدد قطع غرفة المواصفات',
+                    helperText:
+                        'مستقل تمامًا عن عدد القطع القياسي للغرفة العادية.',
+                  ),
+                ),
+              ],
             ],
           ),
         ),

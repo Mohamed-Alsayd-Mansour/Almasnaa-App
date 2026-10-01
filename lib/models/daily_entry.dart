@@ -9,6 +9,13 @@ import 'enums.dart';
 /// نحتفظ بنسختين من النواقص:
 /// - [originalDeficiencies]: كما سُجّلت وقت الإدخال في اليومية (لا تتغير أبدًا).
 /// - [currentDeficiencies]: الحالة الحالية القابلة للتعديل من تبويب السجل.
+///
+/// وسم "مواصفات" ([hasSpecifications]): يمثل نسخة/حالة خاصة من الغرفة
+/// لها مواصفات وتعديلات شكلية خاصة بها ([specificationsText])، وعدد قطع
+/// مستقل تمامًا ([specialPieceCount]) عن العدد القياسي المحفوظ للغرفة
+/// الأساسية ([pieceCountSnapshot]). تعديل [specialPieceCount] لا يغيّر
+/// [pieceCountSnapshot] بأي شكل، والعكس صحيح — وهذا الاستقلال التام
+/// مطلوب بشكل صريح في المواصفات ويجب عدم كسره في أي تعديل مستقبلي.
 class DailyEntry {
   final String id;
   final String dailySessionId;
@@ -16,6 +23,10 @@ class DailyEntry {
   /// قد تكون null إذا حُذفت الغرفة الأساسية لاحقًا؛ الـ Snapshot يبقى قائمًا.
   final String? roomId;
   final String roomNameSnapshot;
+
+  /// العدد القياسي للغرفة العادية كما كان محفوظًا وقت الإضافة إلى
+  /// اليومية. لا يتأثر أبدًا بتفعيل وسم "مواصفات" أو بتعديل
+  /// [specialPieceCount].
   final int pieceCountSnapshot;
 
   final String numbering;
@@ -24,6 +35,21 @@ class DailyEntry {
   final String installer; // الرصيص
   final String supervisor; // المشرف
   final String repairer; // الرميم
+
+  /// مكان اللف.
+  final String wrapLocation;
+
+  /// وسم "مواصفات": يشير إلى أن هذا الإدخال هو نسخة/حالة خاصة من
+  /// الغرفة لها مواصفات وعدد قطع مستقلين.
+  final bool hasSpecifications;
+
+  /// المواصفات والتعديلات الشكلية الخاصة بغرفة المواصفات. لا معنى لها
+  /// إلا عندما يكون [hasSpecifications] مفعّلًا.
+  final String specificationsText;
+
+  /// عدد قطع غرفة المواصفات، مستقل تمامًا عن [pieceCountSnapshot].
+  /// لا معنى له إلا عندما يكون [hasSpecifications] مفعّلًا.
+  final int specialPieceCount;
 
   final String originalDeficiencies;
   final String currentDeficiencies;
@@ -46,6 +72,10 @@ class DailyEntry {
     required this.installer,
     required this.supervisor,
     required this.repairer,
+    required this.wrapLocation,
+    required this.hasSpecifications,
+    required this.specificationsText,
+    required this.specialPieceCount,
     required this.originalDeficiencies,
     required this.currentDeficiencies,
     required this.originalMissingPiecesCount,
@@ -62,8 +92,17 @@ class DailyEntry {
 
   bool get wasEverModified => lastDeficiencyUpdateAt != null;
 
-  /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)".
-  String get displayName => '$roomNameSnapshot ($pieceCountSnapshot)';
+  /// عدد القطع المستخدم فعليًا في اليومية والسجل والطباعة: العدد الخاص
+  /// بغرفة المواصفات عند تفعيل الوسم، وإلا العدد القياسي للغرفة العادية.
+  int get effectivePieceCount =>
+      hasSpecifications ? specialPieceCount : pieceCountSnapshot;
+
+  /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)"، أو
+  /// "أطفال جودي - مواصفات (7)" عند تفعيل وسم المواصفات.
+  String get displayName {
+    final tag = hasSpecifications ? ' - مواصفات' : '';
+    return '$roomNameSnapshot$tag ($effectivePieceCount)';
+  }
 
   /// ينشئ نسخة جديدة محدَّثة بعد تعديل نص النواقص الحالي، مع إعادة
   /// حساب العدد تلقائيًا. هذا هو المسار الوحيد المسموح لتغيير النواقص.
@@ -81,6 +120,10 @@ class DailyEntry {
       installer: installer,
       supervisor: supervisor,
       repairer: repairer,
+      wrapLocation: wrapLocation,
+      hasSpecifications: hasSpecifications,
+      specificationsText: specificationsText,
+      specialPieceCount: specialPieceCount,
       originalDeficiencies: originalDeficiencies,
       currentDeficiencies: trimmed,
       originalMissingPiecesCount: originalMissingPiecesCount,
@@ -98,6 +141,10 @@ class DailyEntry {
     String? installer,
     String? supervisor,
     String? repairer,
+    String? wrapLocation,
+    bool? hasSpecifications,
+    String? specificationsText,
+    int? specialPieceCount,
   }) {
     return DailyEntry(
       id: id,
@@ -111,6 +158,10 @@ class DailyEntry {
       installer: installer ?? this.installer,
       supervisor: supervisor ?? this.supervisor,
       repairer: repairer ?? this.repairer,
+      wrapLocation: wrapLocation ?? this.wrapLocation,
+      hasSpecifications: hasSpecifications ?? this.hasSpecifications,
+      specificationsText: specificationsText ?? this.specificationsText,
+      specialPieceCount: specialPieceCount ?? this.specialPieceCount,
       originalDeficiencies: originalDeficiencies,
       currentDeficiencies: currentDeficiencies,
       originalMissingPiecesCount: originalMissingPiecesCount,
@@ -134,6 +185,10 @@ class DailyEntry {
       'installer': installer,
       'supervisor': supervisor,
       'repairer': repairer,
+      'wrap_location': wrapLocation,
+      'has_specifications': hasSpecifications,
+      'specifications_text': specificationsText,
+      'special_piece_count': specialPieceCount,
       'original_deficiencies': originalDeficiencies,
       'current_deficiencies': currentDeficiencies,
       'original_missing_count': originalMissingPiecesCount,
@@ -144,6 +199,9 @@ class DailyEntry {
     };
   }
 
+  /// آمن تمامًا مع السجلات القديمة التي أُنشئت قبل إضافة "مكان اللف"
+  /// و"مواصفات": كل حقل جديد له قيمة افتراضية محايدة عند غيابه من
+  /// البيانات المخزّنة، فلا تُفقد أي بيانات قديمة ولا يتعطل أي سجل.
   factory DailyEntry.fromMap(Map<String, Object?> map) {
     return DailyEntry(
       id: map['id'] as String,
@@ -157,6 +215,10 @@ class DailyEntry {
       installer: map['installer'] as String? ?? '',
       supervisor: map['supervisor'] as String? ?? '',
       repairer: map['repairer'] as String? ?? '',
+      wrapLocation: map['wrap_location'] as String? ?? '',
+      hasSpecifications: map['has_specifications'] as bool? ?? false,
+      specificationsText: map['specifications_text'] as String? ?? '',
+      specialPieceCount: map['special_piece_count'] as int? ?? 0,
       originalDeficiencies: map['original_deficiencies'] as String? ?? '',
       currentDeficiencies: map['current_deficiencies'] as String? ?? '',
       originalMissingPiecesCount: map['original_missing_count'] as int? ?? 0,

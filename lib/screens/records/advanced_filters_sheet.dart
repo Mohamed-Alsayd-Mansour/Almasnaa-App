@@ -33,7 +33,9 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
   DateTime? _to;
   late final TextEditingController _roomCtrl;
   late final TextEditingController _carpenterCtrl;
+  late final TextEditingController _installerCtrl;
   late final TextEditingController _supervisorCtrl;
+  late final TextEditingController _wrapLocationCtrl;
   RoomEntryStatus? _status;
 
   @override
@@ -43,7 +45,10 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
     _to = widget.current.dateTo;
     _roomCtrl = TextEditingController(text: widget.current.roomName ?? '');
     _carpenterCtrl = TextEditingController(text: widget.current.carpenter ?? '');
+    _installerCtrl = TextEditingController(text: widget.current.installer ?? '');
     _supervisorCtrl = TextEditingController(text: widget.current.supervisor ?? '');
+    _wrapLocationCtrl =
+        TextEditingController(text: widget.current.wrapLocation ?? '');
     _status = widget.current.status;
   }
 
@@ -115,8 +120,18 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
             ),
             const SizedBox(height: 14),
             TextField(
+              controller: _installerCtrl,
+              decoration: const InputDecoration(labelText: 'الرصيص'),
+            ),
+            const SizedBox(height: 14),
+            TextField(
               controller: _supervisorCtrl,
               decoration: const InputDecoration(labelText: 'المشرف'),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _wrapLocationCtrl,
+              decoration: const InputDecoration(labelText: 'مكان اللف'),
             ),
             const SizedBox(height: 14),
             const Align(
@@ -167,7 +182,9 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                         dateTo: _to,
                         roomName: _roomCtrl.text.trim(),
                         carpenter: _carpenterCtrl.text.trim(),
+                        installer: _installerCtrl.text.trim(),
                         supervisor: _supervisorCtrl.text.trim(),
+                        wrapLocation: _wrapLocationCtrl.text.trim(),
                         status: _status,
                       ));
                     },

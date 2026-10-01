@@ -14,7 +14,9 @@ class RecordSearchFilters {
   final DateTime? dateTo;
   final String? roomName;
   final String? carpenter;
+  final String? installer;
   final String? supervisor;
+  final String? wrapLocation;
   final RoomEntryStatus? status;
 
   const RecordSearchFilters({
@@ -23,7 +25,9 @@ class RecordSearchFilters {
     this.dateTo,
     this.roomName,
     this.carpenter,
+    this.installer,
     this.supervisor,
+    this.wrapLocation,
     this.status,
   });
 
@@ -33,7 +37,9 @@ class RecordSearchFilters {
       dateTo == null &&
       (roomName == null || roomName!.isEmpty) &&
       (carpenter == null || carpenter!.isEmpty) &&
+      (installer == null || installer!.isEmpty) &&
       (supervisor == null || supervisor!.isEmpty) &&
+      (wrapLocation == null || wrapLocation!.isEmpty) &&
       status == null;
 
   RecordSearchFilters clear() => const RecordSearchFilters();
@@ -85,6 +91,10 @@ class DailyEntryRepository {
     required String supervisor,
     required String repairer,
     required String deficiencies,
+    String wrapLocation = '',
+    bool hasSpecifications = false,
+    String specificationsText = '',
+    int specialPieceCount = 0,
   }) async {
     final now = DateTime.now();
     final trimmedDeficiencies = deficiencies.trim();
@@ -95,6 +105,8 @@ class DailyEntryRepository {
       dailySessionId: dailySessionId,
       roomId: room.id,
       roomNameSnapshot: room.name,
+      // Snapshot العدد القياسي للغرفة العادية دائمًا، بصرف النظر عن
+      // تفعيل وسم "مواصفات" — يبقى مستقلًا تمامًا عن specialPieceCount.
       pieceCountSnapshot: room.pieceCount,
       numbering: numbering.trim(),
       carpenter: carpenter.trim(),
@@ -102,6 +114,10 @@ class DailyEntryRepository {
       installer: installer.trim(),
       supervisor: supervisor.trim(),
       repairer: repairer.trim(),
+      wrapLocation: wrapLocation.trim(),
+      hasSpecifications: hasSpecifications,
+      specificationsText: specificationsText.trim(),
+      specialPieceCount: specialPieceCount,
       originalDeficiencies: trimmedDeficiencies,
       currentDeficiencies: trimmedDeficiencies,
       originalMissingPiecesCount: missingCount,
@@ -186,9 +202,12 @@ class DailyEntryRepository {
             contains(e.installer) ||
             contains(e.supervisor) ||
             contains(e.repairer) ||
+            contains(e.wrapLocation) ||
+            contains(e.specificationsText) ||
             contains(e.currentDeficiencies) ||
             contains(r.dayName) ||
             contains('${e.pieceCountSnapshot}') ||
+            contains('${e.effectivePieceCount}') ||
             contains('${e.currentMissingPiecesCount}');
       }).toList();
     }
@@ -219,10 +238,21 @@ class DailyEntryRepository {
       final q = filters.carpenter!.trim().toLowerCase();
       rows = rows.where((r) => r.entry.carpenter.toLowerCase().contains(q)).toList();
     }
+    if (filters.installer != null && filters.installer!.trim().isNotEmpty) {
+      final q = filters.installer!.trim().toLowerCase();
+      rows =
+          rows.where((r) => r.entry.installer.toLowerCase().contains(q)).toList();
+    }
     if (filters.supervisor != null && filters.supervisor!.trim().isNotEmpty) {
       final q = filters.supervisor!.trim().toLowerCase();
       rows =
           rows.where((r) => r.entry.supervisor.toLowerCase().contains(q)).toList();
+    }
+    if (filters.wrapLocation != null && filters.wrapLocation!.trim().isNotEmpty) {
+      final q = filters.wrapLocation!.trim().toLowerCase();
+      rows = rows
+          .where((r) => r.entry.wrapLocation.toLowerCase().contains(q))
+          .toList();
     }
     if (filters.status == RoomEntryStatus.completed) {
       rows = rows.where((r) => r.entry.currentDeficiencies.trim().isEmpty).toList();
