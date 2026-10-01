@@ -26,6 +26,10 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get
 
+      # إضافة خطوة توليد أيقونات التطبيق قبل البناء
+      - name: Generate Launcher Icons
+        run: dart run flutter_launcher_icons
+
       - name: Build Windows Release
         run: flutter build windows --release
 
