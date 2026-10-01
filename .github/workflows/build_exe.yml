@@ -1,4 +1,4 @@
-name: Flutter Build - Windows
+name: Build Flutter Windows
 
 on:
   workflow_dispatch:
