@@ -1,12 +1,6 @@
 name: Build Flutter APK
 
 on:
-  push:
-    branches:
-      - main # أو master
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:

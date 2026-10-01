@@ -1,4 +1,4 @@
-name: Flutter Build - Windows
+name: Build Flutter Windows
 
 on:
   workflow_dispatch:
@@ -25,6 +25,10 @@ jobs:
 
       - name: Get Dependencies
         run: flutter pub get
+
+      # إضافة خطوة توليد أيقونات التطبيق قبل البناء
+      - name: Generate Launcher Icons
+        run: dart run flutter_launcher_icons
 
       - name: Build Windows Release
         run: flutter build windows --release
