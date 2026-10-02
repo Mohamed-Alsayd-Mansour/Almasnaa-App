@@ -30,16 +30,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. تحديث رابط Gradle مباشرة في ملف gradle-wrapper.properties
+      # 5. توليد أيقونات التطبيق
+      - name: Generate Launcher Icons
+        run: dart run flutter_launcher_icons
+
+      # 6. تحديث رابط Gradle مباشرة في ملف gradle-wrapper.properties
       - name: Update Gradle Version
         run: |
           sed -i 's/gradle-.*-bin.zip/gradle-8.14-bin.zip/g' android/gradle/wrapper/gradle-wrapper.properties
 
-      # 6. بناء ملف الـ APK
+      # 7. بناء ملف الـ APK
       - name: Build APK
         run: flutter build apk --release --android-skip-build-dependency-validation
 
-      # 7. رفع الـ APK المبنيلتحميله من GitHub
+      # 8. رفع الـ APK المبني لتحميله من GitHub
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
