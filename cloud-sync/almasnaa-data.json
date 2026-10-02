@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-02T18:15:39.368609",
+  "exported_at": "2026-10-02T18:22:59.999128",
   "data": {
     "rooms": [
       {
@@ -9,6 +9,7 @@
         "name": "أطفال كاب ميني",
         "piece_count": 22,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:20:12.659706",
         "updated_at": "2026-09-26T19:54:12.040443"
       },
@@ -17,6 +18,7 @@
         "name": "أطفال كارما رمادي ميني",
         "piece_count": 22,
         "glass_piece_count": 1,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T19:53:31.039725",
         "updated_at": "2026-09-26T19:54:24.652690"
       },
@@ -25,6 +27,7 @@
         "name": "أطفال كارما بني ميني",
         "piece_count": 22,
         "glass_piece_count": 1,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T19:54:57.641582",
         "updated_at": "2026-09-26T19:54:57.641582"
       },
@@ -33,6 +36,7 @@
         "name": "أطفال بيور رمادي ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:56:16.029038",
         "updated_at": "2026-09-26T19:56:16.029038"
       },
@@ -41,6 +45,7 @@
         "name": "أطفال بيور بني ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:56:49.019204",
         "updated_at": "2026-09-26T19:56:49.019204"
       },
@@ -49,6 +54,7 @@
         "name": "أطفال جولف بني ٢م",
         "piece_count": 21,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:57:31.096502",
         "updated_at": "2026-09-26T19:57:31.096502"
       },
@@ -57,6 +63,7 @@
         "name": "أطفال جولف رمادي ٢م",
         "piece_count": 21,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:58:01.306002",
         "updated_at": "2026-09-26T19:58:01.306002"
       },
@@ -65,6 +72,7 @@
         "name": "أطفال دريم ٢م",
         "piece_count": 24,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:59:20.042446",
         "updated_at": "2026-09-26T19:59:20.042446"
       },
@@ -73,6 +81,7 @@
         "name": "أطفال كندر ٢م",
         "piece_count": 25,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T19:59:56.898985",
         "updated_at": "2026-09-26T19:59:56.898985"
       },
@@ -81,6 +90,7 @@
         "name": "أطفال هلا ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:01:14.923582",
         "updated_at": "2026-09-26T20:01:14.923582"
       },
@@ -89,6 +99,7 @@
         "name": "أطفال رفيف ميني",
         "piece_count": 19,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:02:02.052277",
         "updated_at": "2026-09-26T20:02:02.052277"
       },
@@ -97,6 +108,7 @@
         "name": "أطفال رفيف ٢م",
         "piece_count": 24,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:03:49.027137",
         "updated_at": "2026-09-26T20:03:49.027137"
       },
@@ -105,6 +117,7 @@
         "name": "أطفال بنوكيو ٢م",
         "piece_count": 24,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:06:52.954507",
         "updated_at": "2026-09-26T20:06:52.954507"
       },
@@ -113,6 +126,7 @@
         "name": "أطفال ألترا ٢م",
         "piece_count": 23,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:08:01.280648",
         "updated_at": "2026-09-26T20:08:01.280648"
       },
@@ -121,6 +135,7 @@
         "name": "أطفال ألترا ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:09:19.227719",
         "updated_at": "2026-09-26T20:09:19.227719"
       },
@@ -129,6 +144,7 @@
         "name": "أطفال موجة ٢م",
         "piece_count": 20,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:09:44.142763",
         "updated_at": "2026-09-26T20:09:44.142763"
       },
@@ -137,6 +153,7 @@
         "name": "أطفال وعد ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:10:39.469419",
         "updated_at": "2026-09-26T20:10:39.469419"
       },
@@ -145,6 +162,7 @@
         "name": "أطفال لاينز ٢م",
         "piece_count": 20,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:11:15.998883",
         "updated_at": "2026-09-29T22:08:43.562744"
       },
@@ -153,6 +171,7 @@
         "name": "أطفال مساطر ٢م",
         "piece_count": 21,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:13:11.769600",
         "updated_at": "2026-09-26T20:13:11.769600"
       },
@@ -161,6 +180,7 @@
         "name": "أطفال مساطر ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:14:40.997733",
         "updated_at": "2026-09-26T20:14:40.997733"
       },
@@ -169,6 +189,7 @@
         "name": "أطفال أمريكي ميني",
         "piece_count": 19,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:15:49.133010",
         "updated_at": "2026-09-26T20:15:49.133010"
       },
@@ -177,6 +198,7 @@
         "name": "أطفال أمريكي ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:19:11.515656",
         "updated_at": "2026-09-28T11:08:44.392113"
       },
@@ -185,6 +207,7 @@
         "name": "أطفال مقبض ميني",
         "piece_count": 19,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:20:03.309369",
         "updated_at": "2026-09-26T20:20:03.309369"
       },
@@ -193,6 +216,7 @@
         "name": "أطفال بيضاوي ميني",
         "piece_count": 19,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:20:21.109093",
         "updated_at": "2026-09-26T20:20:21.109093"
       },
@@ -201,6 +225,7 @@
         "name": "أطفال كارما بني ٢م جديدة",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:22:09.134359",
         "updated_at": "2026-09-26T20:22:09.134359"
       },
@@ -209,6 +234,7 @@
         "name": "أطفال كارما رمادي ٢م جديدة",
         "piece_count": 27,
         "glass_piece_count": 3,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:22:52.421718",
         "updated_at": "2026-09-26T20:22:52.421718"
       },
@@ -217,6 +243,7 @@
         "name": "أطفال كارما بني ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:23:07.930910",
         "updated_at": "2026-09-26T20:23:07.930910"
       },
@@ -225,6 +252,7 @@
         "name": "أطفال كارما رمادي ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:23:24.051867",
         "updated_at": "2026-09-26T20:23:24.051867"
       },
@@ -233,6 +261,7 @@
         "name": "أطفال دبي معدل ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:24:32.113141",
         "updated_at": "2026-09-26T20:24:32.113141"
       },
@@ -241,6 +270,7 @@
         "name": "أطفال دبي ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:24:50.632318",
         "updated_at": "2026-09-26T20:24:50.632318"
       },
@@ -249,6 +279,7 @@
         "name": "أطفال دبي معدل ٢م",
         "piece_count": 22,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:27:39.064647",
         "updated_at": "2026-09-26T20:27:39.064647"
       },
@@ -257,6 +288,7 @@
         "name": "أطفال دبي ٢م",
         "piece_count": 22,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:28:48.817092",
         "updated_at": "2026-09-26T20:28:48.817092"
       },
@@ -265,14 +297,16 @@
         "name": "أطفال أسيل رمادي ٢م",
         "piece_count": 22,
         "glass_piece_count": 3,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:30:13.110813",
-        "updated_at": "2026-09-26T20:30:13.110813"
+        "updated_at": "2026-10-02T18:18:27.559259"
       },
       {
         "id": "ce20981f-3578-4a76-a5cb-968a7663ad6d",
         "name": "أطفال فجر ٢م",
         "piece_count": 24,
         "glass_piece_count": 2,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:32:32.375429",
         "updated_at": "2026-09-26T20:32:32.375429"
       },
@@ -281,6 +315,7 @@
         "name": "أطفال فجر ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:32:58.307153",
         "updated_at": "2026-09-26T20:32:58.307153"
       },
@@ -289,6 +324,7 @@
         "name": "أطفال جودي ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:33:23.162951",
         "updated_at": "2026-09-26T20:33:23.162951"
       },
@@ -297,6 +333,7 @@
         "name": "أطفال جودي ٢م",
         "piece_count": 22,
         "glass_piece_count": 2,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T20:34:24.491019",
         "updated_at": "2026-09-26T20:34:24.491019"
       },
@@ -305,6 +342,7 @@
         "name": "أطفال جلوريا ٢م",
         "piece_count": 22,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:41:11.832450",
         "updated_at": "2026-09-26T20:41:11.832450"
       },
@@ -313,6 +351,7 @@
         "name": "أطفال أوسكار ٢م",
         "piece_count": 22,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:45:16.927571",
         "updated_at": "2026-10-01T20:31:15.948868"
       },
@@ -321,6 +360,7 @@
         "name": "أطفال فلاي ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:50:50.609645",
         "updated_at": "2026-09-26T20:50:50.609645"
       },
@@ -329,6 +369,7 @@
         "name": "أطفال بيلا ٢م",
         "piece_count": 25,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:54:20.788905",
         "updated_at": "2026-09-26T20:54:20.788905"
       },
@@ -337,6 +378,7 @@
         "name": "أطفال أيفون ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:56:13.294839",
         "updated_at": "2026-09-26T20:56:13.294839"
       },
@@ -345,6 +387,7 @@
         "name": "أطفال إيفان ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-26T20:58:54.233293",
         "updated_at": "2026-09-26T20:58:54.233293"
       },
@@ -353,6 +396,7 @@
         "name": "أطفال كريم ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-27T08:55:40.795346",
         "updated_at": "2026-09-27T08:55:40.795346"
       },
@@ -361,6 +405,7 @@
         "name": "أطفال لافا ٢م",
         "piece_count": 20,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-27T15:45:48.046493",
         "updated_at": "2026-09-27T15:45:48.046493"
       },
@@ -369,6 +414,7 @@
         "name": "أطفال لافا ميني",
         "piece_count": 18,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-27T15:46:16.379247",
         "updated_at": "2026-09-27T15:46:16.379247"
       },
@@ -377,6 +423,7 @@
         "name": "أطفال جنة ٢م",
         "piece_count": 28,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-28T13:21:42.340365",
         "updated_at": "2026-09-28T13:21:42.340365"
       },
@@ -385,6 +432,7 @@
         "name": "أطفال مارينا ٢م",
         "piece_count": 21,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-28T13:35:14.313968",
         "updated_at": "2026-09-28T19:15:09.618933"
       },
@@ -393,6 +441,7 @@
         "name": "أطفال جنة ميني",
         "piece_count": 23,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-28T13:43:31.928664",
         "updated_at": "2026-09-28T13:43:31.928664"
       },
@@ -401,6 +450,7 @@
         "name": "أطفال روجينا ميني",
         "piece_count": 23,
         "glass_piece_count": 1,
+        "partition_piece_count": 1,
         "created_at": "2026-09-30T16:06:41.565086",
         "updated_at": "2026-09-30T16:06:41.565086"
       },
@@ -409,6 +459,7 @@
         "name": "أطفال روجينا ٢م",
         "piece_count": 23,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-09-30T16:09:58.083001",
         "updated_at": "2026-09-30T16:09:58.083001"
       },
@@ -417,6 +468,7 @@
         "name": "أطفال سيرا ٢م",
         "piece_count": 26,
         "glass_piece_count": 2,
+        "partition_piece_count": 1,
         "created_at": "2026-10-01T09:48:45.208221",
         "updated_at": "2026-10-01T09:48:45.208221"
       }
