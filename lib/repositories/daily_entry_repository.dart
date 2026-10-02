@@ -19,6 +19,9 @@ class RecordSearchFilters {
   final String? wrapLocation;
   final RoomEntryStatus? status;
 
+  /// شكل الغرفة: عادية / مواصفات (null = الكل).
+  final RoomShape? shape;
+
   const RecordSearchFilters({
     this.keyword = '',
     this.dateFrom,
@@ -29,6 +32,7 @@ class RecordSearchFilters {
     this.supervisor,
     this.wrapLocation,
     this.status,
+    this.shape,
   });
 
   bool get isEmpty =>
@@ -40,7 +44,8 @@ class RecordSearchFilters {
       (installer == null || installer!.isEmpty) &&
       (supervisor == null || supervisor!.isEmpty) &&
       (wrapLocation == null || wrapLocation!.isEmpty) &&
-      status == null;
+      status == null &&
+      shape == null;
 
   RecordSearchFilters clear() => const RecordSearchFilters();
 }
@@ -259,6 +264,12 @@ class DailyEntryRepository {
     } else if (filters.status == RoomEntryStatus.pending) {
       rows =
           rows.where((r) => r.entry.currentDeficiencies.trim().isNotEmpty).toList();
+    }
+
+    if (filters.shape == RoomShape.specs) {
+      rows = rows.where((r) => r.entry.hasSpecifications).toList();
+    } else if (filters.shape == RoomShape.regular) {
+      rows = rows.where((r) => !r.entry.hasSpecifications).toList();
     }
 
     rows.sort((a, b) {

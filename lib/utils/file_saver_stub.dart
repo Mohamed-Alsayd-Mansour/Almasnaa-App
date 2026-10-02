@@ -1,23 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:flutter_file_saver/flutter_file_saver.dart';
-
-/// نسخة الويب.
-///
-/// flutter_file_saver يدعم Web أيضًا، ويستخدم
-/// نافذة الحفظ في المتصفح إن كانت متاحة.
-Future<bool> saveBytesToFile({
-  required String fileName,
-  required Uint8List bytes,
-}) async {
-  try {
-    await FlutterFileSaver().writeFileAsBytes(
-      fileName: fileName,
-      bytes: bytes,
-    );
-
-    return true;
-  } on FileSaverCancelledException {
-    return false;
-  }
+/// نسخة الويب: FilePicker.saveFile نفسه يبدأ تنزيل الملف مباشرة عبر
+/// المتصفح بمجرد تمرير bytes، فلا حاجة لأي كتابة يدوية إضافية هنا.
+Future<void> writeBytesToPath(String path, Uint8List bytes) async {
+  // لا شيء مطلوب على الويب.
 }

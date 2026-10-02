@@ -49,10 +49,14 @@ class RoomsProvider extends ChangeNotifier {
     required String name,
     required int pieceCount,
     required int glassPieceCount,
+    int partitionPieceCount = 0,
   }) async {
     if (name.trim().isEmpty) return 'اسم الغرفة مطلوب.';
     if (pieceCount <= 0) return 'عدد القطع يجب أن يكون أكبر من صفر.';
     if (glassPieceCount < 0) return 'عدد قطع الزجاج لا يمكن أن يكون سالبًا.';
+    if (partitionPieceCount < 0) {
+      return 'عدد قطع القواطيع لا يمكن أن يكون سالبًا.';
+    }
 
     try {
       final taken = await _repository.isRoomNameTaken(name);
@@ -63,6 +67,7 @@ class RoomsProvider extends ChangeNotifier {
         name: name,
         pieceCount: pieceCount,
         glassPieceCount: glassPieceCount,
+        partitionPieceCount: partitionPieceCount,
       );
       _allRooms = [..._allRooms, room]
         ..sort((a, b) => a.name.compareTo(b.name));
@@ -78,10 +83,14 @@ class RoomsProvider extends ChangeNotifier {
     required String name,
     required int pieceCount,
     required int glassPieceCount,
+    int partitionPieceCount = 0,
   }) async {
     if (name.trim().isEmpty) return 'اسم الغرفة مطلوب.';
     if (pieceCount <= 0) return 'عدد القطع يجب أن يكون أكبر من صفر.';
     if (glassPieceCount < 0) return 'عدد قطع الزجاج لا يمكن أن يكون سالبًا.';
+    if (partitionPieceCount < 0) {
+      return 'عدد قطع القواطيع لا يمكن أن يكون سالبًا.';
+    }
 
     try {
       final taken =
@@ -93,6 +102,7 @@ class RoomsProvider extends ChangeNotifier {
         name: name,
         pieceCount: pieceCount,
         glassPieceCount: glassPieceCount,
+        partitionPieceCount: partitionPieceCount,
       ));
       _allRooms = _allRooms
           .map((r) => r.id == updated.id ? updated : r)

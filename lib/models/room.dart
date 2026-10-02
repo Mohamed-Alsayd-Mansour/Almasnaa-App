@@ -7,6 +7,9 @@ class Room {
   final String name;
   final int pieceCount;
   final int glassPieceCount;
+
+  /// عدد قطع القواطيع (قيمة افتراضية 0 للغرف المسجلة قبل إضافة الحقل).
+  final int partitionPieceCount;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -15,6 +18,7 @@ class Room {
     required this.name,
     required this.pieceCount,
     required this.glassPieceCount,
+    this.partitionPieceCount = 0,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -23,6 +27,7 @@ class Room {
     String? name,
     int? pieceCount,
     int? glassPieceCount,
+    int? partitionPieceCount,
     DateTime? updatedAt,
   }) {
     return Room(
@@ -30,6 +35,7 @@ class Room {
       name: name ?? this.name,
       pieceCount: pieceCount ?? this.pieceCount,
       glassPieceCount: glassPieceCount ?? this.glassPieceCount,
+      partitionPieceCount: partitionPieceCount ?? this.partitionPieceCount,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -41,6 +47,7 @@ class Room {
       'name': name,
       'piece_count': pieceCount,
       'glass_piece_count': glassPieceCount,
+      'partition_piece_count': partitionPieceCount,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -52,6 +59,7 @@ class Room {
       name: map['name'] as String,
       pieceCount: map['piece_count'] as int,
       glassPieceCount: map['glass_piece_count'] as int,
+      partitionPieceCount: map['partition_piece_count'] as int? ?? 0,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );

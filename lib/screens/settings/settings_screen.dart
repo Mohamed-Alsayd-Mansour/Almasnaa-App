@@ -12,12 +12,13 @@ import '../../providers/people_provider.dart';
 import '../../providers/records_provider.dart';
 import '../../providers/rooms_provider.dart';
 import '../../services/backup_service.dart';
-import 'package:flutter_file_saver/flutter_file_saver.dart';
+import '../../utils/file_saver.dart';
 import '../../widgets/common_widgets.dart';
+import 'cloud_sync_card.dart';
 import 'person_dialog.dart';
 
 /// تبويب الإعدادات: النسخ الاحتياطي (تصدير/استيراد JSON)، حذف كل البيانات،
-/// وإدارة قوائم الأسماء (الخدمة، النجار، الرصيص، المشرف، الرميم).
+/// وإدارة قوائم الأسماء (الخدمة، النجار، الرصيص، المشرف، الرميم، مكان اللف).
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -55,26 +56,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final fileName =
           'almasnaa-backup-${now.year}-${two(now.month)}-${two(now.day)}.json';
 
-      // فتح نافذة الحفظ الأصلية في Android.
-      final path = await FlutterFileSaver().writeFileAsBytes(
+      // فتح نافذة الحفظ الأصلية للنظام (تعمل على Android وiOS
+      // وWindows وLinux وmacOS والويب).
+      final path = await FilePicker.platform.saveFile(
+        dialogTitle: 'حفظ النسخة الاحتياطية',
         fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: const ['json'],
         bytes: bytes,
       );
 
+      // على بعض المنصات (خصوصًا سطح المكتب) تُعيد النافذة المسار فقط
+      // دون أن تكتب الملف فعليًا، فنكتبه هنا بأنفسنا لضمان نجاح الحفظ
+      // في كل الحالات. لا تأثير لهذا على الويب (المسار يكون null هناك
+      // لأن المتصفح هو من يتولى التنزيل مباشرة).
+      if (path != null) {
+        await writeBytesToPath(path, bytes);
+      }
+
       if (!mounted) return;
+
+      if (path == null) {
+        showErrorSnackBar(
+          context,
+          'تم إلغاء عملية الحفظ.',
+        );
+        return;
+      }
 
       showSuccessSnackBar(
         context,
-        path.isEmpty
-            ? 'تم حفظ النسخة الاحتياطية بنجاح.'
-            : 'تم حفظ النسخة الاحتياطية بنجاح.',
-      );
-    } on FileSaverCancelledException {
-      if (!mounted) return;
-
-      showErrorSnackBar(
-        context,
-        'تم إلغاء عملية الحفظ.',
+        'تم حفظ النسخة الاحتياطية بنجاح.',
       );
     } catch (e, stackTrace) {
       debugPrint('EXPORT ERROR: $e');
@@ -299,6 +311,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+        const SizedBox(height: AppSpacing.md),
+        CloudSyncCard(onRestored: _reloadAll),
         const SizedBox(height: AppSpacing.md),
         _SectionCard(
           title: 'قوائم الأسماء',

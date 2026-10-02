@@ -25,3 +25,14 @@ enum RoomEntryStatus {
         RoomEntryStatus.pending => 'بها نواقص',
       };
 }
+
+/// شكل الغرفة في البحث المتقدم: عادية، أو غرفة بوسم "مواصفات".
+enum RoomShape {
+  regular,
+  specs;
+
+  String get label => switch (this) {
+        RoomShape.regular => 'عادية',
+        RoomShape.specs => 'مواصفات',
+      };
+}

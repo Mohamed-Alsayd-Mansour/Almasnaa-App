@@ -32,8 +32,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   late String? _installer = _nullIfEmpty(widget.entry.installer);
   late String? _supervisor = _nullIfEmpty(widget.entry.supervisor);
   late String? _repairer = _nullIfEmpty(widget.entry.repairer);
-  late final TextEditingController _wrapLocationCtrl =
-      TextEditingController(text: widget.entry.wrapLocation);
+  late String? _wrapLocation = _nullIfEmpty(widget.entry.wrapLocation);
 
   late bool _hasSpecifications = widget.entry.hasSpecifications;
   late final TextEditingController _specificationsCtrl =
@@ -51,7 +50,6 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   @override
   void dispose() {
     _numberingCtrl.dispose();
-    _wrapLocationCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
     super.dispose();
@@ -75,7 +73,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
       installer: _installer ?? '',
       supervisor: _supervisor ?? '',
       repairer: _repairer ?? '',
-      wrapLocation: _wrapLocationCtrl.text.trim(),
+      wrapLocation: _wrapLocation ?? '',
       hasSpecifications: _hasSpecifications,
       specificationsText: _specificationsCtrl.text.trim(),
       specialPieceCount: _hasSpecifications
@@ -137,9 +135,10 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 onChanged: (v) => setState(() => _repairer = v),
               ),
               const SizedBox(height: 14),
-              TextField(
-                controller: _wrapLocationCtrl,
-                decoration: const InputDecoration(labelText: 'مكان اللف'),
+              PersonDropdownField(
+                role: PersonRole.wrapLocation,
+                value: _wrapLocation,
+                onChanged: (v) => setState(() => _wrapLocation = v),
               ),
               const SizedBox(height: 14),
               const Divider(),

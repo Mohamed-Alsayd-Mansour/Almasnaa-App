@@ -3,19 +3,55 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../models/daily_entry.dart';
-import '../models/daily_session.dart';
-import '../utils/date_formatter.dart';
 
-/// يبني نسخة طباعة يومية العمل ويعرض حوار الطباعة/الحفظ كـ PDF الخاص
-/// بالنظام. الأعمدة والترتيب ثابتان تمامًا وفق المواصفات:
+/// يبني نسخة طباعة بتنسيق RTL منظّم ويعرض حوار الطباعة/الحفظ كـ PDF
+/// الخاص بالنظام. الأعمدة والترتيب ثابتان تمامًا وفق المواصفات:
 /// اسم الغرفة | القطع | ترقيمها | الخدمة | النواقص | المواصفات
-/// ولا تتم إضافة أي عمود آخر غير هذه الستة.
+/// ولا تتم إضافة أي عمود آخر غير هذه الستة، سواء لطباعة اليومية أو
+/// لطباعة السجل.
 class DailyPrintService {
   DailyPrintService._();
 
-  static Future<void> printSession({
-    required DailySession session,
+  static const _headers = [
+    'اسم الغرفة',
+    'القطع',
+    'ترقيمها',
+    'الخدمة',
+    'النواقص',
+    'المواصفات',
+  ];
+
+  /// نِسَب عرض الأعمدة بترتيبها المنطقي (قبل انعكاس tableDirection).
+  /// محدّدة صراحةً بدل الاعتماد على العرض التلقائي (IntrinsicColumnWidth)
+  /// الذي كان يجعل أعمدة الأرقام القصيرة أضيق من عناوينها فيتكسر النص.
+  static final _columnWidths = <int, pw.TableColumnWidth>{
+    0: const pw.FlexColumnWidth(2.4), // اسم الغرفة
+    1: const pw.FlexColumnWidth(0.9), // القطع
+    2: const pw.FlexColumnWidth(1.0), // ترقيمها
+    3: const pw.FlexColumnWidth(1.3), // الخدمة
+    4: const pw.FlexColumnWidth(1.9), // النواقص
+    5: const pw.FlexColumnWidth(1.9), // المواصفات
+  };
+
+  static List<String> _rowOf(DailyEntry e) {
+    final roomName =
+        e.hasSpecifications ? '${e.roomNameSnapshot} - مواصفات' : e.roomNameSnapshot;
+    final specifications = e.hasSpecifications ? e.specificationsText : '';
+    return [
+      roomName,
+      '${e.effectivePieceCount}',
+      e.numbering,
+      e.service,
+      e.currentDeficiencies,
+      specifications,
+    ];
+  }
+
+  /// يطبع قائمة إدخالات بعنوان مخصص (يُستخدم لليومية وللسجل معًا).
+  static Future<void> printEntries({
+    required String title,
     required List<DailyEntry> entries,
+    required String documentName,
   }) async {
     // نستخدم خط Cairo نفسه المستخدم في واجهة التطبيق، لضمان دعم كامل
     // للعربية واتجاه RTL في نسخة الطباعة.
@@ -26,22 +62,7 @@ class DailyPrintService {
       theme: pw.ThemeData.withFont(base: regularFont, bold: boldFont),
     );
 
-    const headers = ['اسم الغرفة', 'القطع', 'ترقيمها', 'الخدمة', 'النواقص', 'المواصفات'];
-
-    final rows = entries.map((e) {
-      final roomName = e.hasSpecifications
-          ? '${e.roomNameSnapshot} - مواصفات'
-          : e.roomNameSnapshot;
-      final specifications = e.hasSpecifications ? e.specificationsText : '';
-      return [
-        roomName,
-        '${e.effectivePieceCount}',
-        e.numbering,
-        e.service,
-        e.currentDeficiencies,
-        specifications,
-      ];
-    }).toList();
+    final rows = entries.map(_rowOf).toList();
 
     doc.addPage(
       pw.MultiPage(
@@ -53,7 +74,8 @@ class DailyPrintService {
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.end,
             children: [
-              pw.Text('يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}',
+              pw.Text(title,
+                  textAlign: pw.TextAlign.right,
                   style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 10),
             ],
@@ -63,19 +85,21 @@ class DailyPrintService {
           pw.Directionality(
             textDirection: pw.TextDirection.rtl,
             child: pw.TableHelper.fromTextArray(
-              headers: headers,
+              headers: _headers,
               data: rows,
               // ترتيب الأعمدة هنا منطقي (اسم الغرفة أولًا)؛ tableDirection
               // هو ما يعكس عرضها بصريًا بحيث يبدأ "اسم الغرفة" من أقصى
               // اليمين، وهو الترتيب الصحيح للقراءة بالعربية.
               tableDirection: pw.TextDirection.rtl,
               headerDirection: pw.TextDirection.rtl,
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11),
+              columnWidths: _columnWidths,
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5),
               cellStyle: const pw.TextStyle(fontSize: 10),
               headerDecoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xffe0e4e5)),
+              headerPadding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              cellPadding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 6),
               cellAlignment: pw.Alignment.center,
               headerAlignment: pw.Alignment.center,
-              cellHeight: 26,
               border: pw.TableBorder.all(color: PdfColor.fromInt(0xff9aa5a7), width: 0.6),
             ),
           ),
@@ -85,7 +109,7 @@ class DailyPrintService {
 
     await Printing.layoutPdf(
       onLayout: (format) async => doc.save(),
-      name: 'يومية-${AppDateFormatter.date(session.date)}',
+      name: documentName,
     );
   }
 }

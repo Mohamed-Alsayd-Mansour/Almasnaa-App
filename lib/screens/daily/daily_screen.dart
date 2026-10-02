@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,12 +6,16 @@ import '../../core/app_theme.dart';
 import '../../models/daily_entry.dart';
 import '../../providers/daily_provider.dart';
 import '../../providers/rooms_provider.dart' show LoadStatus;
+import '../../utils/platform_utils.dart';
+import '../../services/daily_print_service.dart';
+import '../../services/excel_export_service.dart';
 import '../../utils/date_formatter.dart';
+import '../../utils/file_saver.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/deficiency_cell.dart';
+import '../../widgets/export_fields_dialog.dart';
 import '../../widgets/scrollable_table.dart';
 import '../../widgets/status_badge.dart';
-import '../../services/daily_print_service.dart';
 import 'add_entry_dialog.dart';
 import 'edit_entry_dialog.dart';
 
@@ -79,9 +84,10 @@ class _DailyScreenState extends State<DailyScreen> {
       return;
     }
     try {
-      await DailyPrintService.printSession(
-        session: session,
+      await DailyPrintService.printEntries(
+        title: 'يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}',
         entries: provider.entries,
+        documentName: 'يومية-${AppDateFormatter.date(session.date)}',
       );
     } catch (_) {
       if (!mounted) return;
@@ -89,6 +95,52 @@ class _DailyScreenState extends State<DailyScreen> {
         context,
         'تعذّر تجهيز الطباعة. تأكد من الاتصال بالإنترنت ثم أعد المحاولة.',
       );
+    }
+  }
+
+  Future<void> _exportExcel() async {
+    final provider = context.read<DailyProvider>();
+    final session = provider.activeSession;
+    if (provider.entries.isEmpty) {
+      showErrorSnackBar(context, 'لا توجد غرف في اليومية لتصديرها.');
+      return;
+    }
+
+    final availableFields = ExcelExportService.entryFields;
+    final fields = await showExportFieldsDialog(
+      context,
+      availableFields: availableFields,
+      initiallySelectedKeys: availableFields.map((f) => f.key).toSet(),
+    );
+    if (fields == null || fields.isEmpty || !mounted) return;
+
+    try {
+      final rows =
+          provider.entries.map((e) => ExportRowContext(entry: e)).toList();
+      final bytes = ExcelExportService.buildBytes(fields: fields, rows: rows);
+      final fileName = session == null
+          ? 'يومية.xlsx'
+          : 'يومية-${AppDateFormatter.date(session.date)}.xlsx';
+
+      final path = await FilePicker.platform.saveFile(
+        dialogTitle: 'حفظ ملف Excel',
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: const ['xlsx'],
+        bytes: bytes,
+      );
+      if (path != null) {
+        await writeBytesToPath(path, bytes);
+      }
+      if (!mounted) return;
+      if (path == null) {
+        showErrorSnackBar(context, 'تم إلغاء عملية الحفظ.');
+        return;
+      }
+      showSuccessSnackBar(context, 'تم تصدير ملف Excel بنجاح.');
+    } catch (_) {
+      if (!mounted) return;
+      showErrorSnackBar(context, 'تعذّر تصدير ملف Excel.');
     }
   }
 
@@ -153,12 +205,21 @@ class _DailyScreenState extends State<DailyScreen> {
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w800)),
                   const Spacer(),
-                  OutlinedButton.icon(
-                    onPressed: _printSession,
-                    icon: const Icon(Icons.print_outlined),
-                    label: const Text('طباعة اليومية'),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
+                  // أزرار الطباعة والتصدير لا تظهر في تطبيق أندرويد.
+                  if (!isAndroidApp) ...[
+                    OutlinedButton.icon(
+                      onPressed: _printSession,
+                      icon: const Icon(Icons.print_outlined),
+                      label: const Text('طباعة اليومية'),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    OutlinedButton.icon(
+                      onPressed: _exportExcel,
+                      icon: const Icon(Icons.table_chart_outlined),
+                      label: const Text('تصدير Excel'),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                  ],
                   ElevatedButton.icon(
                     onPressed: _addEntry,
                     icon: const Icon(Icons.add),

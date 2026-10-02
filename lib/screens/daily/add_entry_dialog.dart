@@ -36,7 +36,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   String? _installer;
   String? _supervisor;
   String? _repairer;
-  final _wrapLocationCtrl = TextEditingController();
+  String? _wrapLocation;
   final _deficienciesCtrl = TextEditingController();
 
   bool _hasSpecifications = false;
@@ -48,7 +48,6 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   @override
   void dispose() {
     _numberingCtrl.dispose();
-    _wrapLocationCtrl.dispose();
     _deficienciesCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
@@ -87,7 +86,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
           supervisor: _supervisor ?? '',
           repairer: _repairer ?? '',
           deficiencies: _deficienciesCtrl.text,
-          wrapLocation: _wrapLocationCtrl.text,
+          wrapLocation: _wrapLocation ?? '',
           hasSpecifications: _hasSpecifications,
           specificationsText: _specificationsCtrl.text,
           specialPieceCount: _hasSpecifications
@@ -174,9 +173,10 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   onChanged: (v) => setState(() => _repairer = v),
                 ),
                 const SizedBox(height: 14),
-                TextFormField(
-                  controller: _wrapLocationCtrl,
-                  decoration: const InputDecoration(labelText: 'مكان اللف'),
+                PersonDropdownField(
+                  role: PersonRole.wrapLocation,
+                  value: _wrapLocation,
+                  onChanged: (v) => setState(() => _wrapLocation = v),
                 ),
                 const SizedBox(height: 14),
                 const Divider(),

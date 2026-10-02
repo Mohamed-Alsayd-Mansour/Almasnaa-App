@@ -37,6 +37,7 @@ class RecordsProvider extends ChangeNotifier {
       supervisor: filters.supervisor,
       wrapLocation: filters.wrapLocation,
       status: filters.status,
+      shape: filters.shape,
     );
     notifyListeners();
     _debounce?.cancel();

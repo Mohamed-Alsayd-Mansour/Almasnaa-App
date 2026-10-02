@@ -27,6 +27,7 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _pieceCtrl;
   late final TextEditingController _glassCtrl;
+  late final TextEditingController _partitionCtrl;
   bool _saving = false;
 
   bool get isEditing => widget.room != null;
@@ -39,6 +40,8 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
         TextEditingController(text: widget.room?.pieceCount.toString() ?? '');
     _glassCtrl = TextEditingController(
         text: widget.room?.glassPieceCount.toString() ?? '');
+    _partitionCtrl = TextEditingController(
+        text: widget.room?.partitionPieceCount.toString() ?? '0');
   }
 
   @override
@@ -46,6 +49,7 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
     _nameCtrl.dispose();
     _pieceCtrl.dispose();
     _glassCtrl.dispose();
+    _partitionCtrl.dispose();
     super.dispose();
   }
 
@@ -57,6 +61,7 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
     final name = _nameCtrl.text.trim();
     final pieces = int.parse(_pieceCtrl.text.trim());
     final glass = int.parse(_glassCtrl.text.trim());
+    final partitions = int.parse(_partitionCtrl.text.trim());
 
     final error = isEditing
         ? await provider.updateRoom(
@@ -64,11 +69,13 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
             name: name,
             pieceCount: pieces,
             glassPieceCount: glass,
+            partitionPieceCount: partitions,
           )
         : await provider.addRoom(
             name: name,
             pieceCount: pieces,
             glassPieceCount: glass,
+            partitionPieceCount: partitions,
           );
 
     if (!mounted) return;
@@ -116,6 +123,19 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
                 keyboardType: TextInputType.number,
                 decoration:
                     const InputDecoration(labelText: 'عدد قطع الزجاج *'),
+                validator: (v) {
+                  final n = int.tryParse(v?.trim() ?? '');
+                  if (n == null) return 'يرجى إدخال رقم صحيح';
+                  if (n < 0) return 'لا يمكن أن يكون سالبًا';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _partitionCtrl,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'عدد قطع القواطيع *'),
                 validator: (v) {
                   final n = int.tryParse(v?.trim() ?? '');
                   if (n == null) return 'يرجى إدخال رقم صحيح';

@@ -118,6 +118,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
                             DataColumn(label: Text('الغرفة')),
                             DataColumn(label: Text('عدد القطع'), numeric: true),
                             DataColumn(label: Text('قطع الزجاج'), numeric: true),
+                            DataColumn(label: Text('قطع القواطيع'), numeric: true),
                             DataColumn(label: Text('تعديل')),
                           ],
                           rows: [
@@ -128,6 +129,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
                                     style: const TextStyle(fontWeight: FontWeight.w700))),
                                 DataCell(Text('${rooms[i].pieceCount}')),
                                 DataCell(Text('${rooms[i].glassPieceCount}')),
+                                DataCell(Text('${rooms[i].partitionPieceCount}')),
                                 DataCell(Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,9 +6,14 @@ import '../../core/app_theme.dart';
 import '../../providers/records_provider.dart';
 import '../../providers/rooms_provider.dart' show LoadStatus;
 import '../../repositories/daily_entry_repository.dart' show RecordSearchFilters;
+import '../../utils/platform_utils.dart';
+import '../../services/daily_print_service.dart';
+import '../../services/excel_export_service.dart';
 import '../../utils/date_formatter.dart';
+import '../../utils/file_saver.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/deficiency_cell.dart';
+import '../../widgets/export_fields_dialog.dart';
 import '../../widgets/scrollable_table.dart';
 import '../../widgets/status_badge.dart';
 import 'advanced_filters_sheet.dart';
@@ -50,12 +56,85 @@ class _RecordsScreenState extends State<RecordsScreen> {
       supervisor: result.supervisor,
       wrapLocation: result.wrapLocation,
       status: result.status,
+      shape: result.shape,
     ));
   }
 
   Future<void> _clearAll() async {
     _keywordCtrl.clear();
     await context.read<RecordsProvider>().clearFilters();
+  }
+
+  Future<void> _printRecords(RecordsProvider provider) async {
+    if (provider.results.isEmpty) {
+      showErrorSnackBar(context, 'لا توجد سجلات لطباعتها.');
+      return;
+    }
+    final isFiltered = !provider.filters.isEmpty;
+    try {
+      await DailyPrintService.printEntries(
+        title: isFiltered ? 'سجل الغرف (بعد تطبيق الفلاتر)' : 'سجل الغرف',
+        entries: provider.results.map((r) => r.entry).toList(),
+        documentName: 'سجل-الغرف-${AppDateFormatter.date(DateTime.now())}',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      showErrorSnackBar(
+        context,
+        'تعذّر تجهيز الطباعة. تأكد من الاتصال بالإنترنت ثم أعد المحاولة.',
+      );
+    }
+  }
+
+  Future<void> _exportExcel(RecordsProvider provider) async {
+    if (provider.results.isEmpty) {
+      showErrorSnackBar(context, 'لا توجد سجلات لتصديرها.');
+      return;
+    }
+
+    final availableFields = [
+      ...ExcelExportService.entryFields,
+      ...ExcelExportService.recordOnlyFields,
+    ];
+    final fields = await showExportFieldsDialog(
+      context,
+      availableFields: availableFields,
+      initiallySelectedKeys: availableFields.map((f) => f.key).toSet(),
+    );
+    if (fields == null || fields.isEmpty || !mounted) return;
+
+    try {
+      final rows = provider.results
+          .map((r) => ExportRowContext(
+                entry: r.entry,
+                dayName: r.dayName,
+                date: r.date,
+                sessionStatus: r.sessionStatus,
+              ))
+          .toList();
+      final bytes = ExcelExportService.buildBytes(fields: fields, rows: rows);
+      final fileName = 'سجل-الغرف-${AppDateFormatter.date(DateTime.now())}.xlsx';
+
+      final path = await FilePicker.platform.saveFile(
+        dialogTitle: 'حفظ ملف Excel',
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: const ['xlsx'],
+        bytes: bytes,
+      );
+      if (path != null) {
+        await writeBytesToPath(path, bytes);
+      }
+      if (!mounted) return;
+      if (path == null) {
+        showErrorSnackBar(context, 'تم إلغاء عملية الحفظ.');
+        return;
+      }
+      showSuccessSnackBar(context, 'تم تصدير ملف Excel بنجاح.');
+    } catch (_) {
+      if (!mounted) return;
+      showErrorSnackBar(context, 'تعذّر تصدير ملف Excel.');
+    }
   }
 
   @override
@@ -90,6 +169,30 @@ class _RecordsScreenState extends State<RecordsScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
+          if (!isAndroidApp)
+          Consumer<RecordsProvider>(
+            builder: (context, provider, _) {
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: AppSpacing.sm,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => _printRecords(provider),
+                      icon: const Icon(Icons.print_outlined),
+                      label: const Text('طباعة السجل'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => _exportExcel(provider),
+                      icon: const Icon(Icons.table_chart_outlined),
+                      label: const Text('تصدير Excel'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: AppSpacing.sm),
           Consumer<RecordsProvider>(
             builder: (context, provider, _) {
               if (provider.filters.isEmpty) return const SizedBox.shrink();
@@ -114,6 +217,8 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       Chip(label: Text('مكان اللف: ${provider.filters.wrapLocation}')),
                     if (provider.filters.status != null)
                       Chip(label: Text('الحالة: ${provider.filters.status!.label}')),
+                    if (provider.filters.shape != null)
+                      Chip(label: Text('الشكل: ${provider.filters.shape!.label}')),
                   ],
                 ),
               );

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import '../../models/enums.dart';
+import '../../models/person.dart';
+import '../../providers/people_provider.dart';
 import '../../repositories/daily_entry_repository.dart';
 import '../../utils/date_formatter.dart';
 
@@ -35,8 +39,9 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
   late final TextEditingController _carpenterCtrl;
   late final TextEditingController _installerCtrl;
   late final TextEditingController _supervisorCtrl;
-  late final TextEditingController _wrapLocationCtrl;
+  String? _wrapLocation;
   RoomEntryStatus? _status;
+  RoomShape? _shape;
 
   @override
   void initState() {
@@ -47,9 +52,10 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
     _carpenterCtrl = TextEditingController(text: widget.current.carpenter ?? '');
     _installerCtrl = TextEditingController(text: widget.current.installer ?? '');
     _supervisorCtrl = TextEditingController(text: widget.current.supervisor ?? '');
-    _wrapLocationCtrl =
-        TextEditingController(text: widget.current.wrapLocation ?? '');
+    final wl = widget.current.wrapLocation;
+    _wrapLocation = (wl == null || wl.isEmpty) ? null : wl;
     _status = widget.current.status;
+    _shape = widget.current.shape;
   }
 
   Future<void> _pickDate({required bool isFrom}) async {
@@ -129,10 +135,26 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
               decoration: const InputDecoration(labelText: 'المشرف'),
             ),
             const SizedBox(height: 14),
-            TextField(
-              controller: _wrapLocationCtrl,
-              decoration: const InputDecoration(labelText: 'مكان اللف'),
-            ),
+            Builder(builder: (context) {
+              final names = [
+                ...context.watch<PeopleProvider>().namesFor(PersonRole.wrapLocation)
+              ];
+              if (_wrapLocation != null && !names.contains(_wrapLocation)) {
+                names.add(_wrapLocation!);
+              }
+              return DropdownButtonFormField<String>(
+                value: _wrapLocation,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'مكان اللف'),
+                items: [
+                  const DropdownMenuItem<String>(
+                      value: null, child: Text('الكل')),
+                  for (final n in names)
+                    DropdownMenuItem<String>(value: n, child: Text(n)),
+                ],
+                onChanged: (v) => setState(() => _wrapLocation = v),
+              );
+            }),
             const SizedBox(height: 14),
             const Align(
               alignment: Alignment.centerRight,
@@ -161,6 +183,32 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                 ),
               ],
             ),
+            const SizedBox(height: 14),
+            const Align(
+              alignment: Alignment.centerRight,
+              child: Text('شكل الغرفة', style: TextStyle(fontWeight: FontWeight.w700)),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  label: const Text('الكل'),
+                  selected: _shape == null,
+                  onSelected: (_) => setState(() => _shape = null),
+                ),
+                ChoiceChip(
+                  label: Text(RoomShape.specs.label),
+                  selected: _shape == RoomShape.specs,
+                  onSelected: (_) => setState(() => _shape = RoomShape.specs),
+                ),
+                ChoiceChip(
+                  label: Text(RoomShape.regular.label),
+                  selected: _shape == RoomShape.regular,
+                  onSelected: (_) => setState(() => _shape = RoomShape.regular),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -184,8 +232,9 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                         carpenter: _carpenterCtrl.text.trim(),
                         installer: _installerCtrl.text.trim(),
                         supervisor: _supervisorCtrl.text.trim(),
-                        wrapLocation: _wrapLocationCtrl.text.trim(),
+                        wrapLocation: _wrapLocation ?? '',
                         status: _status,
+                        shape: _shape,
                       ));
                     },
                     child: const Text('تطبيق'),

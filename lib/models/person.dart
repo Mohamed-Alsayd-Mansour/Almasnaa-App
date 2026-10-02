@@ -5,7 +5,8 @@ enum PersonRole {
   carpenter,
   installer,
   supervisor,
-  repairer;
+  repairer,
+  wrapLocation;
 
   String get dbValue => name;
 
@@ -19,10 +20,12 @@ enum PersonRole {
         PersonRole.installer => 'الرصيص',
         PersonRole.supervisor => 'المشرف',
         PersonRole.repairer => 'الرميم',
+        PersonRole.wrapLocation => 'مكان اللف',
       };
 
   /// عنوان الحقل في نماذج اليومية.
-  String get fieldLabel => 'اسم $label';
+  String get fieldLabel =>
+      this == PersonRole.wrapLocation ? label : 'اسم $label';
 }
 
 /// اسم مسجّل ضمن قائمة دور معين (نجار، مشرف، ...).
