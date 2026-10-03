@@ -199,10 +199,10 @@ th { background:#e9ecef; font-weight:700; }
     required String html,
     required String suggestedFileName,
   }) async {
-    await browser.openHtmlInBrowser(html: html, fileName: suggestedFileName);
-  }
-
-    }
+    await browser.openHtmlInBrowser(
+      html: html,
+      fileName: suggestedFileName,
+    );
   }
 
   static String _escape(String value) {
