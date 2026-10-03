@@ -193,7 +193,9 @@ th { background:#e9ecef; font-weight:700; }
 </table>
 <div class="footer">نظام المصنع — تقرير HTML قابل للطباعة</div>
 </body>
-</html  static Future<void> openHtmlInBrowser({
+</html>''';
+
+  static Future<void> openHtmlInBrowser({
     required String html,
     required String suggestedFileName,
   }) async {
