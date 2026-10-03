@@ -10,11 +10,12 @@ import 'package:url_launcher/url_launcher.dart';
 ///   file:// محظورة على أندرويد الحديث.
 /// - ويندوز / ماك / لينكس: يُفتح بالتطبيق الافتراضي لملفات HTML.
 Future<void> openHtmlInBrowser({required String html, required String fileName}) async {
-  // اسم ملف بحروف إنجليزية فقط لتجنب مشاكل المسارات العربية.
+  final dir = await _reportsDirectory();
+  // اسم ملف مميز بحروف إنجليزية فقط (الطابع الزمني) داخل مجلد ثابت واحد.
   final stamp = DateTime.now().millisecondsSinceEpoch;
-  final dir = await Directory.systemTemp.createTemp('almasnaa_print_');
   final file = File('${dir.path}${Platform.pathSeparator}almasnaa-report-$stamp.html');
   await file.writeAsString(html, encoding: utf8, flush: true);
+  _cleanOldReports(dir);
   final path = file.path;
 
   if (Platform.isAndroid || Platform.isIOS) {
@@ -43,4 +44,35 @@ Future<void> openHtmlInBrowser({required String html, required String fileName})
   if (!await launchUrl(Uri.file(path), mode: LaunchMode.externalApplication)) {
     throw StateError('تعذر فتح ملف HTML في المتصفح.');
   }
+}
+
+/// مجلد ثابت واحد لكل التقارير بدل مجلد عشوائي جديد في كل مرة:
+/// - ويندوز: %LOCALAPPDATA%\\Almasnaa\\Reports
+/// - بقية المنصات: Almasnaa/Reports داخل المجلد المؤقت الخاص بالتطبيق.
+Future<Directory> _reportsDirectory() async {
+  final sep = Platform.pathSeparator;
+  String base;
+  final localAppData = Platform.isWindows ? Platform.environment['LOCALAPPDATA'] : null;
+  if (localAppData != null && localAppData.isNotEmpty) {
+    base = localAppData;
+  } else {
+    base = Directory.systemTemp.path;
+  }
+  final dir = Directory('$base${sep}Almasnaa${sep}Reports');
+  if (!await dir.exists()) {
+    await dir.create(recursive: true);
+  }
+  return dir;
+}
+
+/// حذف التقارير الأقدم من 7 أيام حتى لا يتضخم المجلد (بصمت عند أي خطأ).
+Future<void> _cleanOldReports(Directory dir) async {
+  try {
+    final limit = DateTime.now().subtract(const Duration(days: 7));
+    await for (final e in dir.list()) {
+      if (e is File && e.path.endsWith('.html') && (await e.lastModified()).isBefore(limit)) {
+        await e.delete();
+      }
+    }
+  } catch (_) {}
 }
