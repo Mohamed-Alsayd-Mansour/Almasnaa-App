@@ -192,6 +192,7 @@ th { background:#e9ecef; font-weight:700; }
 <tbody>$body</tbody>
 </table>
 <div class="footer">نظام المصنع — تقرير HTML قابل للطباعة</div>
+<script>window.addEventListener('load', function () { setTimeout(function () { window.print(); }, 600); });</script>
 </body>
 </html>''';
   }
