@@ -194,6 +194,7 @@ th { background:#e9ecef; font-weight:700; }
 <div class="footer">نظام المصنع — تقرير HTML قابل للطباعة</div>
 </body>
 </html>''';
+  }
 
   static Future<void> openHtmlInBrowser({
     required String html,
