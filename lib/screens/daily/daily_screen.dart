@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,13 +6,11 @@ import '../../models/daily_entry.dart';
 import '../../providers/daily_provider.dart';
 import '../../providers/rooms_provider.dart' show LoadStatus;
 import '../../utils/platform_utils.dart';
-import '../../services/daily_print_service.dart';
-import '../../services/excel_export_service.dart';
+import '../../services/html_print_service.dart';
 import '../../utils/date_formatter.dart';
-import '../../utils/file_saver.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/deficiency_cell.dart';
-import '../../widgets/export_fields_dialog.dart';
+import '../../widgets/print_template_dialog.dart';
 import '../../widgets/scrollable_table.dart';
 import '../../widgets/status_badge.dart';
 import 'add_entry_dialog.dart';
@@ -83,64 +80,46 @@ class _DailyScreenState extends State<DailyScreen> {
       showErrorSnackBar(context, 'لا توجد غرف في اليومية لطباعتها.');
       return;
     }
+
+    final title = 'يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}';
+    final rows = provider.entries
+        .map((e) => HtmlPrintRow(
+              entry: e,
+              dayName: session.dayName,
+              date: session.date,
+              sessionStatus: session.status,
+            ))
+        .toList();
+
     try {
-      await DailyPrintService.printEntries(
-        title: 'يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}',
-        entries: provider.entries,
-        documentName: 'يومية-${AppDateFormatter.date(session.date)}',
-      );
-    } catch (_) {
-      if (!mounted) return;
-      showErrorSnackBar(
+      final template = await showPrintTemplateDialog(
         context,
-        'تعذّر تجهيز الطباعة. تأكد من الاتصال بالإنترنت ثم أعد المحاولة.',
+        rows: rows,
+        title: title,
       );
-    }
-  }
+      if (template == null || !mounted) return;
 
-  Future<void> _exportExcel() async {
-    final provider = context.read<DailyProvider>();
-    final session = provider.activeSession;
-    if (provider.entries.isEmpty) {
-      showErrorSnackBar(context, 'لا توجد غرف في اليومية لتصديرها.');
-      return;
-    }
-
-    final availableFields = ExcelExportService.entryFields;
-    final fields = await showExportFieldsDialog(
-      context,
-      availableFields: availableFields,
-      initiallySelectedKeys: availableFields.map((f) => f.key).toSet(),
-    );
-    if (fields == null || fields.isEmpty || !mounted) return;
-
-    try {
-      final rows =
-          provider.entries.map((e) => ExportRowContext(entry: e)).toList();
-      final bytes = ExcelExportService.buildBytes(fields: fields, rows: rows);
-      final fileName = session == null
-          ? 'يومية.xlsx'
-          : 'يومية-${AppDateFormatter.date(session.date)}.xlsx';
-
-      final path = await FilePicker.platform.saveFile(
-        dialogTitle: 'حفظ ملف Excel',
-        fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: const ['xlsx'],
-        bytes: bytes,
+      final preview = await showPrintPreviewDialog(
+        context,
+        title: title,
+        rows: rows,
+        template: template,
       );
-      if (path != null) {
-        await writeBytesToPath(path, bytes);
-      }
+      if (preview != true || !mounted) return;
+
+      final html = HtmlPrintService.buildHtml(
+        title: title,
+        rows: rows,
+        fieldKeys: template.fieldKeys,
+        landscape: template.landscape,
+      );
+      await HtmlPrintService.openHtmlInBrowser(
+        html: html,
+        suggestedFileName: 'يومية-${AppDateFormatter.date(session.date)}.html',
+      );
+    } catch (e) {
       if (!mounted) return;
-      if (path == null) {
-        showErrorSnackBar(context, 'تم إلغاء عملية الحفظ.');
-        return;
-      }
-      showSuccessSnackBar(context, 'تم تصدير ملف Excel بنجاح.');
-    } catch (_) {
-      if (!mounted) return;
-      showErrorSnackBar(context, 'تعذّر تصدير ملف Excel.');
+      showErrorSnackBar(context, 'تعذّر تجهيز ملف HTML للطباعة.\n$e');
     }
   }
 
@@ -213,11 +192,6 @@ class _DailyScreenState extends State<DailyScreen> {
                       label: const Text('طباعة اليومية'),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    OutlinedButton.icon(
-                      onPressed: _exportExcel,
-                      icon: const Icon(Icons.table_chart_outlined),
-                      label: const Text('تصدير Excel'),
-                    ),
                     const SizedBox(width: AppSpacing.sm),
                   ],
                   ElevatedButton.icon(

@@ -92,6 +92,21 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
     if (mounted) showSuccessSnackBar(context, 'تم حفظ إعدادات المزامنة.');
   }
 
+  Future<void> _checkAccess() async {
+    if (!_validate()) return;
+    await _run(() async {
+      await _sync.saveConfig(
+        user: _userCtrl.text,
+        repo: _repoCtrl.text,
+        token: _tokenCtrl.text,
+      );
+      await _sync.checkAccess(_config);
+      if (mounted) {
+        showSuccessSnackBar(context, 'تم الاتصال بـ GitHub والوصول إلى المستودع بنجاح.');
+      }
+    });
+  }
+
   Future<void> _upload() async {
     if (!_validate()) return;
     await _run(() async {
@@ -136,6 +151,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
       if (!confirmed || !mounted) return;
       await _backup.restore(preview);
       await widget.onRestored();
+      await _sync.markSynced();
       final c = await _sync.loadConfig();
       if (!mounted) return;
       setState(() => _lastSync = c.lastSyncAt);
@@ -170,7 +186,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                   const Text(
                     'احفظ نسخة من بياناتك في مستودع GitHub مجاني، واستعدها على أي جهاز. '
                     'ملاحظة: GitHub لا يقبل كلمة المرور العادية، فيُستخدم "رمز وصول شخصي" بدلًا منها '
-                    '(Settings ← Developer settings ← Fine-grained tokens ← صلاحية Contents: Read and write لهذا المستودع فقط).',
+                    '(Settings ← Developer settings ← Fine-grained tokens ← اختر هذا المستودع فقط ← Contents: Read and write).',
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -196,7 +212,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                     autocorrect: false,
                     enableSuggestions: false,
                     decoration: InputDecoration(
-                      labelText: 'كلمة المرور (رمز الوصول الشخصي)',
+                      labelText: 'رمز الوصول الشخصي (GitHub PAT)',
                       suffixIcon: IconButton(
                         icon: Icon(_hideToken
                             ? Icons.visibility_outlined
@@ -228,6 +244,11 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                         onPressed: _busy ? null : _upload,
                         icon: const Icon(Icons.cloud_upload_outlined),
                         label: const Text('رفع إلى السحابة'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: _busy ? null : _checkAccess,
+                        icon: const Icon(Icons.wifi_tethering_outlined),
+                        label: const Text('اختبار الاتصال'),
                       ),
                       OutlinedButton.icon(
                         onPressed: _busy ? null : _download,
