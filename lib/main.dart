@@ -14,7 +14,7 @@ import 'screens/main_tabs_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // تهيئة window_manager
+  // تهيئة مدير نافذة Windows
   await windowManager.ensureInitialized();
 
   const windowOptions = WindowOptions(
@@ -34,46 +34,8 @@ Future<void> main() async {
   runApp(const AlmasnaaApp());
 }
 
-/// جذر تطبيق "المصنع"
-class AlmasnaaApp extends StatefulWidget {
+class AlmasnaaApp extends StatelessWidget {
   const AlmasnaaApp({super.key});
-
-  @override
-  State<AlmasnaaApp> createState() => _AlmasnaaAppState();
-}
-
-class _AlmasnaaAppState extends State<AlmasnaaApp> {
-  @override
-  void initState() {
-    super.initState();
-
-    // التقاط زر ESC من لوحة المفاتيح
-    HardwareKeyboard.instance.addHandler(_handleKeyEvent);
-  }
-
-  @override
-  void dispose() {
-    HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
-    super.dispose();
-  }
-
-  bool _handleKeyEvent(KeyEvent event) {
-    if (event is KeyDownEvent &&
-        event.logicalKey == LogicalKeyboardKey.escape) {
-      _exitFullscreen();
-      return true;
-    }
-
-    return false;
-  }
-
-  Future<void> _exitFullscreen() async {
-    final isFullscreen = await windowManager.isFullScreen();
-
-    if (isFullscreen) {
-      await windowManager.setFullScreen(false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,27 +46,61 @@ class _AlmasnaaAppState extends State<AlmasnaaApp> {
         ChangeNotifierProvider(create: (_) => RecordsProvider()),
         ChangeNotifierProvider(create: (_) => PeopleProvider()..load()),
       ],
-      child: MaterialApp(
-        title: 'المصنع',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        locale: const Locale('ar'),
-        supportedLocales: const [
-          Locale('ar'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        builder: (context, child) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: child ?? const SizedBox.shrink(),
-          );
+      child: Shortcuts(
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
         },
-        home: const MainTabsScreen(),
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            DismissIntent: CallbackAction<DismissIntent>(
+              onInvoke: (intent) {
+                _exitFullscreen();
+                return null;
+              },
+            ),
+          },
+          child: const _App(),
+        ),
       ),
+    );
+  }
+
+  static Future<void> _exitFullscreen() async {
+    try {
+      if (await windowManager.isFullScreen()) {
+        await windowManager.setFullScreen(false);
+      }
+    } catch (_) {
+      // تجاهل أي خطأ في تغيير حالة النافذة
+    }
+  }
+}
+
+class _App extends StatelessWidget {
+  const _App();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'المصنع',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.theme,
+      locale: const Locale('ar'),
+      supportedLocales: const [
+        Locale('ar'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: const MainTabsScreen(),
     );
   }
 }
