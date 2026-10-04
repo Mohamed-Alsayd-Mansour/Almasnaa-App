@@ -33,9 +33,9 @@ Future<void> main() async {
     await windowManager.waitUntilReadyToShow(
       windowOptions,
       () async {
-        // الأفضل نظهر النافذة الأول وبعدين نفعّل ملء الشاشة
+        // مش بنفعّل Fullscreen هنا: على Windows لو اتفعّل قبل أول فريم
+        // المحتوى بيفضل بحجم النافذة القديم وبيقف الـ input.
         await windowManager.show();
-        await windowManager.setFullScreen(true);
         await windowManager.focus();
       },
     );
@@ -81,6 +81,14 @@ class _FullscreenKeysState extends State<_FullscreenKeys> {
   void initState() {
     super.initState();
     HardwareKeyboard.instance.addHandler(_onKey);
+
+    // نفعّل Fullscreen بعد ما أول فريم يترسم ويستقر
+    if (_isDesktop) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) await _setFullscreen(true);
+      });
+    }
   }
 
   @override
