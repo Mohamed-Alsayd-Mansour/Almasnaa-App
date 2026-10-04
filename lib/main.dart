@@ -14,11 +14,10 @@ import 'screens/main_tabs_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // إعداد نافذة Windows
+  // تهيئة window_manager
   await windowManager.ensureInitialized();
 
   const windowOptions = WindowOptions(
-    fullscreen: true,
     center: true,
     title: 'المصنع',
   );
@@ -35,8 +34,7 @@ Future<void> main() async {
   runApp(const AlmasnaaApp());
 }
 
-/// جذر تطبيق "المصنع"، مسؤول عن تسجيل مزودات الحالة
-/// وضبط الواجهة بالكامل باللغة العربية واتجاه RTL.
+/// جذر تطبيق "المصنع"
 class AlmasnaaApp extends StatefulWidget {
   const AlmasnaaApp({super.key});
 
@@ -49,7 +47,7 @@ class _AlmasnaaAppState extends State<AlmasnaaApp> {
   void initState() {
     super.initState();
 
-    // التقاط زر ESC من أي مكان داخل التطبيق.
+    // التقاط زر ESC من لوحة المفاتيح
     HardwareKeyboard.instance.addHandler(_handleKeyEvent);
   }
 
@@ -70,7 +68,9 @@ class _AlmasnaaAppState extends State<AlmasnaaApp> {
   }
 
   Future<void> _exitFullscreen() async {
-    if (await windowManager.isFullScreen()) {
+    final isFullscreen = await windowManager.isFullScreen();
+
+    if (isFullscreen) {
       await windowManager.setFullScreen(false);
     }
   }
