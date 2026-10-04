@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,25 +15,31 @@ import 'providers/records_provider.dart';
 import 'providers/rooms_provider.dart';
 import 'screens/main_tabs_screen.dart';
 
+/// window_manager يعمل على الديسكتوب فقط
+bool get _isDesktop =>
+    !kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // تهيئة مدير نافذة Windows
-  await windowManager.ensureInitialized();
+  if (_isDesktop) {
+    await windowManager.ensureInitialized();
 
-  const windowOptions = WindowOptions(
-    center: true,
-    title: 'المصنع',
-  );
+    const windowOptions = WindowOptions(
+      center: true,
+      title: 'المصنع',
+    );
 
-  await windowManager.waitUntilReadyToShow(
-    windowOptions,
-    () async {
-      await windowManager.setFullScreen(true);
-      await windowManager.show();
-      await windowManager.focus();
-    },
-  );
+    await windowManager.waitUntilReadyToShow(
+      windowOptions,
+      () async {
+        // الأفضل نظهر النافذة الأول وبعدين نفعّل ملء الشاشة
+        await windowManager.show();
+        await windowManager.setFullScreen(true);
+        await windowManager.focus();
+      },
+    );
+  }
 
   runApp(const AlmasnaaApp());
 }
@@ -46,34 +56,68 @@ class AlmasnaaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RecordsProvider()),
         ChangeNotifierProvider(create: (_) => PeopleProvider()..load()),
       ],
-      child: Shortcuts(
-        shortcuts: const <ShortcutActivator, Intent>{
-          SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
-        },
-        child: Actions(
-          actions: <Type, Action<Intent>>{
-            DismissIntent: CallbackAction<DismissIntent>(
-              onInvoke: (intent) {
-                _exitFullscreen();
-                return null;
-              },
-            ),
-          },
-          child: const _App(),
-        ),
-      ),
+      child: const _FullscreenKeys(child: _App()),
     );
   }
+}
 
-  static Future<void> _exitFullscreen() async {
+/// اختصارات الكيبورد:
+///  - Esc : الخروج من ملء الشاشة (لو مفعّل)
+///  - F11 : تبديل ملء الشاشة
+///
+/// بنستخدم HardwareKeyboard مباشرة عشان يشتغل مهما كان الفوكس فين،
+/// وبنرجّع false عشان الـ Esc يفضل شغال عادي في الدايالوجات.
+class _FullscreenKeys extends StatefulWidget {
+  const _FullscreenKeys({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_FullscreenKeys> createState() => _FullscreenKeysState();
+}
+
+class _FullscreenKeysState extends State<_FullscreenKeys> {
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  bool _onKey(KeyEvent event) {
+    if (!_isDesktop || event is! KeyDownEvent) return false;
+
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      unawaited(_setFullscreen(false, onlyIfFullscreen: true));
+    } else if (event.logicalKey == LogicalKeyboardKey.f11) {
+      unawaited(_toggleFullscreen());
+    }
+    return false;
+  }
+
+  Future<void> _setFullscreen(bool value, {bool onlyIfFullscreen = false}) async {
     try {
-      if (await windowManager.isFullScreen()) {
-        await windowManager.setFullScreen(false);
-      }
+      if (onlyIfFullscreen && !await windowManager.isFullScreen()) return;
+      await windowManager.setFullScreen(value);
     } catch (_) {
       // تجاهل أي خطأ في تغيير حالة النافذة
     }
   }
+
+  Future<void> _toggleFullscreen() async {
+    try {
+      final isFull = await windowManager.isFullScreen();
+      await windowManager.setFullScreen(!isFull);
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _App extends StatelessWidget {
