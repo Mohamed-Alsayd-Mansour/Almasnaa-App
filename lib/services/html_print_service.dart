@@ -171,8 +171,9 @@ h1 { margin:0 0 5px; font-size:23px; }
 table { width:100%; border-collapse:collapse; table-layout:auto; font-size:11px; }
 thead { display:table-header-group; }
 tr { page-break-inside:avoid; }
-th, td { border:1px solid #777; padding:6px 5px; text-align:center; vertical-align:middle; overflow-wrap:anywhere; }
+th, td { border:1px solid #777; padding:10px 5px; text-align:center; vertical-align:middle; overflow-wrap:anywhere; }
 th { background:#e9ecef; font-weight:700; }
+tbody tr:nth-child(2n - 1) { background-color: #f1f1f1a3; }
 .index { width:32px; }
 .footer { margin-top:12px; font-size:10px; color:#666; text-align:left; }
 @media print { .toolbar { display:none; } body { background:#fff; } }
