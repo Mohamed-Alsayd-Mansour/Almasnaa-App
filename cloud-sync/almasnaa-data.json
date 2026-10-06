@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-06T12:02:10.089304",
+  "exported_at": "2026-10-06T19:45:35.471677",
   "data": {
     "rooms": [
       {
@@ -489,6 +489,15 @@
         "partition_piece_count": 1,
         "created_at": "2026-10-06T12:00:24.846002",
         "updated_at": "2026-10-06T12:00:24.846002"
+      },
+      {
+        "id": "ebd8bed5-a3e6-437a-b4b7-279c9779ecdc",
+        "name": "أطفال موجة ميني",
+        "piece_count": 18,
+        "glass_piece_count": 1,
+        "partition_piece_count": 1,
+        "created_at": "2026-10-06T17:48:36.294772",
+        "updated_at": "2026-10-06T17:48:36.294772"
       }
     ],
     "sessions": [
@@ -569,8 +578,8 @@
         "day_name": "الثلاثاء",
         "date": "2026-10-06T08:36:03.497602",
         "start_time": "2026-10-06T08:36:03.497602",
-        "end_time": null,
-        "status": "active"
+        "end_time": "2026-10-06T18:35:21.644294",
+        "status": "closed"
       }
     ],
     "entries": [
@@ -999,12 +1008,12 @@
         "specifications_text": "بدون زجاج الفارغة",
         "special_piece_count": 19,
         "original_deficiencies": "زجاج الفارغة - حرف ٣ - ظهر ٣ - ظهر ٣ - سرير كبير ٢٩ - سرير كبير ٣٠",
-        "current_deficiencies": "حرف ٣ - ٢ ظهر ٣ - ٢ سرير كبير ٢٩،٣٠",
+        "current_deficiencies": "",
         "original_missing_count": 6,
-        "current_missing_count": 3,
+        "current_missing_count": 0,
         "created_at": "2026-09-28T19:19:14.649468",
-        "updated_at": "2026-10-06T09:29:13.649560",
-        "last_deficiency_update_at": "2026-10-06T09:29:13.649561"
+        "updated_at": "2026-10-06T17:43:10.017088",
+        "last_deficiency_update_at": "2026-10-06T17:43:10.017090"
       },
       {
         "id": "c8712b58-5832-48c1-8387-9532169cba26",
@@ -1359,12 +1368,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "ضلفة زجاج ٦ - ضلفة زجاج ٦ - زجاجة تسريحة تمام الإمام",
-        "current_deficiencies": "زجاجة تسريحة تمام الإمام",
+        "current_deficiencies": "",
         "original_missing_count": 3,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-09-29T19:28:18.408792",
-        "updated_at": "2026-10-03T11:19:15.300883",
-        "last_deficiency_update_at": "2026-10-03T11:19:15.300884"
+        "updated_at": "2026-10-06T12:57:12.285904",
+        "last_deficiency_update_at": "2026-10-06T12:57:12.285906"
       },
       {
         "id": "29a431b5-2ebb-473e-a41e-9569fcb86b9b",
@@ -1647,12 +1656,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "٢ سرير كبير ٢٣،٢٤ - ضلفة زجاج ١",
-        "current_deficiencies": "ضلفة زجاج ١",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-01T20:24:49.987793",
-        "updated_at": "2026-10-05T15:37:45.634058",
-        "last_deficiency_update_at": "2026-10-05T15:37:45.634060"
+        "updated_at": "2026-10-06T15:57:37.735797",
+        "last_deficiency_update_at": "2026-10-06T15:57:37.735798"
       },
       {
         "id": "6c5d7ef4-8b5f-4bb7-b917-33292f06230d",
@@ -1719,12 +1728,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "جمب ١ - جمب ١",
-        "current_deficiencies": "جمب ١ - جمب ١",
+        "current_deficiencies": "٢ جمب ١",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 1,
         "created_at": "2026-10-03T11:22:13.763146",
-        "updated_at": "2026-10-03T11:22:13.763146",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T17:44:13.661894",
+        "last_deficiency_update_at": "2026-10-06T17:44:13.661896"
       },
       {
         "id": "a9f8fc41-9c29-4a50-a46a-9660a3cb587e",
@@ -1743,12 +1752,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل بدون ضلفة زجاج وضلفة خشب وقواطيع",
-        "current_deficiencies": "دولاب كامل رقم ٧ بدون ٢ ضلفة زجاج وضلفة خشب وقواطيع",
+        "current_deficiencies": "دولاب كامل رقم ٧ بدون ٢ ضلفة زجاج وقواطيع",
         "original_missing_count": 1,
         "current_missing_count": 1,
         "created_at": "2026-10-03T11:24:05.987677",
-        "updated_at": "2026-10-06T11:14:20.244086",
-        "last_deficiency_update_at": "2026-10-06T11:14:20.244088"
+        "updated_at": "2026-10-06T17:43:39.600286",
+        "last_deficiency_update_at": "2026-10-06T17:43:39.600287"
       },
       {
         "id": "22fc7864-1c46-4faa-ad10-020f61b2c6a3",
@@ -2271,12 +2280,12 @@
         "specifications_text": "٢ سرير مقاس متر",
         "special_piece_count": 26,
         "original_deficiencies": "قاطوع نايم بسدابة - قاطوع فوق العلبة - دلفة خشب ١٥ - دوسيه تسريحة ١٥ - ٢ سرير كبير ١٦،١٥",
-        "current_deficiencies": "قاطوع نايم بسدابة - قاطوع فوق العلبة - دلفة خشب ١٥ - دوسيه تسريحة ١٥ - ٢ سرير كبير ١٦،١٥",
+        "current_deficiencies": "قاطوع فوق علبة الإدراج - قاطوع صغير ناحية القسام",
         "original_missing_count": 5,
-        "current_missing_count": 5,
+        "current_missing_count": 2,
         "created_at": "2026-10-05T15:33:54.337305",
-        "updated_at": "2026-10-05T15:33:54.337305",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T18:35:05.106368",
+        "last_deficiency_update_at": "2026-10-06T18:35:05.106370"
       },
       {
         "id": "706232cf-953b-4152-b2ad-c4aff857a41d",
@@ -2373,6 +2382,78 @@
         "created_at": "2026-10-06T09:08:58.750131",
         "updated_at": "2026-10-06T09:08:58.750131",
         "last_deficiency_update_at": null
+      },
+      {
+        "id": "3c3a5448-d800-4bc8-9daf-0144cae684f1",
+        "daily_session_id": "e48df731-aaf4-4e1d-be32-be0ee7fb7538",
+        "room_id": "ce20981f-3578-4a76-a5cb-968a7663ad6d",
+        "room_name_snapshot": "أطفال فجر ٢م",
+        "piece_count_snapshot": 24,
+        "numbering": "30",
+        "carpenter": "أبو مروان",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ذياد",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "original_deficiencies": "قاعدة ٣٠",
+        "current_deficiencies": "",
+        "original_missing_count": 1,
+        "current_missing_count": 0,
+        "created_at": "2026-10-06T14:43:40.247030",
+        "updated_at": "2026-10-06T15:57:14.737351",
+        "last_deficiency_update_at": "2026-10-06T15:57:14.737353"
+      },
+      {
+        "id": "7d318c23-f71b-4ed2-81c3-252f7c6cc295",
+        "daily_session_id": "e48df731-aaf4-4e1d-be32-be0ee7fb7538",
+        "room_id": "ce20981f-3578-4a76-a5cb-968a7663ad6d",
+        "room_name_snapshot": "أطفال فجر ٢م",
+        "piece_count_snapshot": 24,
+        "numbering": "27",
+        "carpenter": "أبو مروان",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ذياد",
+        "wrap_location": "التجهيز",
+        "has_specifications": true,
+        "specifications_text": "السراير والبف تنجيد مختلف",
+        "special_piece_count": 24,
+        "original_deficiencies": "جمب ٢٧ - برنيطة ٢٧ - حرف ٢٧ - ٢ سرير كبير ٧٠،٤٠",
+        "current_deficiencies": "حرف ٢٧ - ٢ سرير كبير ٧٠،٤٠",
+        "original_missing_count": 4,
+        "current_missing_count": 2,
+        "created_at": "2026-10-06T15:00:33.270236",
+        "updated_at": "2026-10-06T16:37:25.374097",
+        "last_deficiency_update_at": "2026-10-06T16:37:25.374099"
+      },
+      {
+        "id": "cea4f966-d5e6-4e24-80f8-6712ee868504",
+        "daily_session_id": "e48df731-aaf4-4e1d-be32-be0ee7fb7538",
+        "room_id": "ebd8bed5-a3e6-437a-b4b7-279c9779ecdc",
+        "room_name_snapshot": "أطفال موجة ميني",
+        "piece_count_snapshot": 18,
+        "numbering": "13",
+        "carpenter": "أحمد عويس",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ذياد",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "original_deficiencies": "ضلفة زجاج ١٣",
+        "current_deficiencies": "",
+        "original_missing_count": 1,
+        "current_missing_count": 0,
+        "created_at": "2026-10-06T17:54:33.519696",
+        "updated_at": "2026-10-06T18:32:25.610677",
+        "last_deficiency_update_at": "2026-10-06T18:32:25.610678"
       }
     ],
     "people": [
