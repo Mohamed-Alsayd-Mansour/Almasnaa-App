@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-05T21:25:51.727403",
+  "exported_at": "2026-10-06T11:56:47.769041",
   "data": {
     "rooms": [
       {
@@ -554,6 +554,14 @@
         "start_time": "2026-10-05T08:38:25.531874",
         "end_time": "2026-10-05T21:21:07.884944",
         "status": "closed"
+      },
+      {
+        "id": "e48df731-aaf4-4e1d-be32-be0ee7fb7538",
+        "day_name": "الثلاثاء",
+        "date": "2026-10-06T08:36:03.497602",
+        "start_time": "2026-10-06T08:36:03.497602",
+        "end_time": null,
+        "status": "active"
       }
     ],
     "entries": [
@@ -766,12 +774,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "قاطوع صغير - قاطوع قسام",
-        "current_deficiencies": "قاطوع صغير - قاطوع قسام",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-09-27T20:38:55.274737",
-        "updated_at": "2026-09-27T20:38:55.274737",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T09:16:07.656253",
+        "last_deficiency_update_at": "2026-10-06T09:16:07.656254"
       },
       {
         "id": "c7251e54-ac3a-44f3-8212-2ae3057dc5f7",
@@ -838,12 +846,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "قاطوع قسام - بف",
-        "current_deficiencies": "قاطوع قسام - بف",
+        "current_deficiencies": "قاطوع قسام",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 1,
         "created_at": "2026-09-28T19:05:06.024765",
-        "updated_at": "2026-09-28T19:05:06.024765",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T08:50:04.865819",
+        "last_deficiency_update_at": "2026-10-06T08:50:04.865820"
       },
       {
         "id": "d3c1c695-f2c7-4344-971f-1ff160893cc5",
@@ -978,16 +986,16 @@
         "supervisor": "قدري",
         "repairer": "ذياد",
         "wrap_location": "التجهيز",
-        "has_specifications": false,
-        "specifications_text": "",
-        "special_piece_count": 0,
+        "has_specifications": true,
+        "specifications_text": "بدون زجاج الفارغة",
+        "special_piece_count": 19,
         "original_deficiencies": "زجاج الفارغة - حرف ٣ - ظهر ٣ - ظهر ٣ - سرير كبير ٢٩ - سرير كبير ٣٠",
-        "current_deficiencies": "زجاج الفارغة - حرف ٣ - ٢ ظهر ٣ - ٢ سرير كبير ٢٩،٣٠",
+        "current_deficiencies": "حرف ٣ - ٢ ظهر ٣ - ٢ سرير كبير ٢٩،٣٠",
         "original_missing_count": 6,
-        "current_missing_count": 4,
+        "current_missing_count": 3,
         "created_at": "2026-09-28T19:19:14.649468",
-        "updated_at": "2026-10-04T11:40:54.234484",
-        "last_deficiency_update_at": "2026-10-04T11:40:54.234486"
+        "updated_at": "2026-10-06T09:29:13.649560",
+        "last_deficiency_update_at": "2026-10-06T09:29:13.649561"
       },
       {
         "id": "c8712b58-5832-48c1-8387-9532169cba26",
@@ -1726,12 +1734,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل بدون ضلفة زجاج وضلفة خشب وقواطيع",
-        "current_deficiencies": "دولاب كامل بدون ضلفة زجاج وضلفة خشب وقواطيع",
+        "current_deficiencies": "دولاب كامل رقم ٧ بدون ٢ ضلفة زجاج وضلفة خشب وقواطيع",
         "original_missing_count": 1,
         "current_missing_count": 1,
         "created_at": "2026-10-03T11:24:05.987677",
-        "updated_at": "2026-10-03T11:24:05.987677",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T11:14:20.244086",
+        "last_deficiency_update_at": "2026-10-06T11:14:20.244088"
       },
       {
         "id": "22fc7864-1c46-4faa-ad10-020f61b2c6a3",
@@ -1774,12 +1782,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "",
-        "current_deficiencies": "ضلفة زجاج ٨",
+        "current_deficiencies": "",
         "original_missing_count": 0,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-03T13:52:03.359701",
-        "updated_at": "2026-10-03T14:19:45.316619",
-        "last_deficiency_update_at": "2026-10-03T14:19:45.316621"
+        "updated_at": "2026-10-06T11:12:58.304329",
+        "last_deficiency_update_at": "2026-10-06T11:12:58.304331"
       },
       {
         "id": "55cb802d-e50e-48c3-a215-087688daedeb",
@@ -2158,12 +2166,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "٤ قواطيع ١٠ - حرف ١٠",
-        "current_deficiencies": "حرف ١٠",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-05T11:14:20.319688",
-        "updated_at": "2026-10-05T14:15:03.683755",
-        "last_deficiency_update_at": "2026-10-05T14:15:03.683757"
+        "updated_at": "2026-10-06T11:37:33.860145",
+        "last_deficiency_update_at": "2026-10-06T11:37:33.860147"
       },
       {
         "id": "6455960e-8361-437b-8fb9-cfccef6f5e7a",
@@ -2182,12 +2190,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "٤ قاطوع ٩ - حرف ٩",
-        "current_deficiencies": "حرف ٩",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-05T11:15:08.964031",
-        "updated_at": "2026-10-05T14:15:11.144052",
-        "last_deficiency_update_at": "2026-10-05T14:15:11.144054"
+        "updated_at": "2026-10-06T11:37:27.921020",
+        "last_deficiency_update_at": "2026-10-06T11:37:27.921022"
       },
       {
         "id": "cc3c5ab4-2ecd-4965-8fe9-6952e27a8e5e",
@@ -2206,12 +2214,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "٤ قواطيع ٥ - حرف ٥",
-        "current_deficiencies": "حرف ٥",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-05T11:16:07.923387",
-        "updated_at": "2026-10-05T14:15:19.958313",
-        "last_deficiency_update_at": "2026-10-05T14:15:19.958315"
+        "updated_at": "2026-10-06T11:37:21.940618",
+        "last_deficiency_update_at": "2026-10-06T11:37:21.940620"
       },
       {
         "id": "96816abe-cc1a-4917-912d-96b66ecebe1b",
@@ -2230,12 +2238,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دلفة زجاج ١١ - ٢ دلفة خشب ١١",
-        "current_deficiencies": "دلفة زجاج ١١ - ٢ دلفة خشب ١١",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-10-05T14:25:53.438241",
-        "updated_at": "2026-10-05T14:50:00.710437",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-06T10:45:55.309213",
+        "last_deficiency_update_at": "2026-10-06T10:45:55.309214"
       },
       {
         "id": "aa985739-e33d-476d-b105-614b2712b40f",
@@ -2331,6 +2339,30 @@
         "current_missing_count": 0,
         "created_at": "2026-10-05T21:20:24.475106",
         "updated_at": "2026-10-05T21:20:24.475106",
+        "last_deficiency_update_at": null
+      },
+      {
+        "id": "5e4167f4-0253-4c5c-a1ec-b3788498f15b",
+        "daily_session_id": "e48df731-aaf4-4e1d-be32-be0ee7fb7538",
+        "room_id": "040b1974-910d-45c9-9f9d-dac02e4e6139",
+        "room_name_snapshot": "أطفال رفيف ٢م",
+        "piece_count_snapshot": 24,
+        "numbering": "2",
+        "carpenter": "أحمد أيمن",
+        "service": "محمود سعد",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ذياد",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "original_deficiencies": "٢ قاطوع صغير ناحية الضلفة الخشب (عرض مختلف ٤٧،٤٦ سم)",
+        "current_deficiencies": "٢ قاطوع صغير ناحية الضلفة الخشب (عرض مختلف ٤٧،٤٦ سم)",
+        "original_missing_count": 1,
+        "current_missing_count": 1,
+        "created_at": "2026-10-06T09:08:58.750131",
+        "updated_at": "2026-10-06T09:08:58.750131",
         "last_deficiency_update_at": null
       }
     ],
