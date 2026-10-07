@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-06T20:08:29.473602",
+  "exported_at": "2026-10-07T19:16:21.364942",
   "data": {
     "rooms": [
       {
@@ -36,18 +36,18 @@
         "name": "أطفال بيور رمادي ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
-        "partition_piece_count": 1,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T19:56:16.029038",
-        "updated_at": "2026-09-26T19:56:16.029038"
+        "updated_at": "2026-10-07T09:15:33.725329"
       },
       {
         "id": "3f3ff185-1c6c-42ed-8ed5-e487be61318c",
         "name": "أطفال بيور بني ٢م",
         "piece_count": 27,
         "glass_piece_count": 3,
-        "partition_piece_count": 1,
+        "partition_piece_count": 2,
         "created_at": "2026-09-26T19:56:49.019204",
-        "updated_at": "2026-09-26T19:56:49.019204"
+        "updated_at": "2026-10-07T09:15:27.824079"
       },
       {
         "id": "8f9f715d-7020-4d2d-be9c-8b507cb60d13",
@@ -579,6 +579,14 @@
         "date": "2026-10-06T08:36:03.497602",
         "start_time": "2026-10-06T08:36:03.497602",
         "end_time": "2026-10-06T18:35:21.644294",
+        "status": "closed"
+      },
+      {
+        "id": "fe83f5db-eee6-4798-90aa-f6942bbd2cfd",
+        "day_name": "الأربعاء",
+        "date": "2026-10-07T08:24:28.564171",
+        "start_time": "2026-10-07T08:24:28.564171",
+        "end_time": "2026-10-07T18:59:17.715232",
         "status": "closed"
       }
     ],
@@ -1224,12 +1232,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "درفة زجاج ٦ - درفة زجاج ٦ - برواز كمود ٧",
-        "current_deficiencies": "برواز كمود ٧",
+        "current_deficiencies": "",
         "original_missing_count": 3,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-09-29T19:19:45.721370",
-        "updated_at": "2026-09-30T08:43:32.510266",
-        "last_deficiency_update_at": "2026-09-30T08:43:32.510268"
+        "updated_at": "2026-10-07T09:26:55.262460",
+        "last_deficiency_update_at": "2026-10-07T09:26:55.262463"
       },
       {
         "id": "731714e3-e8d2-42a2-93a2-1f1568c770c1",
@@ -1488,12 +1496,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل رقم ١ - زجاجة كمود",
-        "current_deficiencies": "دولاب كامل رقم ١ - زجاجة كمود ١",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-10-01T12:29:28.523537",
-        "updated_at": "2026-10-01T12:33:31.645745",
-        "last_deficiency_update_at": "2026-10-01T12:33:31.645746"
+        "updated_at": "2026-10-07T19:00:57.063090",
+        "last_deficiency_update_at": "2026-10-07T19:00:57.063092"
       },
       {
         "id": "7e6d9e57-edbe-4bb1-960e-60bdd0e6dbe2",
@@ -1512,12 +1520,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل رقم ٢ - ٤ اسطامة ١٦٥،١٧٠ - كمود ٢",
-        "current_deficiencies": "دولاب كامل رقم ٢ - ٤ اسطامة ١٦٥،١٧٠ - كمود ٢",
+        "current_deficiencies": "",
         "original_missing_count": 3,
-        "current_missing_count": 3,
+        "current_missing_count": 0,
         "created_at": "2026-10-01T12:31:37.251938",
-        "updated_at": "2026-10-01T12:31:37.251938",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-07T19:00:50.040142",
+        "last_deficiency_update_at": "2026-10-07T19:00:50.040143"
       },
       {
         "id": "9c762fe1-d622-4ac9-910b-cdf1e79b3974",
@@ -1536,12 +1544,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل رقم ٣ - ٤ اسطامة ١٦٧،١٦٨ - كمود ٣",
-        "current_deficiencies": "دولاب كامل رقم ٣ - ٤ اسطامة ١٦٧،١٦٨ - كمود ٣",
+        "current_deficiencies": "",
         "original_missing_count": 3,
-        "current_missing_count": 3,
+        "current_missing_count": 0,
         "created_at": "2026-10-01T12:33:18.375059",
-        "updated_at": "2026-10-01T12:33:18.375059",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-07T19:00:42.732496",
+        "last_deficiency_update_at": "2026-10-07T19:00:42.732497"
       },
       {
         "id": "2bc56733-0747-484f-8beb-688916e2e553",
@@ -1728,12 +1736,12 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "جمب ١ - جمب ١",
-        "current_deficiencies": "٢ جمب ١",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-03T11:22:13.763146",
-        "updated_at": "2026-10-06T17:44:13.661894",
-        "last_deficiency_update_at": "2026-10-06T17:44:13.661896"
+        "updated_at": "2026-10-07T19:06:13.713792",
+        "last_deficiency_update_at": "2026-10-07T19:06:13.713793"
       },
       {
         "id": "a9f8fc41-9c29-4a50-a46a-9660a3cb587e",
@@ -1992,39 +2000,15 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل - ٢ سرير كاملين",
-        "current_deficiencies": "دولاب كامل - ٢ سرير كاملين",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-10-04T15:31:16.754326",
-        "updated_at": "2026-10-04T15:31:16.754326",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-07T19:00:04.606273",
+        "last_deficiency_update_at": "2026-10-07T19:00:04.606275"
       },
       {
         "id": "7ef47196-eaac-42da-a13a-df230d88a928",
-        "daily_session_id": "03154f59-68fd-48a2-8900-5d876bba76eb",
-        "room_id": "fc3e3276-5c76-4867-a5ef-0f15273d0b8c",
-        "room_name_snapshot": "أطفال فجر ميني",
-        "piece_count_snapshot": 18,
-        "numbering": "2",
-        "carpenter": "أحمد عويس",
-        "service": "زياد موافي",
-        "installer": "منصور",
-        "supervisor": "قدري",
-        "repairer": "ياسر",
-        "wrap_location": "التجهيز",
-        "has_specifications": false,
-        "specifications_text": "",
-        "special_piece_count": 0,
-        "original_deficiencies": "دولاب كامل - ٢ سرير كاملين",
-        "current_deficiencies": "دولاب كامل - ٢ سرير كاملين",
-        "original_missing_count": 2,
-        "current_missing_count": 2,
-        "created_at": "2026-10-04T15:32:20.102472",
-        "updated_at": "2026-10-04T15:32:20.102472",
-        "last_deficiency_update_at": null
-      },
-      {
-        "id": "e0c1cadf-1007-4575-b005-cd66b65a7e9a",
         "daily_session_id": "03154f59-68fd-48a2-8900-5d876bba76eb",
         "room_id": "fc3e3276-5c76-4867-a5ef-0f15273d0b8c",
         "room_name_snapshot": "أطفال فجر ميني",
@@ -2040,12 +2024,36 @@
         "specifications_text": "",
         "special_piece_count": 0,
         "original_deficiencies": "دولاب كامل - ٢ سرير كاملين",
-        "current_deficiencies": "دولاب كامل - ٢ سرير كاملين",
+        "current_deficiencies": "",
         "original_missing_count": 2,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
+        "created_at": "2026-10-04T15:32:20.102472",
+        "updated_at": "2026-10-07T19:00:00.106737",
+        "last_deficiency_update_at": "2026-10-07T19:00:00.106739"
+      },
+      {
+        "id": "e0c1cadf-1007-4575-b005-cd66b65a7e9a",
+        "daily_session_id": "03154f59-68fd-48a2-8900-5d876bba76eb",
+        "room_id": "fc3e3276-5c76-4867-a5ef-0f15273d0b8c",
+        "room_name_snapshot": "أطفال فجر ميني",
+        "piece_count_snapshot": 18,
+        "numbering": "13",
+        "carpenter": "أحمد عويس",
+        "service": "زياد موافي",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ياسر",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "original_deficiencies": "دولاب كامل - ٢ سرير كاملين",
+        "current_deficiencies": "",
+        "original_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-10-04T15:33:18.387265",
-        "updated_at": "2026-10-04T15:33:18.387265",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-07T18:59:54.674341",
+        "last_deficiency_update_at": "2026-10-07T18:59:54.674343"
       },
       {
         "id": "e769004d-6b8a-4bec-9014-87e98f62d5d6",
@@ -2420,16 +2428,16 @@
         "supervisor": "قدري",
         "repairer": "ذياد",
         "wrap_location": "التجهيز",
-        "has_specifications": true,
-        "specifications_text": "السراير والبف تنجيد مختلف",
-        "special_piece_count": 24,
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": null,
         "original_deficiencies": "جمب ٢٧ - برنيطة ٢٧ - حرف ٢٧ - ٢ سرير كبير ٧٠،٤٠",
-        "current_deficiencies": "حرف ٢٧ - ٢ سرير كبير ٧٠،٤٠",
+        "current_deficiencies": "",
         "original_missing_count": 4,
-        "current_missing_count": 2,
+        "current_missing_count": 0,
         "created_at": "2026-10-06T15:00:33.270236",
-        "updated_at": "2026-10-06T16:37:25.374097",
-        "last_deficiency_update_at": "2026-10-06T16:37:25.374099"
+        "updated_at": "2026-10-07T19:06:57.427271",
+        "last_deficiency_update_at": "2026-10-07T19:06:57.427272"
       },
       {
         "id": "cea4f966-d5e6-4e24-80f8-6712ee868504",
@@ -2454,6 +2462,30 @@
         "created_at": "2026-10-06T17:54:33.519696",
         "updated_at": "2026-10-06T18:32:25.610677",
         "last_deficiency_update_at": "2026-10-06T18:32:25.610678"
+      },
+      {
+        "id": "d2e46630-817d-4377-8a0e-e6ca17fb3540",
+        "daily_session_id": "fe83f5db-eee6-4798-90aa-f6942bbd2cfd",
+        "room_id": "14cb04cd-f27f-472c-b5cb-a283bb5bcb1b",
+        "room_name_snapshot": "أطفال كارما بني ميني",
+        "piece_count_snapshot": 22,
+        "numbering": "4",
+        "carpenter": "جهاد",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ذياد",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "original_deficiencies": "برواز ٢٠",
+        "current_deficiencies": "برواز ٢٠",
+        "original_missing_count": 1,
+        "current_missing_count": 1,
+        "created_at": "2026-10-07T18:59:01.738117",
+        "updated_at": "2026-10-07T18:59:01.738117",
+        "last_deficiency_update_at": null
       }
     ],
     "people": [
