@@ -50,6 +50,7 @@ class RoomsProvider extends ChangeNotifier {
     required int pieceCount,
     required int glassPieceCount,
     int partitionPieceCount = 0,
+    int partitionCount = 0,
     int marblePieceCount = 0,
   }) async {
     if (name.trim().isEmpty) return 'اسم الغرفة مطلوب.';
@@ -57,6 +58,9 @@ class RoomsProvider extends ChangeNotifier {
     if (glassPieceCount < 0) return 'عدد قطع الزجاج لا يمكن أن يكون سالبًا.';
     if (partitionPieceCount < 0) {
       return 'عدد قطع القواطيع لا يمكن أن يكون سالبًا.';
+    }
+    if (partitionCount < 0) {
+      return 'عدد قواطيع الغرفة لا يمكن أن يكون سالبًا.';
     }
     if (marblePieceCount < 0) {
       return 'عدد قطع الرخام لا يمكن أن يكون سالبًا.';
@@ -72,6 +76,7 @@ class RoomsProvider extends ChangeNotifier {
         pieceCount: pieceCount,
         glassPieceCount: glassPieceCount,
         partitionPieceCount: partitionPieceCount,
+        partitionCount: partitionCount,
         marblePieceCount: marblePieceCount,
       );
       _allRooms = [..._allRooms, room]
@@ -89,6 +94,7 @@ class RoomsProvider extends ChangeNotifier {
     required int pieceCount,
     required int glassPieceCount,
     int partitionPieceCount = 0,
+    int partitionCount = 0,
     int marblePieceCount = 0,
   }) async {
     if (name.trim().isEmpty) return 'اسم الغرفة مطلوب.';
@@ -96,6 +102,9 @@ class RoomsProvider extends ChangeNotifier {
     if (glassPieceCount < 0) return 'عدد قطع الزجاج لا يمكن أن يكون سالبًا.';
     if (partitionPieceCount < 0) {
       return 'عدد قطع القواطيع لا يمكن أن يكون سالبًا.';
+    }
+    if (partitionCount < 0) {
+      return 'عدد قواطيع الغرفة لا يمكن أن يكون سالبًا.';
     }
     if (marblePieceCount < 0) {
       return 'عدد قطع الرخام لا يمكن أن يكون سالبًا.';
@@ -112,6 +121,7 @@ class RoomsProvider extends ChangeNotifier {
         pieceCount: pieceCount,
         glassPieceCount: glassPieceCount,
         partitionPieceCount: partitionPieceCount,
+        partitionCount: partitionCount,
         marblePieceCount: marblePieceCount,
       ));
       _allRooms = _allRooms

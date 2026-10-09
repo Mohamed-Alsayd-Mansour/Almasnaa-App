@@ -11,6 +11,9 @@ class Room {
   /// عدد قطع القواطيع (قيمة افتراضية 0 للغرف المسجلة قبل إضافة الحقل).
   final int partitionPieceCount;
 
+  /// عدد قواطيع الغرفة (رقم للعرض فقط، لا يدخل في أي مجموع).
+  final int partitionCount;
+
   /// عدد قطع الرخام (قيمة افتراضية 0 للغرف المسجلة قبل إضافة الحقل).
   final int marblePieceCount;
   final DateTime createdAt;
@@ -22,6 +25,7 @@ class Room {
     required this.pieceCount,
     required this.glassPieceCount,
     this.partitionPieceCount = 0,
+    this.partitionCount = 0,
     this.marblePieceCount = 0,
     required this.createdAt,
     required this.updatedAt,
@@ -34,11 +38,15 @@ class Room {
   /// عدد ورق الطباعة = قطع الخشب + قطع القواطيع.
   int get printPaperCount => pieceCount + partitionPieceCount;
 
+  /// نص العرض: قطع القواطيع ثم عددها بين قوسين، مثال: 1 (11).
+  String get partitionDisplay => '$partitionPieceCount ($partitionCount)';
+
   Room copyWith({
     String? name,
     int? pieceCount,
     int? glassPieceCount,
     int? partitionPieceCount,
+    int? partitionCount,
     int? marblePieceCount,
     DateTime? updatedAt,
   }) {
@@ -48,6 +56,7 @@ class Room {
       pieceCount: pieceCount ?? this.pieceCount,
       glassPieceCount: glassPieceCount ?? this.glassPieceCount,
       partitionPieceCount: partitionPieceCount ?? this.partitionPieceCount,
+      partitionCount: partitionCount ?? this.partitionCount,
       marblePieceCount: marblePieceCount ?? this.marblePieceCount,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -61,6 +70,7 @@ class Room {
       'piece_count': pieceCount,
       'glass_piece_count': glassPieceCount,
       'partition_piece_count': partitionPieceCount,
+      'partition_count': partitionCount,
       'marble_piece_count': marblePieceCount,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -74,6 +84,7 @@ class Room {
       pieceCount: map['piece_count'] as int,
       glassPieceCount: map['glass_piece_count'] as int,
       partitionPieceCount: map['partition_piece_count'] as int? ?? 0,
+      partitionCount: map['partition_count'] as int? ?? 0,
       marblePieceCount: map['marble_piece_count'] as int? ?? 0,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),

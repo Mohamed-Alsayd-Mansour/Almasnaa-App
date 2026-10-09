@@ -38,6 +38,7 @@ class RoomRepository {
     required int pieceCount,
     required int glassPieceCount,
     int partitionPieceCount = 0,
+    int partitionCount = 0,
     int marblePieceCount = 0,
   }) async {
     final now = DateTime.now();
@@ -47,6 +48,7 @@ class RoomRepository {
       pieceCount: pieceCount,
       glassPieceCount: glassPieceCount,
       partitionPieceCount: partitionPieceCount,
+      partitionCount: partitionCount,
       marblePieceCount: marblePieceCount,
       createdAt: now,
       updatedAt: now,

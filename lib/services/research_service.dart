@@ -394,7 +394,7 @@ class ResearchService {
       rows.add(_row({
         'name': r.name,
         'wood': '${r.pieceCount}',
-        'partition': '${r.partitionPieceCount}',
+        'partition': r.partitionDisplay,
         'glass': '${r.glassPieceCount}',
         'marble': '${r.marblePieceCount}',
         'total': '${r.totalPieceCount}',
@@ -424,7 +424,7 @@ class ResearchService {
       columns: const [
         ResearchColumn('name', 'الغرفة', width: 230),
         ResearchColumn('wood', 'قطع الخشب', width: 100, numeric: true),
-        ResearchColumn('partition', 'قطع القواطيع', width: 110, numeric: true),
+        ResearchColumn('partition', 'قطع القواطيع (عددها)', width: 150, numeric: true),
         ResearchColumn('glass', 'قطع الزجاج', width: 100, numeric: true),
         ResearchColumn('marble', 'قطع الرخام', width: 100, numeric: true),
         ResearchColumn('total', 'عدد القطع الكلي', width: 120, numeric: true),
