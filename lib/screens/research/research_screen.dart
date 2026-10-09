@@ -54,7 +54,7 @@ class _ResearchScreenState extends State<ResearchScreen> {
       _error = null;
     });
     try {
-      _data = await ResearchService.load();
+      _data = await ResearchData.load();
       _recompute(resetSort: false);
     } catch (e) {
       _error = 'تعذر تحميل البيانات: $e';
