@@ -94,6 +94,45 @@ class RecordsProvider extends ChangeNotifier {
     }
   }
 
+  /// تعديل نص "المشكلة" من داخل جدول السجل مباشرة.
+  Future<String?> updateProblem({
+    required String entryId,
+    required String newText,
+  }) async {
+    try {
+      final updated = await _repository.updateProblem(
+        entryId: entryId,
+        newProblem: newText,
+      );
+      results = results
+          .map((r) => r.entry.id == entryId
+              ? RecordRow(
+                  entry: updated,
+                  dayName: r.dayName,
+                  date: r.date,
+                  sessionStatus: r.sessionStatus,
+                )
+              : r)
+          .toList();
+      notifyListeners();
+      return null;
+    } catch (e) {
+      return 'تعذر تحديث المشكلة: $e';
+    }
+  }
+
+  /// التعديل الشامل لسجل كامل (بعد التحقق من كلمة المرور في الواجهة).
+  Future<String?> replaceEntry(DailyEntry updated) async {
+    if (updated.roomNameSnapshot.trim().isEmpty) return 'اسم الغرفة مطلوب.';
+    try {
+      await _repository.replaceEntry(updated);
+      await _runSearch();
+      return null;
+    } catch (e) {
+      return 'تعذر حفظ التعديلات: $e';
+    }
+  }
+
   @override
   void dispose() {
     _debounce?.cancel();

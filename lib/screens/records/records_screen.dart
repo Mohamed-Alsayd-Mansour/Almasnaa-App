@@ -11,7 +11,12 @@ import '../../utils/date_formatter.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/deficiency_cell.dart';
 import '../../widgets/print_template_dialog.dart';
-import '../../widgets/scrollable_table.dart';
+import '../../widgets/app_data_grid.dart';
+import '../../widgets/problem_cell.dart';
+import '../../providers/daily_provider.dart';
+import '../../models/daily_entry.dart';
+import '../../utils/password_gate.dart';
+import 'full_edit_dialog.dart';
 import '../../widgets/status_badge.dart';
 import 'advanced_filters_sheet.dart';
 
@@ -24,6 +29,9 @@ class RecordsScreen extends StatefulWidget {
 
 class _RecordsScreenState extends State<RecordsScreen> {
   final _keywordCtrl = TextEditingController();
+
+  /// بعد إدخال كلمة المرور يبقى التعديل الشامل مفتوحًا حتى يُقفل يدويًا.
+  bool _unlocked = false;
 
   @override
   void initState() {
@@ -69,7 +77,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
     }
 
     final isFiltered = !provider.filters.isEmpty;
-    final title = isFiltered ? 'سجل الغرف (بعد تطبيق الفلاتر)' : 'سجل الغرف';
     final rows = provider.results
         .map((r) => HtmlPrintRow(
               entry: r.entry,
@@ -79,37 +86,55 @@ class _RecordsScreenState extends State<RecordsScreen> {
             ))
         .toList();
 
-    try {
-      final template = await showPrintTemplateDialog(
-        context,
-        rows: rows,
-        title: title,
-      );
-      if (template == null || !mounted) return;
-
-      final preview = await showPrintPreviewDialog(
-        context,
-        title: title,
-        rows: rows,
-        template: template,
-      );
-      if (preview != true || !mounted) return;
-
-      final html = HtmlPrintService.buildHtml(
-        title: title,
-        rows: rows,
-        fieldKeys: template.fieldKeys,
-        landscape: template.landscape,
-      );
-      await HtmlPrintService.openHtmlInBrowser(
-        html: html,
-        suggestedFileName: 'سجل-الغرف-${AppDateFormatter.date(DateTime.now())}.html',
-      );
-    } catch (e) {
-      if (!mounted) return;
-      showErrorSnackBar(context, 'تعذّر تجهيز ملف HTML للطباعة.\n$e');
-    }
+    await runHtmlPrintFlow<HtmlPrintRow>(
+      context,
+      spec: HtmlPrintService.entriesSpec,
+      rows: rows,
+      subtitle: isFiltered ? 'بعد تطبيق الفلاتر' : null,
+      fileNamePrefix:
+          'سجل-الغرف-${AppDateFormatter.date(DateTime.now()).replaceAll('/', '-')}',
+    );
   }
+
+  /// التعديل الشامل: يطلب كلمة المرور مرة واحدة ثم يفتح نافذة التعديل.
+  Future<void> _fullEdit(DailyEntry entry) async {
+    if (!_unlocked) {
+      final ok = await askRecordsEditPassword(context);
+      if (!ok || !mounted) return;
+      setState(() => _unlocked = true);
+    }
+    final updated = await showFullEditDialog(context, entry);
+    if (updated == null || !mounted) return;
+    final error = await context.read<RecordsProvider>().replaceEntry(updated);
+    if (!mounted) return;
+    if (error != null) {
+      showErrorSnackBar(context, error);
+      return;
+    }
+    // اليومية النشطة قد تحتوي نفس السجل، فنحدّثها.
+    context.read<DailyProvider>().load();
+    showSuccessSnackBar(context, 'تم حفظ التعديلات على السجل.');
+  }
+
+  static const List<AppGridColumn> _columns = [
+    AppGridColumn('م', width: 56, numeric: true),
+    AppGridColumn('اليوم', width: 90),
+    AppGridColumn('التاريخ', width: 110),
+    AppGridColumn('الغرفة (القطع)', width: 260),
+    AppGridColumn('الترقيم', width: 90),
+    AppGridColumn('النجار', width: 120),
+    AppGridColumn('الخدمة', width: 120),
+    AppGridColumn('الرصيص', width: 120),
+    AppGridColumn('المشرف', width: 120),
+    AppGridColumn('الرميم', width: 120),
+    AppGridColumn('مكان اللف', width: 120),
+    AppGridColumn('المواصفات', width: 180),
+    AppGridColumn('النواقص', width: 220),
+    AppGridColumn('المشكلة', width: 200),
+    AppGridColumn('عدد الناقص', width: 100, numeric: true),
+    AppGridColumn('الحالة', width: 120),
+    AppGridColumn('تعديل', width: 80),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +181,12 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       icon: const Icon(Icons.print_outlined),
                       label: const Text('طباعة السجل'),
                     ),
+                    if (_unlocked)
+                      OutlinedButton.icon(
+                        onPressed: () => setState(() => _unlocked = false),
+                        icon: const Icon(Icons.lock_outline),
+                        label: const Text('قفل التعديل الشامل'),
+                      ),
                   ],
                 ),
               );
@@ -219,79 +250,62 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 final rows = provider.results;
                 return Card(
                   clipBehavior: Clip.antiAlias,
-                  child: AppScrollableTable(
-                    child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('م')),
-                          DataColumn(label: Text('اليوم')),
-                          DataColumn(label: Text('التاريخ')),
-                          DataColumn(label: Text('الغرفة (القطع)')),
-                          DataColumn(label: Text('الترقيم')),
-                          DataColumn(label: Text('النجار')),
-                          DataColumn(label: Text('الخدمة')),
-                          DataColumn(label: Text('الرصيص')),
-                          DataColumn(label: Text('المشرف')),
-                          DataColumn(label: Text('الرميم')),
-                          DataColumn(label: Text('مكان اللف')),
-                          DataColumn(label: Text('المواصفات')),
-                          DataColumn(label: Text('النواقص')),
-                          DataColumn(label: Text('عدد الناقص'), numeric: true),
-                          DataColumn(label: Text('الحالة')),
-                        ],
-                        rows: [
-                          for (var i = 0; i < rows.length; i++)
-                            DataRow(
-                              color: WidgetStateProperty.all(
-                                  rowColorForStatus(rows[i].entry.status)),
-                              cells: [
-                                DataCell(Text('${i + 1}')),
-                                DataCell(Text(rows[i].dayName)),
-                                DataCell(Text(AppDateFormatter.date(rows[i].date))),
-                                DataCell(Text(rows[i].entry.displayName,
-                                    style: const TextStyle(fontWeight: FontWeight.w700))),
-                                DataCell(Text(rows[i].entry.numbering)),
-                                DataCell(Text(rows[i].entry.carpenter)),
-                                DataCell(Text(rows[i].entry.service)),
-                                DataCell(Text(rows[i].entry.installer)),
-                                DataCell(Text(rows[i].entry.supervisor)),
-                                DataCell(Text(rows[i].entry.repairer)),
-                                DataCell(Text(rows[i].entry.wrapLocation)),
-                                DataCell(
-                                  SizedBox(
-                                    width: 180,
-                                    child: Text(
-                                      rows[i].entry.hasSpecifications
-                                          ? rows[i].entry.specificationsText
-                                          : '',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
+                  child: AppDataGrid(
+                    columns: _columns,
+                    rowCount: rows.length,
+                    rowBuilder: (i) {
+                      final r = rows[i];
+                      final e = r.entry;
+                      return AppGridRow(
+                        color: rowColorForStatus(e.status),
+                        cells: [
+                          gridText('${i + 1}'),
+                          gridText(r.dayName),
+                          gridText(AppDateFormatter.date(r.date)),
+                          gridText(e.displayName, bold: true),
+                          gridText(e.numbering),
+                          gridText(e.carpenter),
+                          gridText(e.service),
+                          gridText(e.installer),
+                          gridText(e.supervisor),
+                          gridText(e.repairer),
+                          gridText(e.wrapLocation),
+                          gridText(e.hasSpecifications ? e.specificationsText : ''),
+                          DeficiencyCell(
+                            text: e.currentDeficiencies,
+                            missingCount: e.currentMissingPiecesCount,
+                            editable: true,
+                            onSave: (newText) => context
+                                .read<RecordsProvider>()
+                                .updateDeficiencies(
+                                  entryId: e.id,
+                                  newText: newText,
                                 ),
-                                DataCell(
-                                  SizedBox(
-                                    width: 220,
-                                    child: DeficiencyCell(
-                                      text: rows[i].entry.currentDeficiencies,
-                                      missingCount:
-                                          rows[i].entry.currentMissingPiecesCount,
-                                      editable: true,
-                                      onSave: (newText) => context
-                                          .read<RecordsProvider>()
-                                          .updateDeficiencies(
-                                            entryId: rows[i].entry.id,
-                                            newText: newText,
-                                          ),
-                                    ),
-                                  ),
+                          ),
+                          ProblemCell(
+                            text: e.problem,
+                            editable: true,
+                            onSave: (newText) => context
+                                .read<RecordsProvider>()
+                                .updateProblem(
+                                  entryId: e.id,
+                                  newText: newText,
                                 ),
-                                DataCell(Text('${rows[i].entry.currentMissingPiecesCount}')),
-                                DataCell(StatusBadge(status: rows[i].entry.status)),
-                              ],
+                          ),
+                          gridText('${e.currentMissingPiecesCount}'),
+                          StatusBadge(status: e.status),
+                          IconButton(
+                            tooltip: 'تعديل شامل',
+                            icon: Icon(
+                              _unlocked ? Icons.edit : Icons.lock_outline,
+                              color: AppColors.primary,
                             ),
+                            onPressed: () => _fullEdit(e),
+                          ),
                         ],
-                      ),
-                    ),
+                      );
+                    },
+                  ),
                 );
               },
             ),

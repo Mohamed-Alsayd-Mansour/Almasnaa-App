@@ -43,6 +43,14 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
               ? widget.entry.specialPieceCount.toString()
               : '');
 
+  late bool _isPartial = widget.entry.isPartial;
+  late final TextEditingController _partNameCtrl =
+      TextEditingController(text: widget.entry.partName);
+  late final TextEditingController _partCountCtrl = TextEditingController(
+      text: widget.entry.isPartial
+          ? widget.entry.partialPieceCount.toString()
+          : '');
+
   bool _saving = false;
 
   static String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v;
@@ -52,6 +60,8 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
     _numberingCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
+    _partNameCtrl.dispose();
+    _partCountCtrl.dispose();
     super.dispose();
   }
 
@@ -65,8 +75,21 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   }
 
   Future<void> _submit() async {
+    final partName = _partNameCtrl.text.trim();
+    final partCount = int.tryParse(_partCountCtrl.text.trim()) ?? 0;
+    if (_isPartial && (partName.isEmpty || partCount <= 0)) {
+      showErrorSnackBar(
+          context, 'أدخل اسم الجزء وعدد القطع الموجودة (أكبر من صفر).');
+      return;
+    }
     setState(() => _saving = true);
+    // اسم الغرفة المسجّل: "[اسم الجزء] [اسم الغرفة]".
+    final baseName = widget.entry.baseRoomName;
     final updated = widget.entry.copyWithFields(
+      roomNameSnapshot: _isPartial ? '$partName $baseName' : baseName,
+      isPartial: _isPartial,
+      partName: _isPartial ? partName : '',
+      partialPieceCount: _isPartial ? partCount : 0,
       numbering: _numberingCtrl.text.trim(),
       carpenter: _carpenter ?? '',
       service: _service ?? '',
@@ -141,6 +164,31 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 onChanged: (v) => setState(() => _wrapLocation = v),
               ),
               const SizedBox(height: 14),
+              const Divider(),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('جزء من غرفة',
+                    style: TextStyle(fontWeight: FontWeight.w800)),
+                subtitle: const Text(
+                    'تسجيل جزء أو أكثر من الغرفة بدل الغرفة كاملة.'),
+                value: _isPartial,
+                onChanged: (v) => setState(() => _isPartial = v),
+              ),
+              if (_isPartial) ...[
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _partNameCtrl,
+                  decoration: const InputDecoration(
+                      labelText: 'اسم الجزء أو الأجزاء'),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: _partCountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      labelText: 'عدد القطع الموجودة'),
+                ),
+              ],
               const Divider(),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,

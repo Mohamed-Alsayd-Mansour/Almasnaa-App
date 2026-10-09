@@ -28,9 +28,19 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
   late final TextEditingController _pieceCtrl;
   late final TextEditingController _glassCtrl;
   late final TextEditingController _partitionCtrl;
+  late final TextEditingController _marbleCtrl;
   bool _saving = false;
 
   bool get isEditing => widget.room != null;
+
+  int _n(TextEditingController c) => int.tryParse(c.text.trim()) ?? 0;
+
+  /// عدد القطع الكلي = الخشب + القواطيع + الزجاج + الرخام.
+  int get _liveTotal =>
+      _n(_pieceCtrl) + _n(_partitionCtrl) + _n(_glassCtrl) + _n(_marbleCtrl);
+
+  /// عدد ورق الطباعة = الخشب + القواطيع.
+  int get _livePaper => _n(_pieceCtrl) + _n(_partitionCtrl);
 
   @override
   void initState() {
@@ -42,6 +52,8 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
         text: widget.room?.glassPieceCount.toString() ?? '');
     _partitionCtrl = TextEditingController(
         text: widget.room?.partitionPieceCount.toString() ?? '0');
+    _marbleCtrl = TextEditingController(
+        text: widget.room?.marblePieceCount.toString() ?? '0');
   }
 
   @override
@@ -50,6 +62,7 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
     _pieceCtrl.dispose();
     _glassCtrl.dispose();
     _partitionCtrl.dispose();
+    _marbleCtrl.dispose();
     super.dispose();
   }
 
@@ -62,6 +75,7 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
     final pieces = int.parse(_pieceCtrl.text.trim());
     final glass = int.parse(_glassCtrl.text.trim());
     final partitions = int.parse(_partitionCtrl.text.trim());
+    final marble = int.parse(_marbleCtrl.text.trim());
 
     final error = isEditing
         ? await provider.updateRoom(
@@ -70,12 +84,14 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
             pieceCount: pieces,
             glassPieceCount: glass,
             partitionPieceCount: partitions,
+            marblePieceCount: marble,
           )
         : await provider.addRoom(
             name: name,
             pieceCount: pieces,
             glassPieceCount: glass,
             partitionPieceCount: partitions,
+            marblePieceCount: marble,
           );
 
     if (!mounted) return;
@@ -96,7 +112,8 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
         width: 420,
         child: Form(
           key: _formKey,
-          child: Column(
+          child: SingleChildScrollView(
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
@@ -109,7 +126,8 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
               TextFormField(
                 controller: _pieceCtrl,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'عدد القطع *'),
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(labelText: 'قطع الخشب *'),
                 validator: (v) {
                   final n = int.tryParse(v?.trim() ?? '');
                   if (n == null) return 'يرجى إدخال رقم صحيح';
@@ -121,8 +139,9 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
               TextFormField(
                 controller: _glassCtrl,
                 keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
                 decoration:
-                    const InputDecoration(labelText: 'عدد قطع الزجاج *'),
+                    const InputDecoration(labelText: 'قطع الزجاج *'),
                 validator: (v) {
                   final n = int.tryParse(v?.trim() ?? '');
                   if (n == null) return 'يرجى إدخال رقم صحيح';
@@ -134,8 +153,9 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
               TextFormField(
                 controller: _partitionCtrl,
                 keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
                 decoration:
-                    const InputDecoration(labelText: 'عدد قطع القواطيع *'),
+                    const InputDecoration(labelText: 'قطع القواطيع *'),
                 validator: (v) {
                   final n = int.tryParse(v?.trim() ?? '');
                   if (n == null) return 'يرجى إدخال رقم صحيح';
@@ -143,7 +163,29 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
                   return null;
                 },
               ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _marbleCtrl,
+                keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(labelText: 'قطع الرخام *'),
+                validator: (v) {
+                  final n = int.tryParse(v?.trim() ?? '');
+                  if (n == null) return 'يرجى إدخال رقم صحيح';
+                  if (n < 0) return 'لا يمكن أن يكون سالبًا';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 14),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'عدد القطع الكلي: $_liveTotal    |    عدد ورق الطباعة: $_livePaper',
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
             ],
+          ),
           ),
         ),
       ),

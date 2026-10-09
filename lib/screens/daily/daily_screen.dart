@@ -9,9 +9,10 @@ import '../../utils/platform_utils.dart';
 import '../../services/html_print_service.dart';
 import '../../utils/date_formatter.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/app_data_grid.dart';
 import '../../widgets/deficiency_cell.dart';
+import '../../widgets/problem_cell.dart';
 import '../../widgets/print_template_dialog.dart';
-import '../../widgets/scrollable_table.dart';
 import '../../widgets/status_badge.dart';
 import 'add_entry_dialog.dart';
 import 'edit_entry_dialog.dart';
@@ -81,7 +82,6 @@ class _DailyScreenState extends State<DailyScreen> {
       return;
     }
 
-    final title = 'يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}';
     final rows = provider.entries
         .map((e) => HtmlPrintRow(
               entry: e,
@@ -91,36 +91,14 @@ class _DailyScreenState extends State<DailyScreen> {
             ))
         .toList();
 
-    try {
-      final template = await showPrintTemplateDialog(
-        context,
-        rows: rows,
-        title: title,
-      );
-      if (template == null || !mounted) return;
-
-      final preview = await showPrintPreviewDialog(
-        context,
-        title: title,
-        rows: rows,
-        template: template,
-      );
-      if (preview != true || !mounted) return;
-
-      final html = HtmlPrintService.buildHtml(
-        title: title,
-        rows: rows,
-        fieldKeys: template.fieldKeys,
-        landscape: template.landscape,
-      );
-      await HtmlPrintService.openHtmlInBrowser(
-        html: html,
-        suggestedFileName: 'يومية-${AppDateFormatter.date(session.date)}.html',
-      );
-    } catch (e) {
-      if (!mounted) return;
-      showErrorSnackBar(context, 'تعذّر تجهيز ملف HTML للطباعة.\n$e');
-    }
+    await runHtmlPrintFlow<HtmlPrintRow>(
+      context,
+      spec: HtmlPrintService.entriesSpec,
+      rows: rows,
+      subtitle: 'يومية ${session.dayName} - ${AppDateFormatter.date(session.date)}',
+      fileNamePrefix:
+          'يومية-${AppDateFormatter.date(session.date).replaceAll('/', '-')}',
+    );
   }
 
   Future<void> _finishSession() async {
@@ -140,6 +118,23 @@ class _DailyScreenState extends State<DailyScreen> {
       showSuccessSnackBar(context, 'تم إنهاء اليومية وإضافتها إلى السجل.');
     }
   }
+
+  static const List<AppGridColumn> _columns = [
+    AppGridColumn('م', width: 56, numeric: true),
+    AppGridColumn('الغرفة (القطع)', width: 260),
+    AppGridColumn('الترقيم', width: 90),
+    AppGridColumn('النجار', width: 120),
+    AppGridColumn('الخدمة', width: 120),
+    AppGridColumn('الرصيص', width: 120),
+    AppGridColumn('المشرف', width: 120),
+    AppGridColumn('الرميم', width: 120),
+    AppGridColumn('مكان اللف', width: 120),
+    AppGridColumn('المواصفات', width: 180),
+    AppGridColumn('النواقص', width: 220),
+    AppGridColumn('المشكلة', width: 200),
+    AppGridColumn('عدد الناقص', width: 100, numeric: true),
+    AppGridColumn('إجراءات', width: 120),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -211,89 +206,64 @@ class _DailyScreenState extends State<DailyScreen> {
                       )
                     : Card(
                         clipBehavior: Clip.antiAlias,
-                        child: AppScrollableTable(
-                          child: DataTable(
-                              columns: const [
-                                DataColumn(label: Text('م')),
-                                DataColumn(label: Text('الغرفة (القطع)')),
-                                DataColumn(label: Text('الترقيم')),
-                                DataColumn(label: Text('النجار')),
-                                DataColumn(label: Text('الخدمة')),
-                                DataColumn(label: Text('الرصيص')),
-                                DataColumn(label: Text('المشرف')),
-                                DataColumn(label: Text('الرميم')),
-                                DataColumn(label: Text('مكان اللف')),
-                                DataColumn(label: Text('المواصفات')),
-                                DataColumn(label: Text('النواقص')),
-                                DataColumn(label: Text('عدد الناقص'), numeric: true),
-                                DataColumn(label: Text('إجراءات')),
-                              ],
-                              rows: [
-                                for (var i = 0; i < entries.length; i++)
-                                  DataRow(
-                                    color: WidgetStateProperty.all(
-                                        rowColorForStatus(entries[i].status)),
-                                    cells: [
-                                      DataCell(Text('${i + 1}')),
-                                      DataCell(Text(entries[i].displayName,
-                                          style: const TextStyle(fontWeight: FontWeight.w700))),
-                                      DataCell(Text(entries[i].numbering)),
-                                      DataCell(Text(entries[i].carpenter)),
-                                      DataCell(Text(entries[i].service)),
-                                      DataCell(Text(entries[i].installer)),
-                                      DataCell(Text(entries[i].supervisor)),
-                                      DataCell(Text(entries[i].repairer)),
-                                      DataCell(Text(entries[i].wrapLocation)),
-                                      DataCell(
-                                        SizedBox(
-                                          width: 180,
-                                          child: Text(
-                                            entries[i].hasSpecifications
-                                                ? entries[i].specificationsText
-                                                : '',
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
+                        child: AppDataGrid(
+                          columns: _columns,
+                          rowCount: entries.length,
+                          rowBuilder: (i) {
+                            final e = entries[i];
+                            return AppGridRow(
+                              color: rowColorForStatus(e.status),
+                              cells: [
+                                gridText('${i + 1}'),
+                                gridText(e.displayName, bold: true),
+                                gridText(e.numbering),
+                                gridText(e.carpenter),
+                                gridText(e.service),
+                                gridText(e.installer),
+                                gridText(e.supervisor),
+                                gridText(e.repairer),
+                                gridText(e.wrapLocation),
+                                gridText(e.hasSpecifications ? e.specificationsText : ''),
+                                DeficiencyCell(
+                                  text: e.currentDeficiencies,
+                                  missingCount: e.currentMissingPiecesCount,
+                                  editable: true,
+                                  onSave: (newText) => context
+                                      .read<DailyProvider>()
+                                      .updateEntryDeficiencies(
+                                        entryId: e.id,
+                                        newText: newText,
                                       ),
-                                      DataCell(
-                                        SizedBox(
-                                          width: 220,
-                                          child: DeficiencyCell(
-                                            text: entries[i].currentDeficiencies,
-                                            missingCount:
-                                                entries[i].currentMissingPiecesCount,
-                                            editable: true,
-                                            onSave: (newText) => context
-                                                .read<DailyProvider>()
-                                                .updateEntryDeficiencies(
-                                                  entryId: entries[i].id,
-                                                  newText: newText,
-                                                ),
-                                          ),
-                                        ),
+                                ),
+                                ProblemCell(
+                                  text: e.problem,
+                                  editable: true,
+                                  onSave: (newText) => context
+                                      .read<DailyProvider>()
+                                      .updateEntryProblem(
+                                        entryId: e.id,
+                                        newText: newText,
                                       ),
-                                      DataCell(Text('${entries[i].currentMissingPiecesCount}')),
-                                      DataCell(Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            tooltip: 'تعديل',
-                                            icon: const Icon(Icons.edit, color: AppColors.primary),
-                                            onPressed: () => _editEntry(entries[i]),
-                                          ),
-                                          IconButton(
-                                            tooltip: 'حذف',
-                                            icon: Icon(Icons.delete_outline,
-                                                color: Colors.red.shade600),
-                                            onPressed: () => _deleteEntry(entries[i]),
-                                          ),
-                                        ],
-                                      )),
-                                    ],
-                                  ),
+                                ),
+                                gridText('${e.currentMissingPiecesCount}'),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      tooltip: 'تعديل',
+                                      icon: const Icon(Icons.edit, color: AppColors.primary),
+                                      onPressed: () => _editEntry(e),
+                                    ),
+                                    IconButton(
+                                      tooltip: 'حذف',
+                                      icon: Icon(Icons.delete_outline, color: Colors.red.shade600),
+                                      onPressed: () => _deleteEntry(e),
+                                    ),
+                                  ],
+                                ),
                               ],
-                            ),
+                            );
+                          },
                         ),
                       ),
               ),

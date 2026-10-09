@@ -10,6 +10,9 @@ class Room {
 
   /// عدد قطع القواطيع (قيمة افتراضية 0 للغرف المسجلة قبل إضافة الحقل).
   final int partitionPieceCount;
+
+  /// عدد قطع الرخام (قيمة افتراضية 0 للغرف المسجلة قبل إضافة الحقل).
+  final int marblePieceCount;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -19,15 +22,24 @@ class Room {
     required this.pieceCount,
     required this.glassPieceCount,
     this.partitionPieceCount = 0,
+    this.marblePieceCount = 0,
     required this.createdAt,
     required this.updatedAt,
   });
+
+  /// عدد القطع الكلي = قطع الخشب + القواطيع + الزجاج + الرخام.
+  int get totalPieceCount =>
+      pieceCount + partitionPieceCount + glassPieceCount + marblePieceCount;
+
+  /// عدد ورق الطباعة = قطع الخشب + قطع القواطيع.
+  int get printPaperCount => pieceCount + partitionPieceCount;
 
   Room copyWith({
     String? name,
     int? pieceCount,
     int? glassPieceCount,
     int? partitionPieceCount,
+    int? marblePieceCount,
     DateTime? updatedAt,
   }) {
     return Room(
@@ -36,6 +48,7 @@ class Room {
       pieceCount: pieceCount ?? this.pieceCount,
       glassPieceCount: glassPieceCount ?? this.glassPieceCount,
       partitionPieceCount: partitionPieceCount ?? this.partitionPieceCount,
+      marblePieceCount: marblePieceCount ?? this.marblePieceCount,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -48,6 +61,7 @@ class Room {
       'piece_count': pieceCount,
       'glass_piece_count': glassPieceCount,
       'partition_piece_count': partitionPieceCount,
+      'marble_piece_count': marblePieceCount,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -60,6 +74,7 @@ class Room {
       pieceCount: map['piece_count'] as int,
       glassPieceCount: map['glass_piece_count'] as int,
       partitionPieceCount: map['partition_piece_count'] as int? ?? 0,
+      marblePieceCount: map['marble_piece_count'] as int? ?? 0,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );

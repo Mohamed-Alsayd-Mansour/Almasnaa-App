@@ -51,6 +51,20 @@ class DailyEntry {
   /// لا معنى له إلا عندما يكون [hasSpecifications] مفعّلًا.
   final int specialPieceCount;
 
+  /// المشكلة: سبب القطع الناقصة (نص حر يُسجَّل بعد النواقص مباشرة).
+  final String problem;
+
+  /// وسم "جزء من غرفة": يعني أن المسجَّل جزء أو أكثر من الغرفة وليس الغرفة
+  /// كاملة. عند تفعيله يُكتب اسم الجزء قبل اسم الغرفة داخل
+  /// [roomNameSnapshot]، ويُستخدم [partialPieceCount] كعدد قطع موجودة.
+  final bool isPartial;
+
+  /// اسم الجزء أو الأجزاء (مثال: "2سرير وكمود"). لا معنى له إلا عند [isPartial].
+  final String partName;
+
+  /// عدد القطع الموجودة فعليًا من الجزء/الأجزاء المسجّلة.
+  final int partialPieceCount;
+
   final String originalDeficiencies;
   final String currentDeficiencies;
   final int originalMissingPiecesCount;
@@ -76,6 +90,10 @@ class DailyEntry {
     required this.hasSpecifications,
     required this.specificationsText,
     required this.specialPieceCount,
+    this.problem = '',
+    this.isPartial = false,
+    this.partName = '',
+    this.partialPieceCount = 0,
     required this.originalDeficiencies,
     required this.currentDeficiencies,
     required this.originalMissingPiecesCount,
@@ -94,8 +112,20 @@ class DailyEntry {
 
   /// عدد القطع المستخدم فعليًا في اليومية والسجل والطباعة: العدد الخاص
   /// بغرفة المواصفات عند تفعيل الوسم، وإلا العدد القياسي للغرفة العادية.
-  int get effectivePieceCount =>
-      hasSpecifications ? specialPieceCount : pieceCountSnapshot;
+  int get effectivePieceCount => isPartial
+      ? partialPieceCount
+      : (hasSpecifications ? specialPieceCount : pieceCountSnapshot);
+
+  /// اسم الغرفة الأساسي دون اسم الجزء المكتوب قبله (إن وُجد).
+  String get baseRoomName {
+    if (isPartial && partName.trim().isNotEmpty) {
+      final prefix = '${partName.trim()} ';
+      if (roomNameSnapshot.startsWith(prefix)) {
+        return roomNameSnapshot.substring(prefix.length);
+      }
+    }
+    return roomNameSnapshot;
+  }
 
   /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)"، أو
   /// "أطفال جودي - مواصفات (7)" عند تفعيل وسم المواصفات.
@@ -105,36 +135,23 @@ class DailyEntry {
   }
 
   /// ينشئ نسخة جديدة محدَّثة بعد تعديل نص النواقص الحالي، مع إعادة
-  /// حساب العدد تلقائيًا. هذا هو المسار الوحيد المسموح لتغيير النواقص.
+  /// حساب العدد تلقائيًا. هذا هو المسار الوحيد المسموح لتغيير النواقص
+  /// من الجداول (أما التعديل الشامل فيستخدم [copyWith]).
   DailyEntry withUpdatedCurrentDeficiencies(String newText) {
-    final trimmed = newText.trim();
-    return DailyEntry(
-      id: id,
-      dailySessionId: dailySessionId,
-      roomId: roomId,
-      roomNameSnapshot: roomNameSnapshot,
-      pieceCountSnapshot: pieceCountSnapshot,
-      numbering: numbering,
-      carpenter: carpenter,
-      service: service,
-      installer: installer,
-      supervisor: supervisor,
-      repairer: repairer,
-      wrapLocation: wrapLocation,
-      hasSpecifications: hasSpecifications,
-      specificationsText: specificationsText,
-      specialPieceCount: specialPieceCount,
-      originalDeficiencies: originalDeficiencies,
-      currentDeficiencies: trimmed,
-      originalMissingPiecesCount: originalMissingPiecesCount,
-      currentMissingPiecesCount: calculateMissingPiecesCount(trimmed),
-      createdAt: createdAt,
-      updatedAt: DateTime.now(),
-      lastDeficiencyUpdateAt: DateTime.now(),
+    return copyWith(
+      currentDeficiencies: newText,
+      markDeficiencyUpdated: true,
     );
   }
 
+  /// نسخة جديدة بعد تعديل نص المشكلة فقط.
+  DailyEntry withUpdatedProblem(String newText) {
+    return copyWith(problem: newText);
+  }
+
+  /// تعديل الحقول التشغيلية (بدون النواقص).
   DailyEntry copyWithFields({
+    String? roomNameSnapshot,
     String? numbering,
     String? carpenter,
     String? service,
@@ -145,13 +162,61 @@ class DailyEntry {
     bool? hasSpecifications,
     String? specificationsText,
     int? specialPieceCount,
+    bool? isPartial,
+    String? partName,
+    int? partialPieceCount,
   }) {
+    return copyWith(
+      roomNameSnapshot: roomNameSnapshot,
+      numbering: numbering,
+      carpenter: carpenter,
+      service: service,
+      installer: installer,
+      supervisor: supervisor,
+      repairer: repairer,
+      wrapLocation: wrapLocation,
+      hasSpecifications: hasSpecifications,
+      specificationsText: specificationsText,
+      specialPieceCount: specialPieceCount,
+      isPartial: isPartial,
+      partName: partName,
+      partialPieceCount: partialPieceCount,
+    );
+  }
+
+  /// نسخة شاملة: أي حقل لا يُمرَّر يبقى كما هو. عند تمرير نص النواقص
+  /// (الأصلي أو الحالي) يُعاد حساب عدد القطع الناقصة المقابل تلقائيًا.
+  /// [markDeficiencyUpdated] يسجّل وقت آخر تعديل للنواقص.
+  DailyEntry copyWith({
+    String? roomNameSnapshot,
+    int? pieceCountSnapshot,
+    String? numbering,
+    String? carpenter,
+    String? service,
+    String? installer,
+    String? supervisor,
+    String? repairer,
+    String? wrapLocation,
+    bool? hasSpecifications,
+    String? specificationsText,
+    int? specialPieceCount,
+    String? problem,
+    bool? isPartial,
+    String? partName,
+    int? partialPieceCount,
+    String? originalDeficiencies,
+    String? currentDeficiencies,
+    bool markDeficiencyUpdated = false,
+  }) {
+    final now = DateTime.now();
+    final newOriginal = originalDeficiencies?.trim();
+    final newCurrent = currentDeficiencies?.trim();
     return DailyEntry(
       id: id,
       dailySessionId: dailySessionId,
       roomId: roomId,
-      roomNameSnapshot: roomNameSnapshot,
-      pieceCountSnapshot: pieceCountSnapshot,
+      roomNameSnapshot: roomNameSnapshot ?? this.roomNameSnapshot,
+      pieceCountSnapshot: pieceCountSnapshot ?? this.pieceCountSnapshot,
       numbering: numbering ?? this.numbering,
       carpenter: carpenter ?? this.carpenter,
       service: service ?? this.service,
@@ -162,13 +227,22 @@ class DailyEntry {
       hasSpecifications: hasSpecifications ?? this.hasSpecifications,
       specificationsText: specificationsText ?? this.specificationsText,
       specialPieceCount: specialPieceCount ?? this.specialPieceCount,
-      originalDeficiencies: originalDeficiencies,
-      currentDeficiencies: currentDeficiencies,
-      originalMissingPiecesCount: originalMissingPiecesCount,
-      currentMissingPiecesCount: currentMissingPiecesCount,
+      problem: problem ?? this.problem,
+      isPartial: isPartial ?? this.isPartial,
+      partName: partName ?? this.partName,
+      partialPieceCount: partialPieceCount ?? this.partialPieceCount,
+      originalDeficiencies: newOriginal ?? this.originalDeficiencies,
+      currentDeficiencies: newCurrent ?? this.currentDeficiencies,
+      originalMissingPiecesCount: newOriginal == null
+          ? originalMissingPiecesCount
+          : calculateMissingPiecesCount(newOriginal),
+      currentMissingPiecesCount: newCurrent == null
+          ? currentMissingPiecesCount
+          : calculateMissingPiecesCount(newCurrent),
       createdAt: createdAt,
-      updatedAt: DateTime.now(),
-      lastDeficiencyUpdateAt: lastDeficiencyUpdateAt,
+      updatedAt: now,
+      lastDeficiencyUpdateAt:
+          markDeficiencyUpdated ? now : lastDeficiencyUpdateAt,
     );
   }
 
@@ -189,6 +263,10 @@ class DailyEntry {
       'has_specifications': hasSpecifications,
       'specifications_text': specificationsText,
       'special_piece_count': specialPieceCount,
+      'problem': problem,
+      'is_partial': isPartial,
+      'part_name': partName,
+      'partial_piece_count': partialPieceCount,
       'original_deficiencies': originalDeficiencies,
       'current_deficiencies': currentDeficiencies,
       'original_missing_count': originalMissingPiecesCount,
@@ -219,6 +297,10 @@ class DailyEntry {
       hasSpecifications: map['has_specifications'] as bool? ?? false,
       specificationsText: map['specifications_text'] as String? ?? '',
       specialPieceCount: map['special_piece_count'] as int? ?? 0,
+      problem: map['problem'] as String? ?? '',
+      isPartial: map['is_partial'] as bool? ?? false,
+      partName: map['part_name'] as String? ?? '',
+      partialPieceCount: map['partial_piece_count'] as int? ?? 0,
       originalDeficiencies: map['original_deficiencies'] as String? ?? '',
       currentDeficiencies: map['current_deficiencies'] as String? ?? '',
       originalMissingPiecesCount: map['original_missing_count'] as int? ?? 0,

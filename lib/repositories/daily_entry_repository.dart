@@ -100,8 +100,14 @@ class DailyEntryRepository {
     bool hasSpecifications = false,
     String specificationsText = '',
     int specialPieceCount = 0,
+    String problem = '',
+    bool isPartial = false,
+    String partName = '',
+    int partialPieceCount = 0,
   }) async {
     final now = DateTime.now();
+    final cleanPartName = partName.trim();
+    final partial = isPartial && cleanPartName.isNotEmpty;
     final trimmedDeficiencies = deficiencies.trim();
     final missingCount = calculateMissingPiecesCount(trimmedDeficiencies);
 
@@ -109,7 +115,9 @@ class DailyEntryRepository {
       id: _uuid.v4(),
       dailySessionId: dailySessionId,
       roomId: room.id,
-      roomNameSnapshot: room.name,
+      // عند تسجيل جزء من غرفة يُكتب اسم الجزء قبل اسم الغرفة:
+      // "[اسم الجزء] [اسم الغرفة]" ويُضاف العدد بين قوسين عند العرض.
+      roomNameSnapshot: partial ? '$cleanPartName ${room.name}' : room.name,
       // Snapshot العدد القياسي للغرفة العادية دائمًا، بصرف النظر عن
       // تفعيل وسم "مواصفات" — يبقى مستقلًا تمامًا عن specialPieceCount.
       pieceCountSnapshot: room.pieceCount,
@@ -123,6 +131,10 @@ class DailyEntryRepository {
       hasSpecifications: hasSpecifications,
       specificationsText: specificationsText.trim(),
       specialPieceCount: specialPieceCount,
+      problem: problem.trim(),
+      isPartial: partial,
+      partName: partial ? cleanPartName : '',
+      partialPieceCount: partial ? partialPieceCount : 0,
       originalDeficiencies: trimmedDeficiencies,
       currentDeficiencies: trimmedDeficiencies,
       originalMissingPiecesCount: missingCount,
@@ -175,6 +187,35 @@ class DailyEntryRepository {
     return updated;
   }
 
+  /// تعديل نص "المشكلة" (سبب القطع الناقصة) لإدخال واحد.
+  Future<DailyEntry> updateProblem({
+    required String entryId,
+    required String newProblem,
+  }) async {
+    final entries = await _readAllEntries();
+    final idx = entries.indexWhere((e) => e.id == entryId);
+    if (idx == -1) {
+      throw StateError('السجل غير موجود.');
+    }
+    final updated = entries[idx].withUpdatedProblem(newProblem.trim());
+    entries[idx] = updated;
+    await _writeAllEntries(entries);
+    return updated;
+  }
+
+  /// استبدال إدخال كامل بالنسخة المعدَّلة (التعديل الشامل من تبويب السجل).
+  /// تُحفظ النسخة كما هي دون أي تعديل إضافي.
+  Future<DailyEntry> replaceEntry(DailyEntry entry) async {
+    final entries = await _readAllEntries();
+    final idx = entries.indexWhere((e) => e.id == entry.id);
+    if (idx == -1) {
+      throw StateError('السجل غير موجود.');
+    }
+    entries[idx] = entry;
+    await _writeAllEntries(entries);
+    return entry;
+  }
+
   /// بحث متقدم عبر كل الإدخالات، مع دمج بيانات اليومية التي ينتمي
   /// إليها كل إدخال (اليوم/التاريخ/الحالة) - يُنفَّذ بالكامل في الذاكرة
   /// حتى يعمل التطبيق على كل المنصات بما فيها الويب.
@@ -210,6 +251,9 @@ class DailyEntryRepository {
             contains(e.wrapLocation) ||
             contains(e.specificationsText) ||
             contains(e.currentDeficiencies) ||
+            contains(e.originalDeficiencies) ||
+            contains(e.problem) ||
+            contains(e.partName) ||
             contains(r.dayName) ||
             contains('${e.pieceCountSnapshot}') ||
             contains('${e.effectivePieceCount}') ||

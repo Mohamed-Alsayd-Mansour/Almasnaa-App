@@ -38,6 +38,12 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   String? _repairer;
   String? _wrapLocation;
   final _deficienciesCtrl = TextEditingController();
+  final _problemCtrl = TextEditingController();
+
+  /// هل الغرفة كاملة؟ عند "لا" تُسجَّل أجزاء منها يدويًا.
+  bool _isComplete = true;
+  final _partNameCtrl = TextEditingController();
+  final _partCountCtrl = TextEditingController();
 
   bool _hasSpecifications = false;
   final _specificationsCtrl = TextEditingController();
@@ -49,6 +55,9 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   void dispose() {
     _numberingCtrl.dispose();
     _deficienciesCtrl.dispose();
+    _problemCtrl.dispose();
+    _partNameCtrl.dispose();
+    _partCountCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
     super.dispose();
@@ -92,6 +101,12 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
           specialPieceCount: _hasSpecifications
               ? (int.tryParse(_specialPieceCountCtrl.text.trim()) ?? 0)
               : 0,
+          problem: _problemCtrl.text,
+          isPartial: !_isComplete,
+          partName: _partNameCtrl.text,
+          partialPieceCount: !_isComplete
+              ? (int.tryParse(_partCountCtrl.text.trim()) ?? 0)
+              : 0,
         );
 
     if (!mounted) return;
@@ -134,6 +149,51 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                 ),
                 const SizedBox(height: 14),
                 _ReadonlyPieceCount(room: _selectedRoom),
+                const SizedBox(height: 14),
+                const Text('هل الغرفة كاملة؟',
+                    style: TextStyle(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: true, label: Text('كاملة')),
+                    ButtonSegment(value: false, label: Text('جزء منها')),
+                  ],
+                  selected: {_isComplete},
+                  onSelectionChanged: (v) =>
+                      setState(() => _isComplete = v.first),
+                ),
+                if (!_isComplete) ...[
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _partNameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'اسم الجزء أو الأجزاء *',
+                      hintText: 'مثال: 2سرير وكمود',
+                    ),
+                    validator: (v) {
+                      if (_isComplete) return null;
+                      return (v == null || v.trim().isEmpty)
+                          ? 'اكتب اسم الجزء أو الأجزاء'
+                          : null;
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _partCountCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'عدد القطع الموجودة *',
+                    ),
+                    validator: (v) {
+                      if (_isComplete) return null;
+                      final n = int.tryParse((v ?? '').trim());
+                      if (n == null || n <= 0) {
+                        return 'أدخل عددًا صحيحًا أكبر من صفر';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
                 const SizedBox(height: 14),
                 TextFormField(
                   controller: _numberingCtrl,
@@ -241,6 +301,17 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                     Text('عدد القطع الناقصة (محسوب تلقائيًا): $_liveMissingCount',
                         style: const TextStyle(fontWeight: FontWeight.w700)),
                   ],
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _problemCtrl,
+                  maxLines: 3,
+                  minLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: 'المشكلة',
+                    hintText: 'سبب القطع الناقصة',
+                    alignLabelWithHint: true,
+                  ),
                 ),
               ],
             ),

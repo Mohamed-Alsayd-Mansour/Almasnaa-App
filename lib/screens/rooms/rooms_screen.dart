@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
 import '../../models/room.dart';
 import '../../providers/rooms_provider.dart';
+import '../../services/html_print_service.dart';
+import '../../utils/date_formatter.dart';
+import '../../utils/platform_utils.dart';
+import '../../widgets/app_data_grid.dart';
 import '../../widgets/common_widgets.dart';
-import '../../widgets/scrollable_table.dart';
+import '../../widgets/print_template_dialog.dart';
 import 'add_edit_room_dialog.dart';
 
 class RoomsScreen extends StatefulWidget {
@@ -56,6 +60,36 @@ class _RoomsScreenState extends State<RoomsScreen> {
     }
   }
 
+  /// طباعة جدول الغرف (نسخة سطح المكتب/الويب فقط) بنفس أسلوب طباعة السجل:
+  /// قوالب جاهزة أو مخصصة ← معاينة ← فتح HTML للطباعة.
+  Future<void> _printRooms(RoomsProvider provider) async {
+    final rooms = provider.rooms;
+    if (rooms.isEmpty) {
+      showErrorSnackBar(context, 'لا توجد غرف لطباعتها.');
+      return;
+    }
+    final query = provider.query.trim();
+    await runHtmlPrintFlow<Room>(
+      context,
+      spec: HtmlPrintService.roomsSpec,
+      rows: rooms,
+      subtitle: query.isEmpty ? null : 'نتائج البحث: $query',
+      fileNamePrefix: 'سجل-الغرف-${AppDateFormatter.date(DateTime.now()).replaceAll('/', '-')}',
+    );
+  }
+
+  static const List<AppGridColumn> _columns = [
+    AppGridColumn('م', width: 56, numeric: true),
+    AppGridColumn('الغرفة', width: 240),
+    AppGridColumn('قطع الخشب', width: 110, numeric: true),
+    AppGridColumn('قطع القواطيع', width: 120, numeric: true),
+    AppGridColumn('قطع الزجاج', width: 110, numeric: true),
+    AppGridColumn('قطع الرخام', width: 110, numeric: true),
+    AppGridColumn('عدد القطع الكلي', width: 130, numeric: true),
+    AppGridColumn('عدد ورق الطباعة', width: 140, numeric: true),
+    AppGridColumn('تعديل', width: 120),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -76,6 +110,17 @@ class _RoomsScreenState extends State<RoomsScreen> {
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
+              // زر الطباعة لا يظهر في تطبيق أندرويد (مثل جدول السجل).
+              if (!isAndroidApp) ...[
+                Consumer<RoomsProvider>(
+                  builder: (context, provider, _) => OutlinedButton.icon(
+                    onPressed: () => _printRooms(provider),
+                    icon: const Icon(Icons.print_outlined),
+                    label: const Text('طباعة الغرف'),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+              ],
               ElevatedButton.icon(
                 onPressed: _handleAdd,
                 icon: const Icon(Icons.add),
@@ -111,43 +156,37 @@ class _RoomsScreenState extends State<RoomsScreen> {
                 }
                 return Card(
                   clipBehavior: Clip.antiAlias,
-                  child: AppScrollableTable(
-                    child: DataTable(
-                      columns: const [
-                            DataColumn(label: Text('م')),
-                            DataColumn(label: Text('الغرفة')),
-                            DataColumn(label: Text('عدد القطع'), numeric: true),
-                            DataColumn(label: Text('قطع الزجاج'), numeric: true),
-                            DataColumn(label: Text('قطع القواطيع'), numeric: true),
-                            DataColumn(label: Text('تعديل')),
+                  child: AppDataGrid(
+                    columns: _columns,
+                    rowCount: rooms.length,
+                    rowBuilder: (i) {
+                      final room = rooms[i];
+                      return AppGridRow(cells: [
+                        gridText('${i + 1}'),
+                        gridText(room.name, bold: true),
+                        gridText('${room.pieceCount}'),
+                        gridText('${room.partitionPieceCount}'),
+                        gridText('${room.glassPieceCount}'),
+                        gridText('${room.marblePieceCount}'),
+                        gridText('${room.totalPieceCount}', bold: true),
+                        gridText('${room.printPaperCount}', bold: true),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'تعديل',
+                              icon: const Icon(Icons.edit, color: AppColors.primary),
+                              onPressed: () => _handleEdit(room),
+                            ),
+                            IconButton(
+                              tooltip: 'حذف',
+                              icon: Icon(Icons.delete_outline, color: Colors.red.shade600),
+                              onPressed: () => _handleDelete(room),
+                            ),
                           ],
-                          rows: [
-                            for (var i = 0; i < rooms.length; i++)
-                              DataRow(cells: [
-                                DataCell(Text('${i + 1}')),
-                                DataCell(Text(rooms[i].name,
-                                    style: const TextStyle(fontWeight: FontWeight.w700))),
-                                DataCell(Text('${rooms[i].pieceCount}')),
-                                DataCell(Text('${rooms[i].glassPieceCount}')),
-                                DataCell(Text('${rooms[i].partitionPieceCount}')),
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      tooltip: 'تعديل',
-                                      icon: const Icon(Icons.edit, color: AppColors.primary),
-                                      onPressed: () => _handleEdit(rooms[i]),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'حذف',
-                                      icon: Icon(Icons.delete_outline, color: Colors.red.shade600),
-                                      onPressed: () => _handleDelete(rooms[i]),
-                                    ),
-                                  ],
-                                )),
-                              ]),
-                          ],
-                    ),
+                        ),
+                      ]);
+                    },
                   ),
                 );
               },

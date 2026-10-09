@@ -1,38 +1,86 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../services/html_print_service.dart';
 import '../services/print_template_store.dart';
+import 'app_data_grid.dart';
+import 'common_widgets.dart';
 
-Future<HtmlPrintTemplate?> showPrintTemplateDialog(
+/// مسار الطباعة الموحّد في كل أنحاء التطبيق (اليومية، السجل، الغرف،
+/// الاستعلامات): اختيار القالب أو تخصيصه ← معاينة ← فتح HTML للطباعة.
+///
+/// العنوان الرئيسي للتقرير يُشتق دائمًا من اسم القالب بالشكل
+/// "سجل الغرف (اسم التقرير)" عبر [HtmlPrintService.reportTitle].
+Future<void> runHtmlPrintFlow<T>(
   BuildContext context, {
-  required List<HtmlPrintRow> rows,
-  required String title,
+  required PrintSpec<T> spec,
+  required List<T> rows,
+  required String fileNamePrefix,
+  String? subtitle,
 }) async {
-  final custom = await PrintTemplateStore.loadCustom();
+  try {
+    final template = await showPrintTemplateDialog<T>(context, spec: spec);
+    if (template == null || !context.mounted) return;
+
+    final title = HtmlPrintService.reportTitle(template.name);
+
+    final preview = await showPrintPreviewDialog<T>(
+      context,
+      title: title,
+      subtitle: subtitle,
+      spec: spec,
+      rows: rows,
+      template: template,
+    );
+    if (preview != true || !context.mounted) return;
+
+    final html = HtmlPrintService.buildHtml<T>(
+      title: title,
+      subtitle: subtitle,
+      spec: spec,
+      rows: rows,
+      fieldKeys: template.fieldKeys,
+      landscape: template.landscape,
+    );
+    await HtmlPrintService.openHtmlInBrowser(
+      html: html,
+      suggestedFileName: '$fileNamePrefix.html',
+    );
+  } catch (e) {
+    if (!context.mounted) return;
+    showErrorSnackBar(context, 'تعذّر تجهيز ملف HTML للطباعة.\n$e');
+  }
+}
+
+Future<HtmlPrintTemplate?> showPrintTemplateDialog<T>(
+  BuildContext context, {
+  required PrintSpec<T> spec,
+}) async {
+  final custom = await PrintTemplateStore.loadCustom(spec.storageKey);
   if (!context.mounted) return null;
   return showDialog<HtmlPrintTemplate>(
     context: context,
-    builder: (_) => _PrintTemplateDialog(rows: rows, title: title, custom: custom),
+    builder: (_) => _PrintTemplateDialog<T>(spec: spec, custom: custom),
   );
 }
 
-class _PrintTemplateDialog extends StatefulWidget {
-  final List<HtmlPrintRow> rows;
-  final String title;
+class _PrintTemplateDialog<T> extends StatefulWidget {
+  final PrintSpec<T> spec;
   final List<HtmlPrintTemplate> custom;
 
   const _PrintTemplateDialog({
-    required this.rows,
-    required this.title,
+    required this.spec,
     required this.custom,
   });
 
   @override
-  State<_PrintTemplateDialog> createState() => _PrintTemplateDialogState();
+  State<_PrintTemplateDialog<T>> createState() =>
+      _PrintTemplateDialogState<T>();
 }
 
-class _PrintTemplateDialogState extends State<_PrintTemplateDialog> {
+class _PrintTemplateDialogState<T> extends State<_PrintTemplateDialog<T>> {
   late List<HtmlPrintTemplate> _custom;
 
   @override
@@ -44,10 +92,10 @@ class _PrintTemplateDialogState extends State<_PrintTemplateDialog> {
   Future<void> _customize({HtmlPrintTemplate? initial}) async {
     final result = await showDialog<HtmlPrintTemplate>(
       context: context,
-      builder: (_) => _CustomizePrintDialog(initial: initial),
+      builder: (_) => _CustomizePrintDialog<T>(spec: widget.spec, initial: initial),
     );
     if (result == null || !mounted) return;
-    await PrintTemplateStore.save(result);
+    await PrintTemplateStore.save(widget.spec.storageKey, result);
     setState(() {
       _custom = [..._custom.where((e) => e.id != result.id), result];
     });
@@ -55,7 +103,7 @@ class _PrintTemplateDialogState extends State<_PrintTemplateDialog> {
   }
 
   Future<void> _delete(HtmlPrintTemplate template) async {
-    await PrintTemplateStore.delete(template.id);
+    await PrintTemplateStore.delete(widget.spec.storageKey, template.id);
     if (mounted) setState(() => _custom.removeWhere((e) => e.id == template.id));
   }
 
@@ -91,7 +139,7 @@ class _PrintTemplateDialogState extends State<_PrintTemplateDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final builtIns = HtmlPrintService.builtInTemplates.values.toList();
+    final builtIns = widget.spec.builtInTemplates.values.toList();
     return AlertDialog(
       title: const Text('اختر قالب الطباعة'),
       content: SizedBox(
@@ -132,19 +180,35 @@ class _PrintTemplateDialogState extends State<_PrintTemplateDialog> {
   }
 }
 
-Future<bool?> showPrintPreviewDialog(
+Future<bool?> showPrintPreviewDialog<T>(
   BuildContext context, {
   required String title,
-  required List<HtmlPrintRow> rows,
+  String? subtitle,
+  required PrintSpec<T> spec,
+  required List<T> rows,
   required HtmlPrintTemplate template,
 }) {
-  final selected = template.fieldKeys.map(HtmlPrintService.fieldByKey).toList();
+  final selected = spec.fieldsOf(template);
+
+  // جدول المعاينة: عمود "م" + الحقول المختارة، بعرض مقدّر لكل عمود.
+  final columns = <AppGridColumn>[
+    const AppGridColumn('م', width: 56, numeric: true),
+    for (final field in selected)
+      AppGridColumn(
+        field.label,
+        width: estimateColumnWidth(field.label, rows.map(field.valueOf)),
+      ),
+  ];
+
+  final screenWidth = MediaQuery.of(context).size.width;
+  final dialogWidth = math.min(900.0, math.max(320.0, screenWidth - 96));
+
   return showDialog<bool>(
     context: context,
-    builder: (_) => AlertDialog(
+    builder: (dialogContext) => AlertDialog(
       title: Text('معاينة: ${template.name}'),
       content: SizedBox(
-        width: 900,
+        width: dialogWidth,
         height: 520,
         child: Directionality(
           textDirection: TextDirection.rtl,
@@ -152,23 +216,29 @@ Future<bool?> showPrintPreviewDialog(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              if (subtitle != null && subtitle.trim().isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(subtitle.trim(), style: const TextStyle(fontWeight: FontWeight.w700)),
+              ],
               const SizedBox(height: 8),
               Text('عدد السجلات: ${rows.length} — ${template.landscape ? 'A4 أفقي' : 'A4 عمودي'}'),
               const SizedBox(height: 12),
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SingleChildScrollView(
-                    child: DataTable(
-                      headingRowColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surfaceContainerHighest),
-                      columns: [const DataColumn(label: Text('م')), ...selected.map((f) => DataColumn(label: Text(f.label)))],
-                      rows: [
-                        for (var i = 0; i < rows.length; i++)
-                          DataRow(cells: [
-                            DataCell(Text('${i + 1}')),
-                            ...selected.map((f) => DataCell(Text(f.valueOf(rows[i])))),
-                          ]),
-                      ],
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AppDataGrid(
+                      columns: columns,
+                      rowCount: rows.length,
+                      rowHeight: 48,
+                      rowBuilder: (i) => AppGridRow(cells: [
+                        gridText('${i + 1}'),
+                        for (final field in selected) gridText(field.valueOf(rows[i])),
+                      ]),
                     ),
                   ),
                 ),
@@ -178,23 +248,29 @@ Future<bool?> showPrintPreviewDialog(
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('رجوع')),
-        FilledButton.icon(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.open_in_browser), label: const Text('فتح HTML والطباعة')),
+        TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('رجوع')),
+        FilledButton.icon(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          icon: const Icon(Icons.open_in_browser),
+          label: const Text('فتح HTML والطباعة'),
+        ),
       ],
     ),
   );
 }
 
-class _CustomizePrintDialog extends StatefulWidget {
+class _CustomizePrintDialog<T> extends StatefulWidget {
+  final PrintSpec<T> spec;
   final HtmlPrintTemplate? initial;
 
-  const _CustomizePrintDialog({this.initial});
+  const _CustomizePrintDialog({required this.spec, this.initial});
 
   @override
-  State<_CustomizePrintDialog> createState() => _CustomizePrintDialogState();
+  State<_CustomizePrintDialog<T>> createState() =>
+      _CustomizePrintDialogState<T>();
 }
 
-class _CustomizePrintDialogState extends State<_CustomizePrintDialog> {
+class _CustomizePrintDialogState<T> extends State<_CustomizePrintDialog<T>> {
   late final TextEditingController _name;
   late Set<String> _selected;
   late List<String> _order;
@@ -203,15 +279,19 @@ class _CustomizePrintDialogState extends State<_CustomizePrintDialog> {
   @override
   void initState() {
     super.initState();
+    final spec = widget.spec;
     final initial = widget.initial;
     _name = TextEditingController(text: initial?.name ?? 'تقرير مخصص');
-    _order = HtmlPrintService.fields.map((f) => f.key).toList();
+    _order = spec.fields.map((f) => f.key).toList();
     if (initial != null) {
-      final selected = initial.fieldKeys.toSet();
-      _order = [...initial.fieldKeys, ..._order.where((k) => !selected.contains(k))];
+      final keys = initial.fieldKeys.where(spec.hasField).toList();
+      final selected = keys.toSet();
+      _order = [...keys, ..._order.where((k) => !selected.contains(k))];
       _selected = selected;
     } else {
-      _selected = {...HtmlPrintService.builtInTemplates['storage']!.fieldKeys};
+      final base = spec.builtInTemplates[spec.defaultCustomBaseTemplateId] ??
+          spec.builtInTemplates.values.first;
+      _selected = {...base.fieldKeys.where(spec.hasField)};
     }
     _landscape = initial?.landscape ?? true;
   }
@@ -233,7 +313,10 @@ class _CustomizePrintDialogState extends State<_CustomizePrintDialog> {
             children: [
               TextField(
                 controller: _name,
-                decoration: const InputDecoration(labelText: 'اسم القالب'),
+                decoration: const InputDecoration(
+                  labelText: 'اسم القالب',
+                  helperText: 'يظهر في عنوان التقرير: سجل الغرف (اسم القالب بدون كلمة تقرير)',
+                ),
               ),
               const SizedBox(height: 12),
               SegmentedButton<bool>(
@@ -265,7 +348,7 @@ class _CustomizePrintDialogState extends State<_CustomizePrintDialog> {
                     Builder(
                       key: ValueKey(key),
                       builder: (_) {
-                        final field = HtmlPrintService.fieldByKey(key);
+                        final field = widget.spec.fieldByKey(key);
                         final selected = _selected.contains(key);
                         return ListTile(
                           leading: Checkbox(

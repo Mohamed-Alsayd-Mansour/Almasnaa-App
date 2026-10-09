@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'daily/daily_screen.dart';
 import 'records/records_screen.dart';
+import 'research/research_screen.dart';
 import 'rooms/rooms_screen.dart';
 import 'settings/settings_screen.dart';
 
-/// نقطة الدخول لواجهة التطبيق: تبويبات الغرف / اليومية / السجل / الإعدادات.
+/// نقطة الدخول لواجهة التطبيق: تبويبات الغرف / اليومية / السجل / الإعدادات / الاستعلامات.
 class MainTabsScreen extends StatefulWidget {
   const MainTabsScreen({super.key});
 
@@ -16,7 +17,7 @@ class MainTabsScreen extends StatefulWidget {
 class _MainTabsScreenState extends State<MainTabsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController =
-      TabController(length: 4, vsync: this);
+      TabController(length: 5, vsync: this);
 
   @override
   void dispose() {
@@ -39,6 +40,7 @@ class _MainTabsScreenState extends State<MainTabsScreen>
             Tab(icon: Icon(Icons.event_note_outlined), text: 'اليومية'),
             Tab(icon: Icon(Icons.fact_check_outlined), text: 'السجل'),
             Tab(icon: Icon(Icons.settings_outlined), text: 'الإعدادات'),
+            Tab(icon: Icon(Icons.query_stats_outlined), text: 'الاستعلامات'),
           ],
         ),
       ),
@@ -49,6 +51,7 @@ class _MainTabsScreenState extends State<MainTabsScreen>
           DailyScreen(),
           RecordsScreen(),
           SettingsScreen(),
+          ResearchScreen(),
         ],
       ),
     );

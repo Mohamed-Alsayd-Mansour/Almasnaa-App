@@ -69,12 +69,22 @@ class DailyProvider extends ChangeNotifier {
     bool hasSpecifications = false,
     String specificationsText = '',
     int specialPieceCount = 0,
+    String problem = '',
+    bool isPartial = false,
+    String partName = '',
+    int partialPieceCount = 0,
   }) async {
     if (activeSession == null) return 'لا توجد يومية نشطة حاليًا.';
     if (numbering.trim().isEmpty) return 'حقل الترقيم مطلوب.';
     if (carpenter.trim().isEmpty) return 'اسم النجار مطلوب.';
     if (hasSpecifications && specialPieceCount < 0) {
       return 'عدد قطع غرفة المواصفات لا يمكن أن يكون سالبًا.';
+    }
+    if (isPartial) {
+      if (partName.trim().isEmpty) return 'اسم الجزء أو الأجزاء مطلوب.';
+      if (partialPieceCount <= 0) {
+        return 'عدد القطع الموجودة يجب أن يكون أكبر من صفر.';
+      }
     }
 
     try {
@@ -92,6 +102,10 @@ class DailyProvider extends ChangeNotifier {
         hasSpecifications: hasSpecifications,
         specificationsText: specificationsText,
         specialPieceCount: specialPieceCount,
+        problem: problem,
+        isPartial: isPartial,
+        partName: partName,
+        partialPieceCount: partialPieceCount,
       );
       entries = [...entries, entry];
       notifyListeners();
@@ -128,6 +142,24 @@ class DailyProvider extends ChangeNotifier {
       return null;
     } catch (e) {
       return 'تعذر تعديل النواقص: $e';
+    }
+  }
+
+  Future<String?> updateEntryProblem({
+    required String entryId,
+    required String newText,
+  }) async {
+    try {
+      final updated = await _entryRepository.updateProblem(
+        entryId: entryId,
+        newProblem: newText,
+      );
+      entries =
+          entries.map((e) => e.id == updated.id ? updated : e).toList();
+      notifyListeners();
+      return null;
+    } catch (e) {
+      return 'تعذر تعديل المشكلة: $e';
     }
   }
 
