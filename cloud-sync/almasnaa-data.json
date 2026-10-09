@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-09T12:35:22.129364",
+  "exported_at": "2026-10-09T13:43:10.938236",
   "data": {
     "rooms": [
       {
@@ -2938,6 +2938,34 @@
         "current_missing_count": 3,
         "created_at": "2026-10-08T10:30:52.647382",
         "updated_at": "2026-10-09T12:10:54.645871",
+        "last_deficiency_update_at": null
+      },
+      {
+        "id": "20f9dcea-cdd2-46c8-a061-243acb336729",
+        "daily_session_id": "fc9e77fc-b72d-4460-a776-93758431875a",
+        "room_id": "79f33a18-dd6a-4a72-997a-3338b2bd04b3",
+        "room_name_snapshot": "دولاب أطفال كندر ٢م",
+        "piece_count_snapshot": 21,
+        "numbering": "20",
+        "carpenter": "يوسف عباس",
+        "service": "عبد العظيم",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ياسر",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "problem": "رجع نجارة (مطب في الأبلكاش)",
+        "is_partial": true,
+        "part_name": "دولاب",
+        "partial_piece_count": 14,
+        "original_deficiencies": "جمب ٢٠",
+        "current_deficiencies": "جمب ٢٠",
+        "original_missing_count": 1,
+        "current_missing_count": 1,
+        "created_at": "2026-10-08T11:30:52.647382",
+        "updated_at": "2026-10-09T11:50:54.645871",
         "last_deficiency_update_at": null
       },
       {
