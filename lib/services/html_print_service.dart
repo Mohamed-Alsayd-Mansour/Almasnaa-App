@@ -116,6 +116,8 @@ class HtmlPrintService {
     HtmlPrintField(key: 'installer', label: 'الرصيص', valueOf: (r) => r.entry.installer),
     HtmlPrintField(key: 'supervisor', label: 'المشرف', valueOf: (r) => r.entry.supervisor),
     HtmlPrintField(key: 'repairer', label: 'الرميم', valueOf: (r) => r.entry.repairer),
+    HtmlPrintField(key: 'merchant', label: 'اسم التاجر', valueOf: (r) => r.entry.merchantName),
+    HtmlPrintField(key: 'is_external', label: 'غرفة خارجية', valueOf: (r) => r.entry.isExternal ? 'نعم' : 'لا'),
     HtmlPrintField(key: 'wrap_location', label: 'مكان اللف', valueOf: (r) => r.entry.wrapLocation),
     HtmlPrintField(key: 'specifications_text', label: 'نص المواصفات', valueOf: (r) => r.entry.hasSpecifications ? r.entry.specificationsText : ''),
     HtmlPrintField(key: 'deficiencies', label: 'النواقص', valueOf: (r) => r.entry.currentDeficiencies),

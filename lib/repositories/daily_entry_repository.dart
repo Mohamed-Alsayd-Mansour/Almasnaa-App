@@ -7,6 +7,23 @@ import '../models/enums.dart';
 import '../models/room.dart';
 import '../utils/deficiency_calculator.dart';
 
+/// يستكمل حقل القطع الإضافية (قواطيع + زجاج + رخام) في السجلات القديمة
+/// من بيانات الغرفة الحالية، لتعرض «الغرفة (القطع)» العدد الكلي.
+List<DailyEntry> backfillExtraPieceCounts(
+    List<DailyEntry> entries, Iterable<Room> rooms) {
+  final byId = {for (final r in rooms) r.id: r};
+  return [
+    for (final e in entries)
+      if (e.extraPieceCountSnapshot == null &&
+          e.roomId != null &&
+          byId[e.roomId] != null)
+        e.withExtraPieceCount(
+            byId[e.roomId]!.totalPieceCount - byId[e.roomId]!.pieceCount)
+      else
+        e,
+  ];
+}
+
 /// فلاتر البحث المتقدم في تبويب السجل.
 class RecordSearchFilters {
   final String keyword;
@@ -60,7 +77,9 @@ class DailyEntryRepository {
 
   Future<List<DailyEntry>> _readAllEntries() async {
     final rows = await _db.readList(AppDatabase.entriesKey);
-    return rows.map(DailyEntry.fromMap).toList();
+    final entries = rows.map(DailyEntry.fromMap).toList();
+    return backfillExtraPieceCounts(
+        entries, (await _db.readList(AppDatabase.roomsKey)).map(Room.fromMap));
   }
 
   Future<void> _writeAllEntries(List<DailyEntry> entries) async {
@@ -88,7 +107,10 @@ class DailyEntryRepository {
   /// بتكرار نفس [room] أكثر من مرة في نفس اليومية (قاعدة العمل #1، #2).
   Future<DailyEntry> addEntry({
     required String dailySessionId,
-    required Room room,
+    Room? room,
+    String externalRoomName = '',
+    int externalPieceCount = 0,
+    String merchantName = '',
     required String numbering,
     required String carpenter,
     required String service,
@@ -110,17 +132,23 @@ class DailyEntryRepository {
     final partial = isPartial && cleanPartName.isNotEmpty;
     final trimmedDeficiencies = deficiencies.trim();
     final missingCount = calculateMissingPiecesCount(trimmedDeficiencies);
+    final baseRoomName = (room?.name ?? externalRoomName).trim();
 
     final entry = DailyEntry(
       id: _uuid.v4(),
       dailySessionId: dailySessionId,
-      roomId: room.id,
+      roomId: room?.id,
       // عند تسجيل جزء من غرفة يُكتب اسم الجزء قبل اسم الغرفة:
       // "[اسم الجزء] [اسم الغرفة]" ويُضاف العدد بين قوسين عند العرض.
-      roomNameSnapshot: partial ? '$cleanPartName ${room.name}' : room.name,
+      roomNameSnapshot:
+          partial ? '$cleanPartName $baseRoomName' : baseRoomName,
       // Snapshot العدد القياسي للغرفة العادية دائمًا، بصرف النظر عن
       // تفعيل وسم "مواصفات" — يبقى مستقلًا تمامًا عن specialPieceCount.
-      pieceCountSnapshot: room.pieceCount,
+      pieceCountSnapshot: room?.pieceCount ?? externalPieceCount,
+      extraPieceCountSnapshot:
+          room == null ? 0 : room.totalPieceCount - room.pieceCount,
+      isExternal: room == null,
+      merchantName: room == null ? merchantName.trim() : '',
       numbering: numbering.trim(),
       carpenter: carpenter.trim(),
       service: service.trim(),

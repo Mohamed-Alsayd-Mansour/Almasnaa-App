@@ -57,7 +57,10 @@ class DailyProvider extends ChangeNotifier {
   }
 
   Future<String?> addEntry({
-    required Room room,
+    Room? room,
+    String externalRoomName = '',
+    int externalPieceCount = 0,
+    String merchantName = '',
     required String numbering,
     required String carpenter,
     required String service,
@@ -76,7 +79,15 @@ class DailyProvider extends ChangeNotifier {
   }) async {
     if (activeSession == null) return 'لا توجد يومية نشطة حاليًا.';
     if (numbering.trim().isEmpty) return 'حقل الترقيم مطلوب.';
-    if (carpenter.trim().isEmpty) return 'اسم النجار مطلوب.';
+    if (room == null) {
+      if (externalRoomName.trim().isEmpty) return 'اسم الغرفة مطلوب.';
+      if (externalPieceCount <= 0) {
+        return 'عدد القطع يجب أن يكون أكبر من صفر.';
+      }
+      if (merchantName.trim().isEmpty) return 'اسم التاجر مطلوب.';
+    } else if (carpenter.trim().isEmpty) {
+      return 'اسم النجار مطلوب.';
+    }
     if (hasSpecifications && specialPieceCount < 0) {
       return 'عدد قطع غرفة المواصفات لا يمكن أن يكون سالبًا.';
     }
@@ -91,6 +102,9 @@ class DailyProvider extends ChangeNotifier {
       final entry = await _entryRepository.addEntry(
         dailySessionId: activeSession!.id,
         room: room,
+        externalRoomName: externalRoomName,
+        externalPieceCount: externalPieceCount,
+        merchantName: merchantName,
         numbering: numbering,
         carpenter: carpenter,
         service: service,

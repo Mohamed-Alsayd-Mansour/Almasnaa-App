@@ -98,9 +98,16 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                   child: OutlinedButton.icon(
                     onPressed: () => _pickDate(isFrom: true),
                     icon: const Icon(Icons.date_range),
-                    label: Text(_from == null
-                        ? 'من تاريخ'
-                        : AppDateFormatter.date(_from!)),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _from == null
+                            ? 'من تاريخ'
+                            : AppDateFormatter.date(_from!),
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -108,8 +115,14 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                   child: OutlinedButton.icon(
                     onPressed: () => _pickDate(isFrom: false),
                     icon: const Icon(Icons.date_range),
-                    label: Text(
-                        _to == null ? 'إلى تاريخ' : AppDateFormatter.date(_to!)),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _to == null ? 'إلى تاريخ' : AppDateFormatter.date(_to!),
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
                   ),
                 ),
               ],

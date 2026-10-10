@@ -30,6 +30,12 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   final _formKey = GlobalKey<FormState>();
   Room? _selectedRoom;
 
+  /// هل الغرفة خارجية؟ (اسمها وعدد قطعها واسم التاجر تُدخل يدويًا).
+  bool _isExternal = false;
+  final _extNameCtrl = TextEditingController();
+  final _extCountCtrl = TextEditingController();
+  final _merchantCtrl = TextEditingController();
+
   final _numberingCtrl = TextEditingController();
   String? _carpenter;
   String? _service;
@@ -53,6 +59,9 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
 
   @override
   void dispose() {
+    _extNameCtrl.dispose();
+    _extCountCtrl.dispose();
+    _merchantCtrl.dispose();
     _numberingCtrl.dispose();
     _deficienciesCtrl.dispose();
     _problemCtrl.dispose();
@@ -73,27 +82,33 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
       // كنقطة بداية مناسبة فقط؛ القيمة بعدها مستقلة تمامًا وقابلة
       // للتعديل بحرية دون أي تأثير على عدد القطع القياسي للغرفة.
       if (value && _specialPieceCountCtrl.text.trim().isEmpty) {
-        _specialPieceCountCtrl.text = (_selectedRoom?.pieceCount ?? 0).toString();
+        _specialPieceCountCtrl.text = (_isExternal
+                ? (int.tryParse(_extCountCtrl.text.trim()) ?? 0)
+                : (_selectedRoom?.pieceCount ?? 0))
+            .toString();
       }
     });
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedRoom == null) {
+    if (!_isExternal && _selectedRoom == null) {
       showErrorSnackBar(context, 'يرجى اختيار اسم الغرفة أولًا.');
       return;
     }
     setState(() => _saving = true);
 
     final error = await context.read<DailyProvider>().addEntry(
-          room: _selectedRoom!,
+          room: _isExternal ? null : _selectedRoom,
+          externalRoomName: _extNameCtrl.text,
+          externalPieceCount: int.tryParse(_extCountCtrl.text.trim()) ?? 0,
+          merchantName: _merchantCtrl.text,
           numbering: _numberingCtrl.text,
-          carpenter: _carpenter ?? '',
-          service: _service ?? '',
-          installer: _installer ?? '',
-          supervisor: _supervisor ?? '',
-          repairer: _repairer ?? '',
+          carpenter: _isExternal ? '' : (_carpenter ?? ''),
+          service: _isExternal ? '' : (_service ?? ''),
+          installer: _isExternal ? '' : (_installer ?? ''),
+          supervisor: _isExternal ? '' : (_supervisor ?? ''),
+          repairer: _isExternal ? '' : (_repairer ?? ''),
           deficiencies: _deficienciesCtrl.text,
           wrapLocation: _wrapLocation ?? '',
           hasSpecifications: _hasSpecifications,
@@ -134,6 +149,28 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text('هل الغرفة خارجية؟',
+                    style: TextStyle(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: false, label: Text('لا')),
+                    ButtonSegment(value: true, label: Text('نعم')),
+                  ],
+                  selected: {_isExternal},
+                  onSelectionChanged: (v) =>
+                      setState(() => _isExternal = v.first),
+                ),
+                const SizedBox(height: 14),
+                if (_isExternal)
+                  TextFormField(
+                    controller: _extNameCtrl,
+                    decoration: const InputDecoration(labelText: 'اسم الغرفة *'),
+                    validator: (v) => (_isExternal && (v ?? '').trim().isEmpty)
+                        ? 'اسم الغرفة مطلوب'
+                        : null,
+                  )
+                else
                 DropdownButtonFormField<Room>(
                   value: _selectedRoom,
                   isExpanded: true,
@@ -145,10 +182,13 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                           ))
                       .toList(),
                   onChanged: (r) => setState(() => _selectedRoom = r),
-                  validator: (v) => v == null ? 'اختر اسم الغرفة' : null,
+                  validator: (v) =>
+                      (!_isExternal && v == null) ? 'اختر اسم الغرفة' : null,
                 ),
-                const SizedBox(height: 14),
-                _ReadonlyPieceCount(room: _selectedRoom),
+                if (!_isExternal) ...[
+                  const SizedBox(height: 14),
+                  _ReadonlyPieceCount(room: _selectedRoom),
+                ],
                 const SizedBox(height: 14),
                 const Text('هل الغرفة كاملة؟',
                     style: TextStyle(fontWeight: FontWeight.w800)),
@@ -202,6 +242,30 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                       (v == null || v.trim().isEmpty) ? 'الترقيم مطلوب' : null,
                 ),
                 const SizedBox(height: 14),
+                if (_isExternal) ...[
+                  TextFormField(
+                    controller: _extCountCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'عدد القطع *'),
+                    validator: (v) {
+                      if (!_isExternal) return null;
+                      final n = int.tryParse((v ?? '').trim());
+                      if (n == null || n <= 0) {
+                        return 'أدخل عددًا صحيحًا أكبر من صفر';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _merchantCtrl,
+                    decoration: const InputDecoration(labelText: 'اسم التاجر *'),
+                    validator: (v) => (_isExternal && (v ?? '').trim().isEmpty)
+                        ? 'اسم التاجر مطلوب'
+                        : null,
+                  ),
+                  const SizedBox(height: 14),
+                ] else ...[
                 PersonDropdownField(
                   role: PersonRole.carpenter,
                   required: true,
@@ -233,6 +297,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   onChanged: (v) => setState(() => _repairer = v),
                 ),
                 const SizedBox(height: 14),
+                ],
                 PersonDropdownField(
                   role: PersonRole.wrapLocation,
                   value: _wrapLocation,

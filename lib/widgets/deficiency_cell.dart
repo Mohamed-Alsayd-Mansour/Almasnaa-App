@@ -28,12 +28,14 @@ class DeficiencyCell extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: Text(
                 isEmpty ? 'لا يوجد نواقص' : text,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isEmpty ? AppColors.textSecondary : AppColors.textPrimary,
                   fontStyle: isEmpty ? FontStyle.italic : FontStyle.normal,

@@ -51,12 +51,23 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           ? widget.entry.partialPieceCount.toString()
           : '');
 
+  bool get _ext => widget.entry.isExternal;
+  late final TextEditingController _extNameCtrl =
+      TextEditingController(text: widget.entry.baseRoomName);
+  late final TextEditingController _extCountCtrl =
+      TextEditingController(text: widget.entry.pieceCountSnapshot.toString());
+  late final TextEditingController _merchantCtrl =
+      TextEditingController(text: widget.entry.merchantName);
+
   bool _saving = false;
 
   static String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v;
 
   @override
   void dispose() {
+    _extNameCtrl.dispose();
+    _extCountCtrl.dispose();
+    _merchantCtrl.dispose();
     _numberingCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
@@ -82,20 +93,32 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           context, 'أدخل اسم الجزء وعدد القطع الموجودة (أكبر من صفر).');
       return;
     }
+    final extCount = int.tryParse(_extCountCtrl.text.trim()) ?? 0;
+    if (_ext &&
+        (_extNameCtrl.text.trim().isEmpty ||
+            extCount <= 0 ||
+            _merchantCtrl.text.trim().isEmpty)) {
+      showErrorSnackBar(context,
+          'أدخل اسم الغرفة وعدد القطع (أكبر من صفر) واسم التاجر.');
+      return;
+    }
     setState(() => _saving = true);
     // اسم الغرفة المسجّل: "[اسم الجزء] [اسم الغرفة]".
-    final baseName = widget.entry.baseRoomName;
+    final baseName =
+        _ext ? _extNameCtrl.text.trim() : widget.entry.baseRoomName;
     final updated = widget.entry.copyWithFields(
       roomNameSnapshot: _isPartial ? '$partName $baseName' : baseName,
+      pieceCountSnapshot: _ext ? extCount : null,
+      merchantName: _ext ? _merchantCtrl.text.trim() : null,
       isPartial: _isPartial,
       partName: _isPartial ? partName : '',
       partialPieceCount: _isPartial ? partCount : 0,
       numbering: _numberingCtrl.text.trim(),
-      carpenter: _carpenter ?? '',
-      service: _service ?? '',
-      installer: _installer ?? '',
-      supervisor: _supervisor ?? '',
-      repairer: _repairer ?? '',
+      carpenter: _ext ? '' : (_carpenter ?? ''),
+      service: _ext ? '' : (_service ?? ''),
+      installer: _ext ? '' : (_installer ?? ''),
+      supervisor: _ext ? '' : (_supervisor ?? ''),
+      repairer: _ext ? '' : (_repairer ?? ''),
       wrapLocation: _wrapLocation ?? '',
       hasSpecifications: _hasSpecifications,
       specificationsText: _specificationsCtrl.text.trim(),
@@ -123,11 +146,31 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (_ext) ...[
+                TextField(
+                  controller: _extNameCtrl,
+                  decoration: const InputDecoration(labelText: 'اسم الغرفة *'),
+                ),
+                const SizedBox(height: 14),
+              ],
               TextField(
                 controller: _numberingCtrl,
                 decoration: const InputDecoration(labelText: 'ترقيمها'),
               ),
               const SizedBox(height: 14),
+              if (_ext) ...[
+                TextField(
+                  controller: _extCountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'عدد القطع *'),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: _merchantCtrl,
+                  decoration: const InputDecoration(labelText: 'اسم التاجر *'),
+                ),
+                const SizedBox(height: 14),
+              ] else ...[
               PersonDropdownField(
                 role: PersonRole.carpenter,
                 value: _carpenter,
@@ -158,6 +201,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 onChanged: (v) => setState(() => _repairer = v),
               ),
               const SizedBox(height: 14),
+              ],
               PersonDropdownField(
                 role: PersonRole.wrapLocation,
                 value: _wrapLocation,

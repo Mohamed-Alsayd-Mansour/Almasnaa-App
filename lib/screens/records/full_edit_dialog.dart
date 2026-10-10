@@ -30,6 +30,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
   late final _pieceCtrl =
       TextEditingController(text: e.pieceCountSnapshot.toString());
   late final _numberingCtrl = TextEditingController(text: e.numbering);
+  late final _merchantCtrl = TextEditingController(text: e.merchantName);
   late final _specTextCtrl = TextEditingController(text: e.specificationsText);
   late final _specCountCtrl =
       TextEditingController(text: e.specialPieceCount.toString());
@@ -58,6 +59,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
       _roomCtrl,
       _pieceCtrl,
       _numberingCtrl,
+      _merchantCtrl,
       _specTextCtrl,
       _specCountCtrl,
       _partNameCtrl,
@@ -87,6 +89,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
     final updated = e.copyWith(
       roomNameSnapshot: _isPartial ? '$partName $base' : base,
       pieceCountSnapshot: int.parse(_pieceCtrl.text.trim()),
+      merchantName: e.isExternal ? _merchantCtrl.text.trim() : null,
       numbering: _numberingCtrl.text.trim(),
       carpenter: _carpenter ?? '',
       service: _service ?? '',
@@ -144,6 +147,16 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                   decoration: const InputDecoration(labelText: 'الترقيم'),
                 ),
                 _gap(),
+                if (e.isExternal) ...[
+                  TextFormField(
+                    controller: _merchantCtrl,
+                    decoration: const InputDecoration(labelText: 'اسم التاجر *'),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'اسم التاجر مطلوب'
+                        : null,
+                  ),
+                  _gap(),
+                ],
                 PersonDropdownField(
                   role: PersonRole.carpenter,
                   value: _carpenter,

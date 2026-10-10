@@ -72,6 +72,16 @@ class ExcelExportService {
           r.entry.hasSpecifications ? '${r.entry.specialPieceCount}' : '',
     ),
     ExcelExportField(
+      key: 'merchant',
+      label: 'اسم التاجر',
+      valueOf: (r) => r.entry.merchantName,
+    ),
+    ExcelExportField(
+      key: 'is_external',
+      label: 'غرفة خارجية',
+      valueOf: (r) => r.entry.isExternal ? 'نعم' : 'لا',
+    ),
+    ExcelExportField(
       key: 'numbering',
       label: 'الترقيم',
       valueOf: (r) => r.entry.numbering,

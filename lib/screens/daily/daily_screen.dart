@@ -128,6 +128,7 @@ class _DailyScreenState extends State<DailyScreen> {
     AppGridColumn('الرصيص', width: 120),
     AppGridColumn('المشرف', width: 120),
     AppGridColumn('الرميم', width: 120),
+    AppGridColumn('التاجر', width: 120),
     AppGridColumn('مكان اللف', width: 120),
     AppGridColumn('المواصفات', width: 180),
     AppGridColumn('النواقص', width: 220),
@@ -222,7 +223,8 @@ class _DailyScreenState extends State<DailyScreen> {
                                 gridText(e.installer),
                                 gridText(e.supervisor),
                                 gridText(e.repairer),
-                                gridText(e.wrapLocation),
+                                gridText(e.merchantName),
+                                gridOneLine(e.wrapLocation),
                                 gridText(e.hasSpecifications ? e.specificationsText : ''),
                                 DeficiencyCell(
                                   text: e.currentDeficiencies,
@@ -335,7 +337,10 @@ class _HeaderItem extends StatelessWidget {
         Icon(icon, size: 18, color: AppColors.primary),
         const SizedBox(width: 6),
         Text('$label: ', style: const TextStyle(color: AppColors.textSecondary)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w800)),
+        Text(value,
+            maxLines: 1,
+            softWrap: false,
+            style: const TextStyle(fontWeight: FontWeight.w800)),
       ],
     );
   }

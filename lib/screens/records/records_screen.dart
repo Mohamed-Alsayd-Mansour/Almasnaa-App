@@ -119,7 +119,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
   static const List<AppGridColumn> _columns = [
     AppGridColumn('م', width: 56, numeric: true),
     AppGridColumn('اليوم', width: 90),
-    AppGridColumn('التاريخ', width: 110),
+    AppGridColumn('التاريخ', width: 125),
     AppGridColumn('الغرفة (القطع)', width: 260),
     AppGridColumn('الترقيم', width: 90),
     AppGridColumn('النجار', width: 120),
@@ -127,6 +127,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
     AppGridColumn('الرصيص', width: 120),
     AppGridColumn('المشرف', width: 120),
     AppGridColumn('الرميم', width: 120),
+    AppGridColumn('التاجر', width: 120),
     AppGridColumn('مكان اللف', width: 120),
     AppGridColumn('المواصفات', width: 180),
     AppGridColumn('النواقص', width: 220),
@@ -261,7 +262,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                         cells: [
                           gridText('${i + 1}'),
                           gridText(r.dayName),
-                          gridText(AppDateFormatter.date(r.date)),
+                          gridOneLine(AppDateFormatter.date(r.date)),
                           gridText(e.displayName, bold: true),
                           gridText(e.numbering),
                           gridText(e.carpenter),
@@ -269,7 +270,8 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           gridText(e.installer),
                           gridText(e.supervisor),
                           gridText(e.repairer),
-                          gridText(e.wrapLocation),
+                          gridText(e.merchantName),
+                          gridOneLine(e.wrapLocation),
                           gridText(e.hasSpecifications ? e.specificationsText : ''),
                           DeficiencyCell(
                             text: e.currentDeficiencies,

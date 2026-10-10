@@ -15,7 +15,11 @@ class AppGridColumn {
   /// أعمدة الأرقام تُحاذى في المنتصف.
   final bool numeric;
 
-  const AppGridColumn(this.label, {this.width = 110, this.numeric = false});
+  /// عنوان العمود على سطر واحد (يُصغَّر الخط إن ضاق العرض).
+  final bool singleLine;
+
+  const AppGridColumn(this.label,
+      {this.width = 110, this.numeric = false, this.singleLine = false});
 }
 
 /// صف واحد: خلاياه بنفس ترتيب الأعمدة، ولون خلفية اختياري.
@@ -34,7 +38,23 @@ Widget gridText(String text, {bool bold = false, int maxLines = 2}) {
     text,
     maxLines: maxLines,
     overflow: TextOverflow.ellipsis,
+    textAlign: TextAlign.center,
     style: bold ? const TextStyle(fontWeight: FontWeight.w700) : null,
+  );
+}
+
+/// نص خلية على سطر واحد دائمًا (للتواريخ والأوقات): إن ضاق العرض
+/// يُصغَّر الخط تلقائيًا بدل أن ينكسر على سطرين.
+Widget gridOneLine(String text, {bool bold = false}) {
+  return FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(
+      text,
+      maxLines: 1,
+      softWrap: false,
+      textAlign: TextAlign.center,
+      style: bold ? const TextStyle(fontWeight: FontWeight.w700) : null,
+    ),
   );
 }
 
@@ -73,6 +93,9 @@ class AppDataGrid extends StatefulWidget {
   final bool sortAscending;
   final ValueChanged<int>? onSort;
 
+  /// ضغط اختياري على صف (يُمرَّر فهرس الصف).
+  final ValueChanged<int>? onRowTap;
+
   const AppDataGrid({
     super.key,
     required this.columns,
@@ -82,6 +105,7 @@ class AppDataGrid extends StatefulWidget {
     this.sortColumnIndex,
     this.sortAscending = true,
     this.onSort,
+    this.onRowTap,
   });
 
   @override
@@ -190,17 +214,32 @@ class _AppDataGridState extends State<AppDataGrid> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: Text(
-            column.label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: column.numeric ? TextAlign.center : TextAlign.start,
-            style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              fontSize: 13.5,
-            ),
-          ),
+          child: column.singleLine
+              ? FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    column.label,
+                    maxLines: 1,
+                    softWrap: false,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                )
+              : Text(
+                  column.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    fontSize: 13.5,
+                  ),
+                ),
         ),
         if (sorted) ...[
           const SizedBox(width: 4),
@@ -215,8 +254,7 @@ class _AppDataGridState extends State<AppDataGrid> {
     final cell = Container(
       width: width,
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      alignment:
-          column.numeric ? Alignment.center : AlignmentDirectional.centerStart,
+      alignment: Alignment.center,
       decoration: _headerCellDecoration,
       child: content,
     );
@@ -225,33 +263,35 @@ class _AppDataGridState extends State<AppDataGrid> {
   }
 
   Widget _bodyCell(int index, double width, Widget child) {
-    final column = widget.columns[index];
     return Container(
       width: width,
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      alignment:
-          column.numeric ? Alignment.center : AlignmentDirectional.centerStart,
+      alignment: Alignment.center,
       decoration: _bodyCellDecoration,
-      child: child,
+      // أي نص داخل الخلية (حتى لو لم يمر عبر gridText) يُوسَّط.
+      child: DefaultTextStyle.merge(textAlign: TextAlign.center, child: child),
     );
   }
 
   Widget _buildRow(int index, List<double> widths) {
     final row = widget.rowBuilder(index);
+    final content = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < widths.length; i++)
+          _bodyCell(
+            i,
+            widths[i],
+            i < row.cells.length ? row.cells[i] : const SizedBox.shrink(),
+          ),
+      ],
+    );
     return ColoredBox(
       color: row.color ??
           (index.isOdd ? const Color(0x08000000) : Colors.transparent),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < widths.length; i++)
-            _bodyCell(
-              i,
-              widths[i],
-              i < row.cells.length ? row.cells[i] : const SizedBox.shrink(),
-            ),
-        ],
-      ),
+      child: widget.onRowTap == null
+          ? content
+          : InkWell(onTap: () => widget.onRowTap!(index), child: content),
     );
   }
 
