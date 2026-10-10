@@ -84,7 +84,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
       if (value && _specialPieceCountCtrl.text.trim().isEmpty) {
         _specialPieceCountCtrl.text = (_isExternal
                 ? (int.tryParse(_extCountCtrl.text.trim()) ?? 0)
-                : (_selectedRoom?.pieceCount ?? 0))
+                : (_selectedRoom?.totalPieceCount ?? 0))
             .toString();
       }
     });
@@ -411,10 +411,10 @@ class _ReadonlyPieceCount extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       readOnly: true,
-      initialValue: room == null ? '' : '${room!.pieceCount}',
+      initialValue: room == null ? '' : '${room!.totalPieceCount}',
       key: ValueKey(room?.id),
       decoration: const InputDecoration(
-        labelText: 'عدد القطع (تلقائي من بيانات الغرفة)',
+        labelText: 'عدد القطع الكلي (تلقائي من بيانات الغرفة)',
       ),
     );
   }

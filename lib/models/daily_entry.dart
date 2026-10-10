@@ -29,11 +29,6 @@ class DailyEntry {
   /// [specialPieceCount].
   final int pieceCountSnapshot;
 
-  /// قطع القواطيع + الزجاج + الرخام للغرفة وقت الإضافة (null في السجلات
-  /// القديمة قبل إضافة الحقل، وتُستكمل من بيانات الغرفة عند القراءة).
-  /// تُستخدم فقط لعرض العدد الكلي في حقل «الغرفة (القطع)»، ولا تؤثر على
-  /// [pieceCountSnapshot] ولا [effectivePieceCount].
-  final int? extraPieceCountSnapshot;
 
   /// غرفة خارجية (غير موجودة في قاعدة الغرف): اسمها وعدد قطعها يُدخلان
   /// يدويًا، ولها [merchantName] بدل أسماء النجار والخدمة وغيرهم.
@@ -93,7 +88,6 @@ class DailyEntry {
     required this.roomId,
     required this.roomNameSnapshot,
     required this.pieceCountSnapshot,
-    this.extraPieceCountSnapshot,
     this.isExternal = false,
     this.merchantName = '',
     required this.numbering,
@@ -143,19 +137,12 @@ class DailyEntry {
     return roomNameSnapshot;
   }
 
-  /// العدد المعروض في حقل «الغرفة (القطع)»: العدد الكلي (خشب + قواطيع +
-  /// زجاج + رخام) للغرفة العادية، أما المواصفات والجزء فيبقى عددهما
-  /// المستقل كما هو.
-  int get displayPieceCount => (isPartial || hasSpecifications)
-      ? effectivePieceCount
-      : pieceCountSnapshot + (extraPieceCountSnapshot ?? 0);
-
   /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)"، أو
   /// "أطفال جودي - مواصفات (7)" عند تفعيل وسم المواصفات.
   String get displayName {
     final tag = '${isExternal ? ' - خارجية' : ''}'
         '${hasSpecifications ? ' - مواصفات' : ''}';
-    return '$roomNameSnapshot$tag ($displayPieceCount)';
+    return '$roomNameSnapshot$tag ($effectivePieceCount)';
   }
 
   /// ينشئ نسخة جديدة محدَّثة بعد تعديل نص النواقص الحالي، مع إعادة
@@ -218,7 +205,6 @@ class DailyEntry {
   DailyEntry copyWith({
     String? roomNameSnapshot,
     int? pieceCountSnapshot,
-    int? extraPieceCountSnapshot,
     String? merchantName,
     String? numbering,
     String? carpenter,
@@ -247,8 +233,6 @@ class DailyEntry {
       roomId: roomId,
       roomNameSnapshot: roomNameSnapshot ?? this.roomNameSnapshot,
       pieceCountSnapshot: pieceCountSnapshot ?? this.pieceCountSnapshot,
-      extraPieceCountSnapshot:
-          extraPieceCountSnapshot ?? this.extraPieceCountSnapshot,
       isExternal: isExternal,
       merchantName: merchantName ?? this.merchantName,
       numbering: numbering ?? this.numbering,
@@ -280,39 +264,6 @@ class DailyEntry {
     );
   }
 
-  /// نسخة بنفس البيانات مع ضبط القطع الإضافية فقط (دون تغيير وقت التعديل).
-  DailyEntry withExtraPieceCount(int extra) => DailyEntry(
-        id: id,
-        dailySessionId: dailySessionId,
-        roomId: roomId,
-        roomNameSnapshot: roomNameSnapshot,
-        pieceCountSnapshot: pieceCountSnapshot,
-        extraPieceCountSnapshot: extra,
-        isExternal: isExternal,
-        merchantName: merchantName,
-        numbering: numbering,
-        carpenter: carpenter,
-        service: service,
-        installer: installer,
-        supervisor: supervisor,
-        repairer: repairer,
-        wrapLocation: wrapLocation,
-        hasSpecifications: hasSpecifications,
-        specificationsText: specificationsText,
-        specialPieceCount: specialPieceCount,
-        problem: problem,
-        isPartial: isPartial,
-        partName: partName,
-        partialPieceCount: partialPieceCount,
-        originalDeficiencies: originalDeficiencies,
-        currentDeficiencies: currentDeficiencies,
-        originalMissingPiecesCount: originalMissingPiecesCount,
-        currentMissingPiecesCount: currentMissingPiecesCount,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        lastDeficiencyUpdateAt: lastDeficiencyUpdateAt,
-      );
-
   Map<String, Object?> toMap() {
     return {
       'id': id,
@@ -320,7 +271,6 @@ class DailyEntry {
       'room_id': roomId,
       'room_name_snapshot': roomNameSnapshot,
       'piece_count_snapshot': pieceCountSnapshot,
-      'extra_piece_count_snapshot': extraPieceCountSnapshot,
       'is_external': isExternal,
       'merchant_name': merchantName,
       'numbering': numbering,
@@ -357,7 +307,6 @@ class DailyEntry {
       roomId: map['room_id'] as String?,
       roomNameSnapshot: map['room_name_snapshot'] as String,
       pieceCountSnapshot: map['piece_count_snapshot'] as int,
-      extraPieceCountSnapshot: map['extra_piece_count_snapshot'] as int?,
       isExternal: map['is_external'] as bool? ?? false,
       merchantName: map['merchant_name'] as String? ?? '',
       numbering: map['numbering'] as String? ?? '',

@@ -7,7 +7,6 @@ import '../models/enums.dart';
 import '../models/person.dart';
 import '../models/room.dart';
 import '../utils/date_formatter.dart';
-import '../repositories/daily_entry_repository.dart' show backfillExtraPieceCounts;
 import '../utils/deficiency_calculator.dart';
 
 /// توحيد النص العربي للبحث والمطابقة: يزيل التشكيل والتطويل، ويوحّد
@@ -101,11 +100,9 @@ class ResearchData {
     final sessions = (await db.readList(AppDatabase.sessionsKey))
         .map(DailySession.fromMap)
         .toList();
-    final entries = backfillExtraPieceCounts(
-        (await db.readList(AppDatabase.entriesKey))
-            .map(DailyEntry.fromMap)
-            .toList(),
-        rooms);
+    final entries = (await db.readList(AppDatabase.entriesKey))
+        .map(DailyEntry.fromMap)
+        .toList();
     final people =
         (await db.readList(AppDatabase.peopleKey)).map(Person.fromMap).toList();
     return ResearchData(
@@ -1587,11 +1584,15 @@ class ResearchService {
       } else if (baseRoom == null) {
         add(2, 'الغرفة الأساسية محذوفة',
             'الغرفة غير موجودة في قاعدة الغرف؛ تبقى النسخة المحفوظة فقط.');
+      } else if (normalizeArabic(baseRoom.name) !=
+          normalizeArabic(e.baseRoomName)) {
+        add(3, 'اسم الغرفة لا يطابق الغرفة المرتبطة',
+            'الاسم المسجّل «${e.baseRoomName}» بينما الغرفة المرتبطة في قاعدة الغرف «${baseRoom.name}».');
       } else if (!e.hasSpecifications &&
           !e.isPartial &&
-          baseRoom.pieceCount != e.pieceCountSnapshot) {
+          baseRoom.totalPieceCount != e.pieceCountSnapshot) {
         add(3, 'العدد القياسي تغيّر',
-            'وقت الإنتاج: ${e.pieceCountSnapshot} — الحالي في قاعدة الغرف: ${baseRoom.pieceCount}.');
+            'وقت الإنتاج: ${e.pieceCountSnapshot} — الحالي في تبويب الغرف (الكلي): ${baseRoom.totalPieceCount}.');
       }
       if (e.effectivePieceCount <= 0) {
         add(1, 'عدد القطع صفر', 'عدد القطع الفعلي للإدخال ${e.effectivePieceCount}.');

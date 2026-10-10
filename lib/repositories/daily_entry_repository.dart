@@ -7,23 +7,6 @@ import '../models/enums.dart';
 import '../models/room.dart';
 import '../utils/deficiency_calculator.dart';
 
-/// يستكمل حقل القطع الإضافية (قواطيع + زجاج + رخام) في السجلات القديمة
-/// من بيانات الغرفة الحالية، لتعرض «الغرفة (القطع)» العدد الكلي.
-List<DailyEntry> backfillExtraPieceCounts(
-    List<DailyEntry> entries, Iterable<Room> rooms) {
-  final byId = {for (final r in rooms) r.id: r};
-  return [
-    for (final e in entries)
-      if (e.extraPieceCountSnapshot == null &&
-          e.roomId != null &&
-          byId[e.roomId] != null)
-        e.withExtraPieceCount(
-            byId[e.roomId]!.totalPieceCount - byId[e.roomId]!.pieceCount)
-      else
-        e,
-  ];
-}
-
 /// فلاتر البحث المتقدم في تبويب السجل.
 class RecordSearchFilters {
   final String keyword;
@@ -77,9 +60,7 @@ class DailyEntryRepository {
 
   Future<List<DailyEntry>> _readAllEntries() async {
     final rows = await _db.readList(AppDatabase.entriesKey);
-    final entries = rows.map(DailyEntry.fromMap).toList();
-    return backfillExtraPieceCounts(
-        entries, (await _db.readList(AppDatabase.roomsKey)).map(Room.fromMap));
+    return rows.map(DailyEntry.fromMap).toList();
   }
 
   Future<void> _writeAllEntries(List<DailyEntry> entries) async {
@@ -144,9 +125,8 @@ class DailyEntryRepository {
           partial ? '$cleanPartName $baseRoomName' : baseRoomName,
       // Snapshot العدد القياسي للغرفة العادية دائمًا، بصرف النظر عن
       // تفعيل وسم "مواصفات" — يبقى مستقلًا تمامًا عن specialPieceCount.
-      pieceCountSnapshot: room?.pieceCount ?? externalPieceCount,
-      extraPieceCountSnapshot:
-          room == null ? 0 : room.totalPieceCount - room.pieceCount,
+      // العدد الكلي للغرفة (خشب + قواطيع + زجاج + رخام) كما في تبويب الغرف.
+      pieceCountSnapshot: room?.totalPieceCount ?? externalPieceCount,
       isExternal: room == null,
       merchantName: room == null ? merchantName.trim() : '',
       numbering: numbering.trim(),
