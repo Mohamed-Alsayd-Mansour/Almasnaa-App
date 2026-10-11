@@ -52,12 +52,18 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           : '');
 
   bool get _ext => widget.entry.isExternal;
+  bool get _ord => widget.entry.isOrder;
+
+  /// خارجية أو أوردر: الاسم/الوصف والعدد واسم التاجر/الزبون تُعدَّل يدويًا.
+  bool get _manual => _ext || _ord;
   late final TextEditingController _extNameCtrl =
       TextEditingController(text: widget.entry.baseRoomName);
   late final TextEditingController _extCountCtrl =
       TextEditingController(text: widget.entry.pieceCountSnapshot.toString());
   late final TextEditingController _merchantCtrl =
       TextEditingController(text: widget.entry.merchantName);
+  late final TextEditingController _customerCtrl =
+      TextEditingController(text: widget.entry.customerName);
 
   bool _saving = false;
 
@@ -68,6 +74,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
     _extNameCtrl.dispose();
     _extCountCtrl.dispose();
     _merchantCtrl.dispose();
+    _customerCtrl.dispose();
     _numberingCtrl.dispose();
     _specificationsCtrl.dispose();
     _specialPieceCountCtrl.dispose();
@@ -88,31 +95,37 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
   Future<void> _submit() async {
     final partName = _partNameCtrl.text.trim();
     final partCount = int.tryParse(_partCountCtrl.text.trim()) ?? 0;
-    if (_isPartial && (partName.isEmpty || partCount <= 0)) {
+    if (!_ord && _isPartial && (partName.isEmpty || partCount <= 0)) {
       showErrorSnackBar(
           context, 'أدخل اسم الجزء وعدد القطع الموجودة (أكبر من صفر).');
       return;
     }
     final extCount = int.tryParse(_extCountCtrl.text.trim()) ?? 0;
-    if (_ext &&
+    if (_manual &&
         (_extNameCtrl.text.trim().isEmpty ||
             extCount <= 0 ||
-            _merchantCtrl.text.trim().isEmpty)) {
-      showErrorSnackBar(context,
-          'أدخل اسم الغرفة وعدد القطع (أكبر من صفر) واسم التاجر.');
+            (_ord ? _customerCtrl : _merchantCtrl).text.trim().isEmpty)) {
+      showErrorSnackBar(
+          context,
+          _ord
+              ? 'أدخل وصف الأوردر وعدد القطع (أكبر من صفر) واسم الزبون.'
+              : 'أدخل اسم الغرفة وعدد القطع (أكبر من صفر) واسم التاجر.');
       return;
     }
     setState(() => _saving = true);
     // اسم الغرفة المسجّل: "[اسم الجزء] [اسم الغرفة]".
     final baseName =
-        _ext ? _extNameCtrl.text.trim() : widget.entry.baseRoomName;
+        _manual ? _extNameCtrl.text.trim() : widget.entry.baseRoomName;
+    final partial = _isPartial && !_ord;
+    final specs = _hasSpecifications && !_ord;
     final updated = widget.entry.copyWithFields(
-      roomNameSnapshot: _isPartial ? '$partName $baseName' : baseName,
-      pieceCountSnapshot: _ext ? extCount : null,
+      roomNameSnapshot: partial ? '$partName $baseName' : baseName,
+      pieceCountSnapshot: _manual ? extCount : null,
       merchantName: _ext ? _merchantCtrl.text.trim() : null,
-      isPartial: _isPartial,
-      partName: _isPartial ? partName : '',
-      partialPieceCount: _isPartial ? partCount : 0,
+      customerName: _ord ? _customerCtrl.text.trim() : null,
+      isPartial: partial,
+      partName: partial ? partName : '',
+      partialPieceCount: partial ? partCount : 0,
       numbering: _numberingCtrl.text.trim(),
       carpenter: _ext ? '' : (_carpenter ?? ''),
       service: _ext ? '' : (_service ?? ''),
@@ -120,9 +133,9 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
       supervisor: _ext ? '' : (_supervisor ?? ''),
       repairer: _ext ? '' : (_repairer ?? ''),
       wrapLocation: _wrapLocation ?? '',
-      hasSpecifications: _hasSpecifications,
+      hasSpecifications: specs,
       specificationsText: _specificationsCtrl.text.trim(),
-      specialPieceCount: _hasSpecifications
+      specialPieceCount: specs
           ? (int.tryParse(_specialPieceCountCtrl.text.trim()) ?? 0)
           : widget.entry.specialPieceCount,
     );
@@ -146,10 +159,13 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_ext) ...[
+              if (_manual) ...[
                 TextField(
                   controller: _extNameCtrl,
-                  decoration: const InputDecoration(labelText: 'اسم الغرفة *'),
+                  maxLines: _ord ? 3 : 1,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                      labelText: _ord ? 'وصف الأوردر *' : 'اسم الغرفة *'),
                 ),
                 const SizedBox(height: 14),
               ],
@@ -158,7 +174,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 decoration: const InputDecoration(labelText: 'ترقيمها'),
               ),
               const SizedBox(height: 14),
-              if (_ext) ...[
+              if (_manual) ...[
                 TextField(
                   controller: _extCountCtrl,
                   keyboardType: TextInputType.number,
@@ -166,11 +182,13 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 ),
                 const SizedBox(height: 14),
                 TextField(
-                  controller: _merchantCtrl,
-                  decoration: const InputDecoration(labelText: 'اسم التاجر *'),
+                  controller: _ord ? _customerCtrl : _merchantCtrl,
+                  decoration: InputDecoration(
+                      labelText: _ord ? 'اسم الزبون *' : 'اسم التاجر *'),
                 ),
                 const SizedBox(height: 14),
-              ] else ...[
+              ],
+              if (!_ext) ...[
               PersonDropdownField(
                 role: PersonRole.carpenter,
                 value: _carpenter,
@@ -208,6 +226,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 onChanged: (v) => setState(() => _wrapLocation = v),
               ),
               const SizedBox(height: 14),
+              if (!_ord) ...[
               const Divider(),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
@@ -264,6 +283,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                         'مستقل تمامًا عن عدد القطع القياسي للغرفة العادية.',
                   ),
                 ),
+              ],
               ],
             ],
           ),

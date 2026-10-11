@@ -62,6 +62,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
       wrapLocation: result.wrapLocation,
       status: result.status,
       shape: result.shape,
+      ownership: result.ownership,
     ));
   }
 
@@ -128,8 +129,10 @@ class _RecordsScreenState extends State<RecordsScreen> {
     AppGridColumn('المشرف', width: 120),
     AppGridColumn('الرميم', width: 120),
     AppGridColumn('التاجر', width: 120),
+    AppGridColumn('اسم الزبون', width: 120),
     AppGridColumn('مكان اللف', width: 120),
     AppGridColumn('المواصفات', width: 180),
+    AppGridColumn('وصف الأوردر', width: 180),
     AppGridColumn('النواقص', width: 220),
     AppGridColumn('المشكلة', width: 200),
     AppGridColumn('عدد الناقص', width: 100, numeric: true),
@@ -220,6 +223,8 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       Chip(label: Text('الحالة: ${provider.filters.status!.label}')),
                     if (provider.filters.shape != null)
                       Chip(label: Text('الشكل: ${provider.filters.shape!.label}')),
+                    if (provider.filters.ownership != null)
+                      Chip(label: Text('الملكية: ${provider.filters.ownership!.label}')),
                   ],
                 ),
               );
@@ -253,6 +258,8 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   clipBehavior: Clip.antiAlias,
                   child: AppDataGrid(
                     columns: _columns,
+                    rowHeight: isMobileApp ? 72 : 60,
+                    cellVerticalPadding: isMobileApp ? 6 : 0,
                     rowCount: rows.length,
                     rowBuilder: (i) {
                       final r = rows[i];
@@ -271,8 +278,10 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           gridText(e.supervisor),
                           gridText(e.repairer),
                           gridText(e.merchantName),
+                          gridText(e.customerName),
                           gridOneLine(e.wrapLocation),
                           gridText(e.hasSpecifications ? e.specificationsText : ''),
+                          gridText(e.orderDescription),
                           DeficiencyCell(
                             text: e.currentDeficiencies,
                             missingCount: e.currentMissingPiecesCount,

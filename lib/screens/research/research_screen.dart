@@ -301,7 +301,8 @@ class _ResearchScreenState extends State<ResearchScreen> {
         (f.dateFrom == null ? 0 : 1) -
         (f.dateTo == null ? 0 : 1) -
         (f.status == null ? 0 : 1) -
-        (f.shape == null ? 0 : 1);
+        (f.shape == null ? 0 : 1) -
+        (f.ownership == null ? 0 : 1);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -356,6 +357,24 @@ class _ResearchScreenState extends State<ResearchScreen> {
                 onChanged: (v) => _update(() => _filters = v == null
                     ? _filters.copyWith(clearShape: true)
                     : _filters.copyWith(shape: v)),
+              ),
+            ),
+            SizedBox(
+              width: 160,
+              child: DropdownButtonFormField<RoomOwnership?>(
+                value: f.ownership,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'ملكية الغرفة'),
+                items: [
+                  const DropdownMenuItem<RoomOwnership?>(
+                      value: null, child: Text('الكل')),
+                  for (final o in RoomOwnership.values)
+                    DropdownMenuItem<RoomOwnership?>(
+                        value: o, child: Text(o.label)),
+                ],
+                onChanged: (v) => _update(() => _filters = v == null
+                    ? _filters.copyWith(clearOwnership: true)
+                    : _filters.copyWith(ownership: v)),
               ),
             ),
             if (_view == ResearchView.grouped)

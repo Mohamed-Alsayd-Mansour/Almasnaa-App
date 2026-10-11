@@ -13,6 +13,7 @@ import '../../providers/records_provider.dart';
 import '../../providers/rooms_provider.dart';
 import '../../services/backup_service.dart';
 import '../../utils/file_saver.dart';
+import '../../utils/platform_utils.dart';
 import '../../widgets/common_widgets.dart';
 import 'cloud_sync_card.dart';
 import 'person_dialog.dart';
@@ -277,39 +278,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: 'البيانات والنسخ الاحتياطي',
           subtitle:
               'صدّر كل بياناتك إلى ملف JSON للاحتفاظ بنسخة، أو استورد نسخة سابقة.',
-          child: Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              ElevatedButton.icon(
-                onPressed: _busy ? null : _export,
-                icon: const Icon(
-                  Icons.file_download_outlined,
+          child: isMobileApp
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: _busy ? null : _export,
+                            icon: const Icon(Icons.file_download_outlined),
+                            label: const Text('تصدير JSON',
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _busy ? null : _import,
+                            icon: const Icon(Icons.file_upload_outlined),
+                            label: const Text('استيراد JSON',
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red.shade700,
+                        side: BorderSide(color: Colors.red.shade700),
+                      ),
+                      onPressed: _busy ? null : _deleteAll,
+                      icon: const Icon(Icons.delete_forever_outlined),
+                      label: const Text('حذف جميع البيانات',
+                          textAlign: TextAlign.center),
+                    ),
+                  ],
+                )
+              : Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _busy ? null : _export,
+                      icon: const Icon(Icons.file_download_outlined),
+                      label: const Text('تصدير JSON'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _busy ? null : _import,
+                      icon: const Icon(Icons.file_upload_outlined),
+                      label: const Text('استيراد JSON'),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red.shade700,
+                        side: BorderSide(color: Colors.red.shade700),
+                      ),
+                      onPressed: _busy ? null : _deleteAll,
+                      icon: const Icon(Icons.delete_forever_outlined),
+                      label: const Text('حذف جميع البيانات'),
+                    ),
+                  ],
                 ),
-                label: const Text('تصدير JSON'),
-              ),
-              OutlinedButton.icon(
-                onPressed: _busy ? null : _import,
-                icon: const Icon(
-                  Icons.file_upload_outlined,
-                ),
-                label: const Text('استيراد JSON'),
-              ),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red.shade700,
-                  side: BorderSide(
-                    color: Colors.red.shade700,
-                  ),
-                ),
-                onPressed: _busy ? null : _deleteAll,
-                icon: const Icon(
-                  Icons.delete_forever_outlined,
-                ),
-                label: const Text('حذف جميع البيانات'),
-              ),
-            ],
-          ),
         ),
         const SizedBox(height: AppSpacing.md),
         CloudSyncCard(onRestored: _reloadAll),

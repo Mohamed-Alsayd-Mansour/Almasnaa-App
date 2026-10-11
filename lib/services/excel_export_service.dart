@@ -77,6 +77,11 @@ class ExcelExportService {
       valueOf: (r) => r.entry.merchantName,
     ),
     ExcelExportField(
+      key: 'customer',
+      label: 'اسم الزبون',
+      valueOf: (r) => r.entry.customerName,
+    ),
+    ExcelExportField(
       key: 'is_external',
       label: 'غرفة خارجية',
       valueOf: (r) => r.entry.isExternal ? 'نعم' : 'لا',
@@ -121,6 +126,11 @@ class ExcelExportService {
       label: 'نص المواصفات',
       valueOf: (r) =>
           r.entry.hasSpecifications ? r.entry.specificationsText : '',
+    ),
+    ExcelExportField(
+      key: 'order_description',
+      label: 'وصف الأوردر',
+      valueOf: (r) => r.entry.orderDescription,
     ),
     ExcelExportField(
       key: 'deficiencies',

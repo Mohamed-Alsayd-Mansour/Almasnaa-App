@@ -31,6 +31,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
       TextEditingController(text: e.pieceCountSnapshot.toString());
   late final _numberingCtrl = TextEditingController(text: e.numbering);
   late final _merchantCtrl = TextEditingController(text: e.merchantName);
+  late final _customerCtrl = TextEditingController(text: e.customerName);
   late final _specTextCtrl = TextEditingController(text: e.specificationsText);
   late final _specCountCtrl =
       TextEditingController(text: e.specialPieceCount.toString());
@@ -60,6 +61,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
       _pieceCtrl,
       _numberingCtrl,
       _merchantCtrl,
+      _customerCtrl,
       _specTextCtrl,
       _specCountCtrl,
       _partNameCtrl,
@@ -82,14 +84,17 @@ class _FullEditDialogState extends State<_FullEditDialog> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     final base = _roomCtrl.text.trim();
+    final partial = _isPartial && !e.isOrder;
+    final specs = _hasSpecs && !e.isOrder;
     final partName = _partNameCtrl.text.trim();
     final currentText = _currentCtrl.text.trim();
     final deficiencyChanged = currentText != e.currentDeficiencies.trim();
 
     final updated = e.copyWith(
-      roomNameSnapshot: _isPartial ? '$partName $base' : base,
+      roomNameSnapshot: partial ? '$partName $base' : base,
       pieceCountSnapshot: int.parse(_pieceCtrl.text.trim()),
       merchantName: e.isExternal ? _merchantCtrl.text.trim() : null,
+      customerName: e.isOrder ? _customerCtrl.text.trim() : null,
       numbering: _numberingCtrl.text.trim(),
       carpenter: _carpenter ?? '',
       service: _service ?? '',
@@ -97,13 +102,13 @@ class _FullEditDialogState extends State<_FullEditDialog> {
       supervisor: _supervisor ?? '',
       repairer: _repairer ?? '',
       wrapLocation: _wrapLocation ?? '',
-      hasSpecifications: _hasSpecs,
+      hasSpecifications: specs,
       specificationsText: _specTextCtrl.text.trim(),
       specialPieceCount: int.tryParse(_specCountCtrl.text.trim()) ?? 0,
-      isPartial: _isPartial,
-      partName: _isPartial ? partName : '',
+      isPartial: partial,
+      partName: partial ? partName : '',
       partialPieceCount:
-          _isPartial ? (int.tryParse(_partCountCtrl.text.trim()) ?? 0) : 0,
+          partial ? (int.tryParse(_partCountCtrl.text.trim()) ?? 0) : 0,
       originalDeficiencies: _originalCtrl.text,
       currentDeficiencies: _currentCtrl.text,
       problem: _problemCtrl.text.trim(),
@@ -128,17 +133,24 @@ class _FullEditDialogState extends State<_FullEditDialog> {
               children: [
                 TextFormField(
                   controller: _roomCtrl,
-                  decoration:
-                      const InputDecoration(labelText: 'اسم الغرفة (بدون الجزء) *'),
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'اسم الغرفة مطلوب' : null,
+                  maxLines: e.isOrder ? 3 : 1,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                      labelText: e.isOrder
+                          ? 'وصف الأوردر *'
+                          : 'اسم الغرفة (بدون الجزء) *'),
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? (e.isOrder ? 'وصف الأوردر مطلوب' : 'اسم الغرفة مطلوب')
+                      : null,
                 ),
                 _gap(),
                 TextFormField(
                   controller: _pieceCtrl,
                   keyboardType: TextInputType.number,
-                  decoration:
-                      const InputDecoration(labelText: 'العدد القياسي للقطع *'),
+                  decoration: InputDecoration(
+                      labelText: e.isOrder
+                          ? 'عدد القطع *'
+                          : 'العدد القياسي للقطع *'),
                   validator: (v) => _requiredInt(v),
                 ),
                 _gap(),
@@ -147,12 +159,13 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                   decoration: const InputDecoration(labelText: 'الترقيم'),
                 ),
                 _gap(),
-                if (e.isExternal) ...[
+                if (e.isExternal || e.isOrder) ...[
                   TextFormField(
-                    controller: _merchantCtrl,
-                    decoration: const InputDecoration(labelText: 'اسم التاجر *'),
+                    controller: e.isOrder ? _customerCtrl : _merchantCtrl,
+                    decoration: InputDecoration(
+                        labelText: e.isOrder ? 'اسم الزبون *' : 'اسم التاجر *'),
                     validator: (v) => (v == null || v.trim().isEmpty)
-                        ? 'اسم التاجر مطلوب'
+                        ? (e.isOrder ? 'اسم الزبون مطلوب' : 'اسم التاجر مطلوب')
                         : null,
                   ),
                   _gap(),
@@ -193,6 +206,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                   onChanged: (v) => setState(() => _wrapLocation = v),
                 ),
                 const Divider(height: 28),
+                if (!e.isOrder) ...[
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('جزء من غرفة',
@@ -243,6 +257,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                         const InputDecoration(labelText: 'عدد قطع المواصفات'),
                     validator: (v) => _hasSpecs ? _requiredInt(v) : null,
                   ),
+                ],
                 ],
                 const Divider(height: 28),
                 TextFormField(

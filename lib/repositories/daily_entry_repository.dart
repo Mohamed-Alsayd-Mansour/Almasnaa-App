@@ -22,6 +22,9 @@ class RecordSearchFilters {
   /// شكل الغرفة: عادية / مواصفات (null = الكل).
   final RoomShape? shape;
 
+  /// ملكية الغرفة: داخلية / خارجية / أوردر (null = الكل).
+  final RoomOwnership? ownership;
+
   const RecordSearchFilters({
     this.keyword = '',
     this.dateFrom,
@@ -33,6 +36,7 @@ class RecordSearchFilters {
     this.wrapLocation,
     this.status,
     this.shape,
+    this.ownership,
   });
 
   bool get isEmpty =>
@@ -45,7 +49,8 @@ class RecordSearchFilters {
       (supervisor == null || supervisor!.isEmpty) &&
       (wrapLocation == null || wrapLocation!.isEmpty) &&
       status == null &&
-      shape == null;
+      shape == null &&
+      ownership == null;
 
   RecordSearchFilters clear() => const RecordSearchFilters();
 }
@@ -92,6 +97,8 @@ class DailyEntryRepository {
     String externalRoomName = '',
     int externalPieceCount = 0,
     String merchantName = '',
+    String customerName = '',
+    bool isOrder = false,
     required String numbering,
     required String carpenter,
     required String service,
@@ -127,8 +134,10 @@ class DailyEntryRepository {
       // تفعيل وسم "مواصفات" — يبقى مستقلًا تمامًا عن specialPieceCount.
       // العدد الكلي للغرفة (خشب + قواطيع + زجاج + رخام) كما في تبويب الغرف.
       pieceCountSnapshot: room?.totalPieceCount ?? externalPieceCount,
-      isExternal: room == null,
-      merchantName: room == null ? merchantName.trim() : '',
+      isExternal: room == null && !isOrder,
+      isOrder: isOrder,
+      merchantName: (room == null && !isOrder) ? merchantName.trim() : '',
+      customerName: isOrder ? customerName.trim() : '',
       numbering: numbering.trim(),
       carpenter: carpenter.trim(),
       service: service.trim(),
@@ -262,6 +271,8 @@ class DailyEntryRepository {
             contains(e.originalDeficiencies) ||
             contains(e.problem) ||
             contains(e.partName) ||
+            contains(e.merchantName) ||
+            contains(e.customerName) ||
             contains(r.dayName) ||
             contains('${e.pieceCountSnapshot}') ||
             contains('${e.effectivePieceCount}') ||
@@ -322,6 +333,10 @@ class DailyEntryRepository {
       rows = rows.where((r) => r.entry.hasSpecifications).toList();
     } else if (filters.shape == RoomShape.regular) {
       rows = rows.where((r) => !r.entry.hasSpecifications).toList();
+    }
+
+    if (filters.ownership != null) {
+      rows = rows.where((r) => r.entry.ownership == filters.ownership).toList();
     }
 
     rows.sort((a, b) {

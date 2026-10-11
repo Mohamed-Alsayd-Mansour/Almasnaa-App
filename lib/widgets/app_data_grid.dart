@@ -88,6 +88,9 @@ class AppDataGrid extends StatefulWidget {
   final AppGridRowBuilder rowBuilder;
   final double rowHeight;
 
+  /// هامش داخلي رأسي (أعلى/أسفل) لخلايا الصفوف.
+  final double cellVerticalPadding;
+
   /// ترتيب اختياري عند الضغط على عنوان العمود.
   final int? sortColumnIndex;
   final bool sortAscending;
@@ -102,6 +105,7 @@ class AppDataGrid extends StatefulWidget {
     required this.rowCount,
     required this.rowBuilder,
     this.rowHeight = 60,
+    this.cellVerticalPadding = 0,
     this.sortColumnIndex,
     this.sortAscending = true,
     this.onSort,
@@ -265,7 +269,8 @@ class _AppDataGridState extends State<AppDataGrid> {
   Widget _bodyCell(int index, double width, Widget child) {
     return Container(
       width: width,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(
+          horizontal: 10, vertical: widget.cellVerticalPadding),
       alignment: Alignment.center,
       decoration: _bodyCellDecoration,
       // أي نص داخل الخلية (حتى لو لم يمر عبر gridText) يُوسَّط.

@@ -161,6 +161,9 @@ class ResearchFilters {
   final RoomEntryStatus? status;
   final ResearchShape? shape;
 
+  /// ملكية الغرفة: داخلية / خارجية / أوردر.
+  final RoomOwnership? ownership;
+
   /// اسم الغرفة الأساسي.
   final String? room;
 
@@ -182,6 +185,7 @@ class ResearchFilters {
     this.dateTo,
     this.status,
     this.shape,
+    this.ownership,
     this.room,
     this.dayName,
     this.people = const {},
@@ -199,6 +203,8 @@ class ResearchFilters {
     bool clearStatus = false,
     ResearchShape? shape,
     bool clearShape = false,
+    RoomOwnership? ownership,
+    bool clearOwnership = false,
     String? room,
     bool clearRoom = false,
     String? dayName,
@@ -212,6 +218,7 @@ class ResearchFilters {
       dateTo: clearTo ? null : (dateTo ?? this.dateTo),
       status: clearStatus ? null : (status ?? this.status),
       shape: clearShape ? null : (shape ?? this.shape),
+      ownership: clearOwnership ? null : (ownership ?? this.ownership),
       room: clearRoom ? null : (room ?? this.room),
       dayName: clearDayName ? null : (dayName ?? this.dayName),
       people: people,
@@ -234,6 +241,7 @@ class ResearchFilters {
       dateTo: dateTo,
       status: status,
       shape: shape,
+      ownership: ownership,
       room: room,
       dayName: dayName,
       people: next,
@@ -246,6 +254,7 @@ class ResearchFilters {
   bool get hasEntryFilters =>
       status != null ||
       shape != null ||
+      ownership != null ||
       room != null ||
       dayName != null ||
       people.isNotEmpty ||
@@ -265,6 +274,7 @@ class ResearchFilters {
       (dateTo == null ? 0 : 1) +
       (status == null ? 0 : 1) +
       (shape == null ? 0 : 1) +
+      (ownership == null ? 0 : 1) +
       (room == null ? 0 : 1) +
       (dayName == null ? 0 : 1) +
       people.length +
@@ -279,6 +289,7 @@ class ResearchFilters {
     if (dateTo != null) parts.add('إلى ${AppDateFormatter.date(dateTo!)}');
     if (status != null) parts.add('الحالة: ${status!.label}');
     if (shape != null) parts.add('الشكل: ${shape!.label}');
+    if (ownership != null) parts.add('الملكية: ${ownership!.label}');
     if (room != null) parts.add('الغرفة: $room');
     if (dayName != null) parts.add('اليوم: $dayName');
     for (final r in PersonRole.values) {
@@ -385,7 +396,8 @@ class ResearchService {
       e.repairer,
       e.wrapLocation,
       e.merchantName,
-      e.isExternal ? 'خارجية' : '',
+      e.customerName,
+      e.ownership.label,
       e.specificationsText,
       e.partName,
       e.originalDeficiencies,
@@ -410,6 +422,7 @@ class ResearchService {
       if (!_inDateRange(data.dateOf(e), f)) return false;
       if (f.status != null && e.status != f.status) return false;
       if (f.shape != null && _shapeOf(e) != f.shape) return false;
+      if (f.ownership != null && e.ownership != f.ownership) return false;
       if (f.room != null && data.roomNameOf(e) != f.room) return false;
       if (f.dayName != null && data.dayNameOf(e).trim() != f.dayName) {
         return false;
@@ -965,11 +978,13 @@ class ResearchService {
           'supervisor': e.supervisor,
           'repairer': e.repairer,
           'merchant': e.merchantName,
+          'customer': e.customerName,
           'external': e.isExternal ? 'نعم' : 'لا',
           'wrap': e.wrapLocation,
           'pieces': '${e.effectivePieceCount}',
           'standard': '${e.pieceCountSnapshot}',
           'specs': e.hasSpecifications ? e.specificationsText : '',
+          'order_desc': e.orderDescription,
           'partial': e.isPartial ? e.partName : '',
           'original_def': e.originalDeficiencies,
           'current_def': e.currentDeficiencies,
@@ -1010,11 +1025,13 @@ class ResearchService {
         ResearchColumn('supervisor', 'المشرف', width: 110),
         ResearchColumn('repairer', 'الرميم', width: 110),
         ResearchColumn('merchant', 'التاجر', width: 120),
+        ResearchColumn('customer', 'اسم الزبون', width: 120),
         ResearchColumn('external', 'غرفة خارجية', width: 100),
         ResearchColumn('wrap', 'مكان اللف', width: 110),
         ResearchColumn('pieces', 'عدد القطع', width: 95, numeric: true),
         ResearchColumn('standard', 'العدد القياسي', width: 110, numeric: true),
         ResearchColumn('specs', 'المواصفات', width: 170),
+        ResearchColumn('order_desc', 'وصف الأوردر', width: 170),
         ResearchColumn('partial', 'اسم الجزء', width: 140),
         ResearchColumn('original_def', 'النواقص الأصلية', width: 200),
         ResearchColumn('current_def', 'النواقص الحالية', width: 200),

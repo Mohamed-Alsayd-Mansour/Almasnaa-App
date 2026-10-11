@@ -34,6 +34,13 @@ class DailyEntry {
   /// يدويًا، ولها [merchantName] بدل أسماء النجار والخدمة وغيرهم.
   final bool isExternal;
 
+  /// أوردر (طلب مخصوص): [roomNameSnapshot] هو وصف الأوردر، و[customerName]
+  /// هو اسم الزبون، و[pieceCountSnapshot] عدد القطع.
+  final bool isOrder;
+
+  /// اسم الزبون (للأوردر فقط)، منفصل عن [merchantName].
+  final String customerName;
+
   /// اسم التاجر (للغرف الخارجية فقط).
   final String merchantName;
 
@@ -89,6 +96,8 @@ class DailyEntry {
     required this.roomNameSnapshot,
     required this.pieceCountSnapshot,
     this.isExternal = false,
+    this.isOrder = false,
+    this.customerName = '',
     this.merchantName = '',
     required this.numbering,
     required this.carpenter,
@@ -126,6 +135,14 @@ class DailyEntry {
       ? partialPieceCount
       : (hasSpecifications ? specialPieceCount : pieceCountSnapshot);
 
+  /// وصف الأوردر (يُخزَّن في [roomNameSnapshot])؛ فارغ لغير الأوردر.
+  String get orderDescription => isOrder ? roomNameSnapshot : '';
+
+  /// ملكية الغرفة: داخلية / خارجية / أوردر.
+  RoomOwnership get ownership => isOrder
+      ? RoomOwnership.order
+      : (isExternal ? RoomOwnership.external : RoomOwnership.internal);
+
   /// اسم الغرفة الأساسي دون اسم الجزء المكتوب قبله (إن وُجد).
   String get baseRoomName {
     if (isPartial && partName.trim().isNotEmpty) {
@@ -140,6 +157,7 @@ class DailyEntry {
   /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)"، أو
   /// "أطفال جودي - مواصفات (7)" عند تفعيل وسم المواصفات.
   String get displayName {
+    if (isOrder) return 'أوردر ($effectivePieceCount) - ${customerName.trim()}';
     final tag = '${isExternal ? ' - خارجية' : ''}'
         '${hasSpecifications ? ' - مواصفات' : ''}';
     return '$roomNameSnapshot$tag ($effectivePieceCount)';
@@ -165,6 +183,7 @@ class DailyEntry {
     String? roomNameSnapshot,
     int? pieceCountSnapshot,
     String? merchantName,
+    String? customerName,
     String? numbering,
     String? carpenter,
     String? service,
@@ -183,6 +202,7 @@ class DailyEntry {
       roomNameSnapshot: roomNameSnapshot,
       pieceCountSnapshot: pieceCountSnapshot,
       merchantName: merchantName,
+      customerName: customerName,
       numbering: numbering,
       carpenter: carpenter,
       service: service,
@@ -206,6 +226,7 @@ class DailyEntry {
     String? roomNameSnapshot,
     int? pieceCountSnapshot,
     String? merchantName,
+    String? customerName,
     String? numbering,
     String? carpenter,
     String? service,
@@ -234,7 +255,9 @@ class DailyEntry {
       roomNameSnapshot: roomNameSnapshot ?? this.roomNameSnapshot,
       pieceCountSnapshot: pieceCountSnapshot ?? this.pieceCountSnapshot,
       isExternal: isExternal,
+      isOrder: isOrder,
       merchantName: merchantName ?? this.merchantName,
+      customerName: customerName ?? this.customerName,
       numbering: numbering ?? this.numbering,
       carpenter: carpenter ?? this.carpenter,
       service: service ?? this.service,
@@ -272,7 +295,9 @@ class DailyEntry {
       'room_name_snapshot': roomNameSnapshot,
       'piece_count_snapshot': pieceCountSnapshot,
       'is_external': isExternal,
+      'is_order': isOrder,
       'merchant_name': merchantName,
+      'customer_name': customerName,
       'numbering': numbering,
       'carpenter': carpenter,
       'service': service,
@@ -308,7 +333,15 @@ class DailyEntry {
       roomNameSnapshot: map['room_name_snapshot'] as String,
       pieceCountSnapshot: map['piece_count_snapshot'] as int,
       isExternal: map['is_external'] as bool? ?? false,
-      merchantName: map['merchant_name'] as String? ?? '',
+      isOrder: map['is_order'] as bool? ?? false,
+      merchantName: (map['is_order'] as bool? ?? false)
+          ? ''
+          : (map['merchant_name'] as String? ?? ''),
+      // توافق مع أوردرات سُجّلت قبل فصل الحقلين: اسم الزبون كان في merchant_name.
+      customerName: map['customer_name'] as String? ??
+          ((map['is_order'] as bool? ?? false)
+              ? (map['merchant_name'] as String? ?? '')
+              : ''),
       numbering: map['numbering'] as String? ?? '',
       carpenter: map['carpenter'] as String? ?? '',
       service: map['service'] as String? ?? '',

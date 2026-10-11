@@ -6,8 +6,8 @@ import '../models/daily_entry.dart';
 
 /// يبني نسخة طباعة بتنسيق RTL منظّم ويعرض حوار الطباعة/الحفظ كـ PDF
 /// الخاص بالنظام. الأعمدة والترتيب ثابتان تمامًا وفق المواصفات:
-/// اسم الغرفة | القطع | ترقيمها | الخدمة | النواقص | المواصفات
-/// ولا تتم إضافة أي عمود آخر غير هذه الستة، سواء لطباعة اليومية أو
+/// اسم الغرفة | القطع | ترقيمها | الخدمة | النواقص | المواصفات | وصف الأوردر
+/// ولا تتم إضافة أي عمود آخر غير هذه السبعة، سواء لطباعة اليومية أو
 /// لطباعة السجل.
 class DailyPrintService {
   DailyPrintService._();
@@ -19,6 +19,7 @@ class DailyPrintService {
     'الخدمة',
     'النواقص',
     'المواصفات',
+    'وصف الأوردر',
   ];
 
   /// نِسَب عرض الأعمدة بترتيبها المنطقي (قبل انعكاس tableDirection).
@@ -26,16 +27,20 @@ class DailyPrintService {
   /// الذي كان يجعل أعمدة الأرقام القصيرة أضيق من عناوينها فيتكسر النص.
   static final _columnWidths = <int, pw.TableColumnWidth>{
     0: const pw.FlexColumnWidth(2.4), // اسم الغرفة
-    1: const pw.FlexColumnWidth(0.9), // القطع
+    1: const pw.FlexColumnWidth(0.8), // القطع
     2: const pw.FlexColumnWidth(1.0), // ترقيمها
     3: const pw.FlexColumnWidth(1.3), // الخدمة
     4: const pw.FlexColumnWidth(1.9), // النواقص
-    5: const pw.FlexColumnWidth(1.9), // المواصفات
+    5: const pw.FlexColumnWidth(1.6), // المواصفات
+    6: const pw.FlexColumnWidth(1.6), // وصف الأوردر
   };
 
   static List<String> _rowOf(DailyEntry e) {
-    final roomName =
-        e.hasSpecifications ? '${e.roomNameSnapshot} - مواصفات' : e.roomNameSnapshot;
+    final roomName = e.isOrder
+        ? 'أوردر - ${e.customerName.trim()}'
+        : (e.hasSpecifications
+            ? '${e.roomNameSnapshot} - مواصفات'
+            : e.roomNameSnapshot);
     final specifications = e.hasSpecifications ? e.specificationsText : '';
     return [
       roomName,
@@ -44,6 +49,7 @@ class DailyPrintService {
       e.service,
       e.currentDeficiencies,
       specifications,
+      e.orderDescription,
     ];
   }
 

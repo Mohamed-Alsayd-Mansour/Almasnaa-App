@@ -13,7 +13,8 @@ import 'providers/daily_provider.dart';
 import 'providers/people_provider.dart';
 import 'providers/records_provider.dart';
 import 'providers/rooms_provider.dart';
-import 'screens/main_tabs_screen.dart';
+import 'screens/splash_screen.dart';
+import 'utils/platform_utils.dart';
 
 /// window_manager يعمل على الديسكتوب فقط
 bool get _isDesktop =>
@@ -21,6 +22,7 @@ bool get _isDesktop =>
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await applyMobileSystemUi();
 
   if (_isDesktop) {
     await windowManager.ensureInitialized();
@@ -76,10 +78,12 @@ class _FullscreenKeys extends StatefulWidget {
   State<_FullscreenKeys> createState() => _FullscreenKeysState();
 }
 
-class _FullscreenKeysState extends State<_FullscreenKeys> {
+class _FullscreenKeysState extends State<_FullscreenKeys>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     HardwareKeyboard.instance.addHandler(_onKey);
 
     // نفعّل Fullscreen بعد ما أول فريم يترسم ويستقر
@@ -93,8 +97,14 @@ class _FullscreenKeysState extends State<_FullscreenKeys> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     HardwareKeyboard.instance.removeHandler(_onKey);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) applyMobileSystemUi();
   }
 
   bool _onKey(KeyEvent event) {
@@ -152,7 +162,7 @@ class _App extends StatelessWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: const MainTabsScreen(),
+      home: const SplashScreen(),
     );
   }
 }

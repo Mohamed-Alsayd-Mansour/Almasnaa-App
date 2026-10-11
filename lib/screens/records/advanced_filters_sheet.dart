@@ -42,6 +42,7 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
   String? _wrapLocation;
   RoomEntryStatus? _status;
   RoomShape? _shape;
+  RoomOwnership? _ownership;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
     _wrapLocation = (wl == null || wl.isEmpty) ? null : wl;
     _status = widget.current.status;
     _shape = widget.current.shape;
+    _ownership = widget.current.ownership;
   }
 
   Future<void> _pickDate({required bool isFrom}) async {
@@ -222,6 +224,28 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                 ),
               ],
             ),
+            const SizedBox(height: 14),
+            const Align(
+              alignment: Alignment.centerRight,
+              child: Text('ملكية الغرفة', style: TextStyle(fontWeight: FontWeight.w700)),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  label: const Text('الكل'),
+                  selected: _ownership == null,
+                  onSelected: (_) => setState(() => _ownership = null),
+                ),
+                for (final o in RoomOwnership.values)
+                  ChoiceChip(
+                    label: Text(o.label),
+                    selected: _ownership == o,
+                    onSelected: (_) => setState(() => _ownership = o),
+                  ),
+              ],
+            ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -248,6 +272,7 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                         wrapLocation: _wrapLocation ?? '',
                         status: _status,
                         shape: _shape,
+                        ownership: _ownership,
                       ));
                     },
                     child: const Text('تطبيق'),

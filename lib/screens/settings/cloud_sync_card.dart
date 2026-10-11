@@ -4,6 +4,7 @@ import '../../core/app_theme.dart';
 import '../../services/backup_service.dart';
 import '../../services/github_sync_service.dart';
 import '../../utils/date_formatter.dart';
+import '../../utils/platform_utils.dart';
 import '../../widgets/common_widgets.dart';
 
 /// قسم "المزامنة السحابية المجانية" في الإعدادات (عبر مستودع GitHub).
@@ -182,13 +183,15 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                   const Text('المزامنة السحابية المجانية',
                       style:
                           TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'احفظ نسخة من بياناتك في مستودع GitHub مجاني، واستعدها على أي جهاز. '
-                    'ملاحظة: GitHub لا يقبل كلمة المرور العادية، فيُستخدم "رمز وصول شخصي" بدلًا منها '
-                    '(Settings ← Developer settings ← Fine-grained tokens ← اختر هذا المستودع فقط ← Contents: Read and write).',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
+                  if (!isMobileApp) ...[
+                    const SizedBox(height: 4),
+                    const Text(
+                      'احفظ نسخة من بياناتك في مستودع GitHub مجاني، واستعدها على أي جهاز. '
+                      'ملاحظة: GitHub لا يقبل كلمة المرور العادية، فيُستخدم "رمز وصول شخصي" بدلًا منها '
+                      '(Settings ← Developer settings ← Fine-grained tokens ← اختر هذا المستودع فقط ← Contents: Read and write).',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.md),
                   TextField(
                     controller: _userCtrl,
@@ -229,13 +232,72 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                         : 'آخر مزامنة: ${AppDateFormatter.dateTime(_lastSync!)}',
                     style: const TextStyle(color: AppColors.textSecondary),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'تنبيه: إن كان المستودع عامًا (Public) فسيستطيع أي شخص قراءة البيانات المرفوعة. '
-                    'يُفضَّل أن يكون المستودع خاصًا (Private). يُحفظ الرمز على هذا الجهاز فقط.',
-                    style: TextStyle(color: Colors.orange.shade800, fontSize: 12.5),
-                  ),
+                  if (!isMobileApp) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'تنبيه: إن كان المستودع عامًا (Public) فسيستطيع أي شخص قراءة البيانات المرفوعة. '
+                      'يُفضَّل أن يكون المستودع خاصًا (Private). يُحفظ الرمز على هذا الجهاز فقط.',
+                      style: TextStyle(color: Colors.orange.shade800, fontSize: 12.5),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.md),
+                  if (isMobileApp)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: _busy ? null : _upload,
+                                icon: const Icon(Icons.cloud_upload_outlined),
+                                label: const Text('رفع إلى السحابة',
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: _busy ? null : _download,
+                                icon: const Icon(Icons.cloud_download_outlined),
+                                label: const Text('تنزيل من السحابة',
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: _busy ? null : _checkAccess,
+                                icon: const Icon(Icons.wifi_tethering_outlined),
+                                label: const Text('اختبار الاتصال',
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: _busy ? null : _save,
+                                icon: const Icon(Icons.save_outlined),
+                                label: const Text('حفظ الإعدادات',
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        TextButton.icon(
+                          onPressed: _busy ? null : _signOut,
+                          icon: const Icon(Icons.logout),
+                          label: const Text('مسح بيانات الاتصال',
+                              textAlign: TextAlign.center),
+                        ),
+                      ],
+                    )
+                  else
                   Wrap(
                     spacing: AppSpacing.sm,
                     runSpacing: AppSpacing.sm,

@@ -61,6 +61,8 @@ class DailyProvider extends ChangeNotifier {
     String externalRoomName = '',
     int externalPieceCount = 0,
     String merchantName = '',
+    String customerName = '',
+    bool isOrder = false,
     required String numbering,
     required String carpenter,
     required String service,
@@ -80,12 +82,16 @@ class DailyProvider extends ChangeNotifier {
     if (activeSession == null) return 'لا توجد يومية نشطة حاليًا.';
     if (numbering.trim().isEmpty) return 'حقل الترقيم مطلوب.';
     if (room == null) {
-      if (externalRoomName.trim().isEmpty) return 'اسم الغرفة مطلوب.';
+      if (externalRoomName.trim().isEmpty) {
+        return isOrder ? 'وصف الأوردر مطلوب.' : 'اسم الغرفة مطلوب.';
+      }
       if (externalPieceCount <= 0) {
         return 'عدد القطع يجب أن يكون أكبر من صفر.';
       }
-      if (merchantName.trim().isEmpty) return 'اسم التاجر مطلوب.';
-    } else if (carpenter.trim().isEmpty) {
+      if (isOrder && customerName.trim().isEmpty) return 'اسم الزبون مطلوب.';
+      if (!isOrder && merchantName.trim().isEmpty) return 'اسم التاجر مطلوب.';
+    }
+    if (!(room == null && !isOrder) && carpenter.trim().isEmpty) {
       return 'اسم النجار مطلوب.';
     }
     if (hasSpecifications && specialPieceCount < 0) {
@@ -105,6 +111,8 @@ class DailyProvider extends ChangeNotifier {
         externalRoomName: externalRoomName,
         externalPieceCount: externalPieceCount,
         merchantName: merchantName,
+        customerName: customerName,
+        isOrder: isOrder,
         numbering: numbering,
         carpenter: carpenter,
         service: service,

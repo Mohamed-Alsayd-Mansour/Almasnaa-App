@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-10T20:38:17.634110",
+  "exported_at": "2026-10-10T21:45:00.981985",
   "data": {
     "rooms": [
       {
@@ -951,7 +951,7 @@
         "service": "الكابينة",
         "installer": "منصور",
         "supervisor": "قدري",
-        "repairer": "حسام",
+        "repairer": "حسام الشناوي",
         "wrap_location": "التجهيز",
         "has_specifications": false,
         "specifications_text": "",
@@ -965,7 +965,7 @@
         "original_missing_count": 0,
         "current_missing_count": 0,
         "created_at": "2026-09-27T20:36:34.662779",
-        "updated_at": "2026-09-27T20:36:34.662779",
+        "updated_at": "2026-10-10T20:49:41.929282",
         "last_deficiency_update_at": null
       },
       {
@@ -981,7 +981,7 @@
         "service": "الكابينة",
         "installer": "منصور",
         "supervisor": "قدري",
-        "repairer": "حسام",
+        "repairer": "حسام الشناوي",
         "wrap_location": "التجهيز",
         "has_specifications": false,
         "specifications_text": "",
@@ -995,7 +995,7 @@
         "original_missing_count": 2,
         "current_missing_count": 0,
         "created_at": "2026-09-27T20:38:55.274737",
-        "updated_at": "2026-10-06T09:16:07.656253",
+        "updated_at": "2026-10-10T20:51:45.513959",
         "last_deficiency_update_at": "2026-10-06T09:16:07.656254"
       },
       {
@@ -2846,7 +2846,7 @@
         "has_specifications": true,
         "specifications_text": "٢ سرير مقاس متر",
         "special_piece_count": 26,
-        "problem": "نجارة (تغيير قشرة)",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -2855,7 +2855,7 @@
         "original_missing_count": 5,
         "current_missing_count": 0,
         "created_at": "2026-10-05T15:33:54.337305",
-        "updated_at": "2026-10-10T17:55:55.829890",
+        "updated_at": "2026-10-10T20:53:58.274197",
         "last_deficiency_update_at": "2026-10-10T17:55:55.829890"
       },
       {
@@ -3536,7 +3536,7 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "تمام أبو ليلى",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -3545,7 +3545,7 @@
         "original_missing_count": 2,
         "current_missing_count": 0,
         "created_at": "2026-10-10T15:35:14.954517",
-        "updated_at": "2026-10-10T15:57:57.908992",
+        "updated_at": "2026-10-10T20:53:37.764540",
         "last_deficiency_update_at": "2026-10-10T15:57:57.908992"
       },
       {
@@ -3566,7 +3566,7 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "تمام أبو ليلى",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -3575,7 +3575,7 @@
         "original_missing_count": 2,
         "current_missing_count": 0,
         "created_at": "2026-10-10T15:36:08.863733",
-        "updated_at": "2026-10-10T15:58:02.525241",
+        "updated_at": "2026-10-10T20:53:41.418807",
         "last_deficiency_update_at": "2026-10-10T15:58:02.525241"
       },
       {

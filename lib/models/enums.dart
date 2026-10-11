@@ -36,3 +36,16 @@ enum RoomShape {
         RoomShape.specs => 'مواصفات',
       };
 }
+
+/// ملكية الغرفة في البحث المتقدم: داخلية، خارجية، أو أوردر (طلب مخصوص).
+enum RoomOwnership {
+  internal,
+  external,
+  order;
+
+  String get label => switch (this) {
+        RoomOwnership.internal => 'داخلية',
+        RoomOwnership.external => 'خارجية',
+        RoomOwnership.order => 'أوردر',
+      };
+}
