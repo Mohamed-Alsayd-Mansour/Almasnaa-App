@@ -370,7 +370,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   TextFormField(
                     controller: _specialPieceCountCtrl,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'عدد قطع غرفة المواصفات *',
                       helperText: isMobileApp
                           ? 'مستقل تماما عن عدد القطع القياسي للغرفة'
