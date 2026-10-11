@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-11T22:57:52.492716",
+  "exported_at": "2026-10-11T23:08:23.074441",
   "data": {
     "rooms": [
       {
@@ -597,28 +597,6 @@
         "marble_piece_count": 0,
         "created_at": "2026-10-10T16:08:35.732984",
         "updated_at": "2026-10-10T16:08:35.732984"
-      },
-      {
-        "id": "d9ceb382-adec-422c-9ac7-e95a3e562d77",
-        "name": "أطفال كارما رمادي ٢م جديدة",
-        "piece_count": 22,
-        "glass_piece_count": 3,
-        "partition_piece_count": 2,
-        "partition_count": 6,
-        "marble_piece_count": 0,
-        "created_at": "2026-10-11T22:56:17.260596",
-        "updated_at": "2026-10-11T22:56:17.260596"
-      },
-      {
-        "id": "b28b8e11-fa0d-441f-b83d-a127a5d0f78d",
-        "name": "أطفال كارما بني ٢م جديدة",
-        "piece_count": 22,
-        "glass_piece_count": 3,
-        "partition_piece_count": 2,
-        "partition_count": 6,
-        "marble_piece_count": 0,
-        "created_at": "2026-10-11T22:56:47.965057",
-        "updated_at": "2026-10-11T22:56:47.965057"
       }
     ],
     "sessions": [
