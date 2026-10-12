@@ -125,7 +125,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
       roomNameSnapshot: partial ? '$partName $baseName' : baseName,
       pieceCountSnapshot: _manual ? extCount : null,
       merchantName: _merchantCtrl.text.trim(),
-      customerName: _ord ? _customerCtrl.text.trim() : null,
+      customerName: _ext ? null : _customerCtrl.text.trim(),
       isPartial: partial,
       partName: partial ? partName : '',
       partialPieceCount: partial ? partCount : 0,
@@ -184,13 +184,13 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                   decoration: const InputDecoration(labelText: 'عدد القطع *'),
                 ),
                 const SizedBox(height: 14),
-                if (_ord) ...[
-                  TextField(
-                    controller: _customerCtrl,
-                    decoration: const InputDecoration(labelText: 'اسم الزبون'),
-                  ),
-                  const SizedBox(height: 14),
-                ],
+              ],
+              if (!_ext) ...[
+                TextField(
+                  controller: _customerCtrl,
+                  decoration: const InputDecoration(labelText: 'اسم الزبون'),
+                ),
+                const SizedBox(height: 14),
               ],
               // اسم التاجر: إلزامي للخارجية، واختياري لباقي الأنواع.
               TextField(

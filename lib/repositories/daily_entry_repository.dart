@@ -137,7 +137,7 @@ class DailyEntryRepository {
       isExternal: room == null && !isOrder,
       isOrder: isOrder,
       merchantName: merchantName.trim(),
-      customerName: isOrder ? customerName.trim() : '',
+      customerName: customerName.trim(),
       numbering: numbering.trim(),
       carpenter: carpenter.trim(),
       service: service.trim(),

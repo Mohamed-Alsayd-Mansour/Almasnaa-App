@@ -94,7 +94,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
       roomNameSnapshot: partial ? '$partName $base' : base,
       pieceCountSnapshot: int.parse(_pieceCtrl.text.trim()),
       merchantName: _merchantCtrl.text.trim(),
-      customerName: e.isOrder ? _customerCtrl.text.trim() : null,
+      customerName: e.isExternal ? null : _customerCtrl.text.trim(),
       numbering: _numberingCtrl.text.trim(),
       carpenter: _carpenter ?? '',
       service: _service ?? '',
@@ -159,12 +159,13 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                   decoration: const InputDecoration(labelText: 'الترقيم'),
                 ),
                 _gap(),
-                if (e.isOrder) ...[
+                if (!e.isExternal) ...[
                   TextFormField(
                     controller: _customerCtrl,
                     decoration: const InputDecoration(labelText: 'اسم الزبون'),
-                    validator: (v) => (v ?? '').trim().isEmpty &&
-                            _merchantCtrl.text.trim().isEmpty
+                    validator: (v) => (e.isOrder &&
+                            (v ?? '').trim().isEmpty &&
+                            _merchantCtrl.text.trim().isEmpty)
                         ? 'أدخل اسم الزبون أو اسم التاجر'
                         : null,
                   ),

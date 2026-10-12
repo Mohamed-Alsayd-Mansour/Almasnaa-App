@@ -283,19 +283,24 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                     },
                   ),
                   const SizedBox(height: 14),
-                  if (_isOrder) ...[
-                    TextFormField(
-                      controller: _customerCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'اسم الزبون',
-                          helperText: 'الأوردر يحمل اسم زبون أو اسم تاجر أو كليهما'),
-                      validator: (v) => (v ?? '').trim().isEmpty &&
-                              _merchantCtrl.text.trim().isEmpty
-                          ? 'أدخل اسم الزبون أو اسم التاجر'
+                ],
+                // اسم الزبون: إلزامي-بديل للأوردر (زبون أو تاجر)، واختياري للداخلية.
+                if (!_isExternal) ...[
+                  TextFormField(
+                    controller: _customerCtrl,
+                    decoration: InputDecoration(
+                      labelText: 'اسم الزبون',
+                      helperText: (_isOrder && !isMobileApp)
+                          ? 'الأوردر يحمل اسم زبون أو اسم تاجر أو كليهما'
                           : null,
                     ),
-                    const SizedBox(height: 14),
-                  ],
+                    validator: (v) => (_isOrder &&
+                            (v ?? '').trim().isEmpty &&
+                            _merchantCtrl.text.trim().isEmpty)
+                        ? 'أدخل اسم الزبون أو اسم التاجر'
+                        : null,
+                  ),
+                  const SizedBox(height: 14),
                 ],
                 // اسم التاجر: إلزامي للخارجية، واختياري لباقي الأنواع.
                 TextFormField(
