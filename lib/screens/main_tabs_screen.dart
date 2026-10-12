@@ -29,6 +29,16 @@ class _MainTabsScreenState extends State<MainTabsScreen>
     super.dispose();
   }
 
+  Tab _tab(IconData icon, String label) => Tab(
+        height: isMobileApp ? 58 : null,
+        iconMargin: EdgeInsets.only(bottom: isMobileApp ? 3 : 10),
+        icon: Icon(icon, size: isMobileApp ? 22 : null),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(label, maxLines: 1, softWrap: false),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +48,20 @@ class _MainTabsScreenState extends State<MainTabsScreen>
           controller: _tabController,
           indicatorColor: Colors.white,
           indicatorWeight: 3,
-          labelStyle: const TextStyle(fontWeight: FontWeight.w800),
+          // على الهاتف: عناوين أصغر وحشو أقل ليتسع النص كاملًا تحت الأيقونة.
+          labelPadding: isMobileApp
+              ? const EdgeInsets.symmetric(horizontal: 2)
+              : null,
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.w800, fontSize: isMobileApp ? 12.5 : null),
+          unselectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.w800, fontSize: isMobileApp ? 12.5 : null),
           tabs: [
-            const Tab(icon: Icon(Icons.meeting_room_outlined), text: 'الغرف'),
-            const Tab(icon: Icon(Icons.event_note_outlined), text: 'اليومية'),
-            const Tab(icon: Icon(Icons.fact_check_outlined), text: 'السجل'),
-            const Tab(icon: Icon(Icons.settings_outlined), text: 'الإعدادات'),
-            if (_withResearch)
-              const Tab(icon: Icon(Icons.query_stats_outlined), text: 'الاستعلامات'),
+            _tab(Icons.meeting_room_outlined, 'الغرف'),
+            _tab(Icons.event_note_outlined, 'اليومية'),
+            _tab(Icons.fact_check_outlined, 'السجل'),
+            _tab(Icons.settings_outlined, 'الإعدادات'),
+            if (_withResearch) _tab(Icons.query_stats_outlined, 'الاستعلامات'),
           ],
         ),
       ),

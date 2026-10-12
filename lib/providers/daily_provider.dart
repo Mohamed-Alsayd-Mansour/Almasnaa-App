@@ -88,7 +88,11 @@ class DailyProvider extends ChangeNotifier {
       if (externalPieceCount <= 0) {
         return 'عدد القطع يجب أن يكون أكبر من صفر.';
       }
-      if (isOrder && customerName.trim().isEmpty) return 'اسم الزبون مطلوب.';
+      if (isOrder &&
+          customerName.trim().isEmpty &&
+          merchantName.trim().isEmpty) {
+        return 'أدخل اسم الزبون أو اسم التاجر (أو كليهما).';
+      }
       if (!isOrder && merchantName.trim().isEmpty) return 'اسم التاجر مطلوب.';
     }
     if (!(room == null && !isOrder) && carpenter.trim().isEmpty) {

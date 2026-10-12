@@ -136,7 +136,7 @@ class DailyEntryRepository {
       pieceCountSnapshot: room?.totalPieceCount ?? externalPieceCount,
       isExternal: room == null && !isOrder,
       isOrder: isOrder,
-      merchantName: (room == null && !isOrder) ? merchantName.trim() : '',
+      merchantName: merchantName.trim(),
       customerName: isOrder ? customerName.trim() : '',
       numbering: numbering.trim(),
       carpenter: carpenter.trim(),

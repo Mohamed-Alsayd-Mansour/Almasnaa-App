@@ -93,7 +93,7 @@ class _FullEditDialogState extends State<_FullEditDialog> {
     final updated = e.copyWith(
       roomNameSnapshot: partial ? '$partName $base' : base,
       pieceCountSnapshot: int.parse(_pieceCtrl.text.trim()),
-      merchantName: e.isExternal ? _merchantCtrl.text.trim() : null,
+      merchantName: _merchantCtrl.text.trim(),
       customerName: e.isOrder ? _customerCtrl.text.trim() : null,
       numbering: _numberingCtrl.text.trim(),
       carpenter: _carpenter ?? '',
@@ -159,17 +159,28 @@ class _FullEditDialogState extends State<_FullEditDialog> {
                   decoration: const InputDecoration(labelText: 'الترقيم'),
                 ),
                 _gap(),
-                if (e.isExternal || e.isOrder) ...[
+                if (e.isOrder) ...[
                   TextFormField(
-                    controller: e.isOrder ? _customerCtrl : _merchantCtrl,
-                    decoration: InputDecoration(
-                        labelText: e.isOrder ? 'اسم الزبون *' : 'اسم التاجر *'),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? (e.isOrder ? 'اسم الزبون مطلوب' : 'اسم التاجر مطلوب')
+                    controller: _customerCtrl,
+                    decoration: const InputDecoration(labelText: 'اسم الزبون'),
+                    validator: (v) => (v ?? '').trim().isEmpty &&
+                            _merchantCtrl.text.trim().isEmpty
+                        ? 'أدخل اسم الزبون أو اسم التاجر'
                         : null,
                   ),
                   _gap(),
                 ],
+                // اسم التاجر: إلزامي للخارجية، واختياري لباقي الأنواع.
+                TextFormField(
+                  controller: _merchantCtrl,
+                  decoration: InputDecoration(
+                      labelText: e.isExternal ? 'اسم التاجر *' : 'اسم التاجر'),
+                  validator: (v) =>
+                      (e.isExternal && (v == null || v.trim().isEmpty))
+                          ? 'اسم التاجر مطلوب'
+                          : null,
+                ),
+                _gap(),
                 PersonDropdownField(
                   role: PersonRole.carpenter,
                   value: _carpenter,

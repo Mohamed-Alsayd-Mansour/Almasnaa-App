@@ -288,8 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: ElevatedButton.icon(
                             onPressed: _busy ? null : _export,
                             icon: const Icon(Icons.file_download_outlined),
-                            label: const Text('تصدير JSON',
-                                textAlign: TextAlign.center),
+                            label: const Text('تصدير', textAlign: TextAlign.center),
                           ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
@@ -297,8 +296,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: OutlinedButton.icon(
                             onPressed: _busy ? null : _import,
                             icon: const Icon(Icons.file_upload_outlined),
-                            label: const Text('استيراد JSON',
-                                textAlign: TextAlign.center),
+                            label: const Text('استيراد', textAlign: TextAlign.center),
                           ),
                         ),
                       ],
@@ -347,8 +345,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: AppSpacing.md),
         _SectionCard(
           title: 'قوائم الأسماء',
-          subtitle:
-              'هذه القوائم تظهر كخيارات عند تسجيل غرفة في اليومية. عدّل الاسم أو دوره، أو أضف اسمًا جديدًا.',
+          subtitle: isAndroidApp
+              ? null
+              : 'هذه القوائم تظهر كخيارات عند تسجيل غرفة في اليومية. عدّل الاسم أو دوره، أو أضف اسمًا جديدًا.',
           trailing: ElevatedButton.icon(
             onPressed: () => _addPerson(),
             icon: const Icon(Icons.add),

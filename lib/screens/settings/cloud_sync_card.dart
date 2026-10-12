@@ -251,8 +251,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                               child: ElevatedButton.icon(
                                 onPressed: _busy ? null : _upload,
                                 icon: const Icon(Icons.cloud_upload_outlined),
-                                label: const Text('رفع إلى السحابة',
-                                    textAlign: TextAlign.center),
+                                label: const Text('الرفع', textAlign: TextAlign.center),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -260,8 +259,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                               child: OutlinedButton.icon(
                                 onPressed: _busy ? null : _download,
                                 icon: const Icon(Icons.cloud_download_outlined),
-                                label: const Text('تنزيل من السحابة',
-                                    textAlign: TextAlign.center),
+                                label: const Text('التنزيل', textAlign: TextAlign.center),
                               ),
                             ),
                           ],
@@ -273,8 +271,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                               child: OutlinedButton.icon(
                                 onPressed: _busy ? null : _checkAccess,
                                 icon: const Icon(Icons.wifi_tethering_outlined),
-                                label: const Text('اختبار الاتصال',
-                                    textAlign: TextAlign.center),
+                                label: const Text('الاختبار', textAlign: TextAlign.center),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -282,8 +279,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                               child: OutlinedButton.icon(
                                 onPressed: _busy ? null : _save,
                                 icon: const Icon(Icons.save_outlined),
-                                label: const Text('حفظ الإعدادات',
-                                    textAlign: TextAlign.center),
+                                label: const Text('الحفظ', textAlign: TextAlign.center),
                               ),
                             ),
                           ],

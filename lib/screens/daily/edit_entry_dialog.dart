@@ -104,11 +104,14 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
     if (_manual &&
         (_extNameCtrl.text.trim().isEmpty ||
             extCount <= 0 ||
-            (_ord ? _customerCtrl : _merchantCtrl).text.trim().isEmpty)) {
+            (_ord
+                    ? (_customerCtrl.text.trim().isEmpty &&
+                        _merchantCtrl.text.trim().isEmpty)
+                    : (_ext && _merchantCtrl.text.trim().isEmpty)))) {
       showErrorSnackBar(
           context,
           _ord
-              ? 'أدخل وصف الأوردر وعدد القطع (أكبر من صفر) واسم الزبون.'
+              ? 'أدخل وصف الأوردر وعدد القطع (أكبر من صفر) واسم الزبون أو التاجر.'
               : 'أدخل اسم الغرفة وعدد القطع (أكبر من صفر) واسم التاجر.');
       return;
     }
@@ -121,7 +124,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
     final updated = widget.entry.copyWithFields(
       roomNameSnapshot: partial ? '$partName $baseName' : baseName,
       pieceCountSnapshot: _manual ? extCount : null,
-      merchantName: _ext ? _merchantCtrl.text.trim() : null,
+      merchantName: _merchantCtrl.text.trim(),
       customerName: _ord ? _customerCtrl.text.trim() : null,
       isPartial: partial,
       partName: partial ? partName : '',
@@ -181,13 +184,21 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                   decoration: const InputDecoration(labelText: 'عدد القطع *'),
                 ),
                 const SizedBox(height: 14),
-                TextField(
-                  controller: _ord ? _customerCtrl : _merchantCtrl,
-                  decoration: InputDecoration(
-                      labelText: _ord ? 'اسم الزبون *' : 'اسم التاجر *'),
-                ),
-                const SizedBox(height: 14),
+                if (_ord) ...[
+                  TextField(
+                    controller: _customerCtrl,
+                    decoration: const InputDecoration(labelText: 'اسم الزبون'),
+                  ),
+                  const SizedBox(height: 14),
+                ],
               ],
+              // اسم التاجر: إلزامي للخارجية، واختياري لباقي الأنواع.
+              TextField(
+                controller: _merchantCtrl,
+                decoration: InputDecoration(
+                    labelText: _ext ? 'اسم التاجر *' : 'اسم التاجر'),
+              ),
+              const SizedBox(height: 14),
               if (!_ext) ...[
               PersonDropdownField(
                 role: PersonRole.carpenter,

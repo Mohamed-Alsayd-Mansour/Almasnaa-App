@@ -37,7 +37,7 @@ class DailyPrintService {
 
   static List<String> _rowOf(DailyEntry e) {
     final roomName = e.isOrder
-        ? 'أوردر - ${e.customerName.trim()}'
+        ? (e.orderParty.isEmpty ? 'أوردر' : 'أوردر - ${e.orderParty}')
         : (e.hasSpecifications
             ? '${e.roomNameSnapshot} - مواصفات'
             : e.roomNameSnapshot);

@@ -283,26 +283,30 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                     },
                   ),
                   const SizedBox(height: 14),
-                  if (_isOrder)
+                  if (_isOrder) ...[
                     TextFormField(
                       controller: _customerCtrl,
-                      decoration:
-                          const InputDecoration(labelText: 'اسم الزبون *'),
-                      validator: (v) => (v ?? '').trim().isEmpty
-                          ? 'اسم الزبون مطلوب'
-                          : null,
-                    )
-                  else
-                    TextFormField(
-                      controller: _merchantCtrl,
-                      decoration:
-                          const InputDecoration(labelText: 'اسم التاجر *'),
-                      validator: (v) => (v ?? '').trim().isEmpty
-                          ? 'اسم التاجر مطلوب'
+                      decoration: const InputDecoration(
+                          labelText: 'اسم الزبون',
+                          helperText: 'الأوردر يحمل اسم زبون أو اسم تاجر أو كليهما'),
+                      validator: (v) => (v ?? '').trim().isEmpty &&
+                              _merchantCtrl.text.trim().isEmpty
+                          ? 'أدخل اسم الزبون أو اسم التاجر'
                           : null,
                     ),
-                  const SizedBox(height: 14),
+                    const SizedBox(height: 14),
+                  ],
                 ],
+                // اسم التاجر: إلزامي للخارجية، واختياري لباقي الأنواع.
+                TextFormField(
+                  controller: _merchantCtrl,
+                  decoration: InputDecoration(
+                      labelText: _isExternal ? 'اسم التاجر *' : 'اسم التاجر'),
+                  validator: (v) => (_isExternal && (v ?? '').trim().isEmpty)
+                      ? 'اسم التاجر مطلوب'
+                      : null,
+                ),
+                const SizedBox(height: 14),
                 if (!_isExternal) ...[
                 PersonDropdownField(
                   role: PersonRole.carpenter,
@@ -406,8 +410,18 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   children: [
                     const Icon(Icons.calculate_outlined, size: 18),
                     const SizedBox(width: 6),
-                    Text('عدد القطع الناقصة (محسوب تلقائيًا): $_liveMissingCount',
-                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    // على الهاتف يصغَّر الخط تلقائيًا ليظهر النص كاملًا في سطر واحد.
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                            'عدد القطع الناقصة (محسوب تلقائيًا): $_liveMissingCount',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(fontWeight: FontWeight.w700)),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 14),

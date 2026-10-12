@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/app_theme.dart';
+import '../utils/platform_utils.dart';
 
 /// تعريف عمود في [AppDataGrid]: العنوان والعرض (بالبكسل المنطقي).
 class AppGridColumn {
@@ -218,7 +219,7 @@ class _AppDataGridState extends State<AppDataGrid> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: column.singleLine
+          child: (column.singleLine || isMobileApp)
               ? FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
@@ -278,6 +279,24 @@ class _AppDataGridState extends State<AppDataGrid> {
     );
   }
 
+  /// أقل عرض يتسع لعنوان العمود في سطر واحد (الحشو الأفقي + أيقونة الترتيب).
+  double _headerMinWidth(int index) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: widget.columns[index].label,
+        style: const TextStyle(
+          fontFamily: 'Cairo',
+          fontWeight: FontWeight.w800,
+          fontSize: 13.5,
+        ),
+      ),
+      maxLines: 1,
+      textDirection: TextDirection.rtl,
+    )..layout();
+    final sortIcon = widget.onSort != null ? 18.0 : 0.0;
+    return painter.width + 20 + sortIcon + 8;
+  }
+
   Widget _buildRow(int index, List<double> widths) {
     final row = widget.rowBuilder(index);
     final content = Row(
@@ -305,14 +324,21 @@ class _AppDataGridState extends State<AppDataGrid> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = widget.columns;
-        final baseWidth =
-            columns.fold<double>(0, (sum, column) => sum + column.width);
+        // على الهاتف: عنوان العمود في سطر واحد وبنفس حجم الخط، فيُوسَّع
+        // العمود تلقائيًا ليتسع للعنوان بدل نزوله لسطرين.
+        final colWidths = [
+          for (var i = 0; i < columns.length; i++)
+            isMobileApp
+                ? math.max(columns[i].width, _headerMinWidth(i))
+                : columns[i].width,
+        ];
+        final baseWidth = colWidths.fold<double>(0, (sum, w) => sum + w);
         final available =
             constraints.maxWidth.isFinite ? constraints.maxWidth : baseWidth;
         // إذا كان مجموع الأعمدة أصغر من عرض الشاشة نوزّع المساحة الزائدة.
         final scale =
             (baseWidth > 0 && baseWidth < available) ? available / baseWidth : 1.0;
-        final widths = [for (final column in columns) column.width * scale];
+        final widths = [for (final w in colWidths) w * scale];
         final totalWidth = baseWidth * scale;
 
         final custom = _customInput;

@@ -135,6 +135,12 @@ class DailyEntry {
       ? partialPieceCount
       : (hasSpecifications ? specialPieceCount : pieceCountSnapshot);
 
+  /// صاحب الأوردر للعرض: اسم الزبون، وإن لم يوجد فاسم التاجر (الأوردر قد
+  /// يحمل أيًّا منهما أو كليهما).
+  String get orderParty => customerName.trim().isNotEmpty
+      ? customerName.trim()
+      : merchantName.trim();
+
   /// وصف الأوردر (يُخزَّن في [roomNameSnapshot])؛ فارغ لغير الأوردر.
   String get orderDescription => isOrder ? roomNameSnapshot : '';
 
@@ -157,7 +163,12 @@ class DailyEntry {
   /// اسم الغرفة كما يُعرض في الجداول: "أطفال جودي (25)"، أو
   /// "أطفال جودي - مواصفات (7)" عند تفعيل وسم المواصفات.
   String get displayName {
-    if (isOrder) return 'أوردر ($effectivePieceCount) - ${customerName.trim()}';
+    if (isOrder) {
+      final who = orderParty;
+      return who.isEmpty
+          ? 'أوردر ($effectivePieceCount)'
+          : 'أوردر ($effectivePieceCount) - $who';
+    }
     final tag = '${isExternal ? ' - خارجية' : ''}'
         '${hasSpecifications ? ' - مواصفات' : ''}';
     return '$roomNameSnapshot$tag ($effectivePieceCount)';
@@ -334,7 +345,9 @@ class DailyEntry {
       pieceCountSnapshot: map['piece_count_snapshot'] as int,
       isExternal: map['is_external'] as bool? ?? false,
       isOrder: map['is_order'] as bool? ?? false,
-      merchantName: (map['is_order'] as bool? ?? false)
+      // توافق: الأوردرات القديمة (بلا customer_name) كان زبونها في merchant_name.
+      merchantName: ((map['is_order'] as bool? ?? false) &&
+              map['customer_name'] == null)
           ? ''
           : (map['merchant_name'] as String? ?? ''),
       // توافق مع أوردرات سُجّلت قبل فصل الحقلين: اسم الزبون كان في merchant_name.

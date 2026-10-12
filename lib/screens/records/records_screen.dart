@@ -136,7 +136,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
     AppGridColumn('النواقص', width: 220),
     AppGridColumn('المشكلة', width: 200),
     AppGridColumn('عدد الناقص', width: 100, numeric: true),
-    AppGridColumn('الحالة', width: 120),
+    AppGridColumn('الحالة', width: 150),
     AppGridColumn('تعديل', width: 80),
   ];
 
