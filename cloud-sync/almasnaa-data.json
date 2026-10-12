@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-12T20:02:57.397006",
+  "exported_at": "2026-10-12T21:26:44.204798",
   "data": {
     "rooms": [
       {
@@ -2822,7 +2822,7 @@
         "has_specifications": true,
         "specifications_text": "٢ سرير مقاس متر - دهان مختلف - التسريحة قطعة واحدة",
         "special_piece_count": 26,
-        "problem": "نجارة (عمل قاطوع جديد)",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -2831,7 +2831,7 @@
         "original_missing_count": 6,
         "current_missing_count": 0,
         "created_at": "2026-10-05T10:08:26.397740",
-        "updated_at": "2026-10-12T18:08:09.625802",
+        "updated_at": "2026-10-12T21:26:19.303321",
         "last_deficiency_update_at": "2026-10-12T18:08:09.625802"
       },
       {
@@ -3878,7 +3878,7 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "رجعت نجارة (تغيير قشرة)",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -3887,7 +3887,7 @@
         "original_missing_count": 1,
         "current_missing_count": 0,
         "created_at": "2026-10-11T10:07:34.911136",
-        "updated_at": "2026-10-12T18:07:24.754741",
+        "updated_at": "2026-10-12T21:25:55.742954",
         "last_deficiency_update_at": "2026-10-12T18:07:24.754741"
       },
       {
@@ -4166,7 +4166,7 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "رم",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -4175,7 +4175,7 @@
         "original_missing_count": 1,
         "current_missing_count": 0,
         "created_at": "2026-10-12T14:31:25.247682",
-        "updated_at": "2026-10-12T18:06:58.861654",
+        "updated_at": "2026-10-12T21:25:36.069551",
         "last_deficiency_update_at": "2026-10-12T18:06:58.861654"
       },
       {
