@@ -152,7 +152,13 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
     final rooms = context.watch<RoomsProvider>().rooms;
 
     return AlertDialog(
-      title: const Text('إضافة غرفة إلى اليومية'),
+      title: isMobileApp
+          ? const FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text('إضافة غرفة لليومية', maxLines: 1, softWrap: false),
+            )
+          : const Text('إضافة غرفة إلى اليومية'),
       content: SizedBox(
         width: 480,
         child: Form(
@@ -370,8 +376,10 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                     controller: _specificationsCtrl,
                     maxLines: 4,
                     minLines: 2,
-                    decoration: const InputDecoration(
-                      labelText: 'المواصفات والتعديلات الشكلية',
+                    decoration: InputDecoration(
+                      labelText: isMobileApp
+                          ? 'المواصفات والتعديلات'
+                          : 'المواصفات والتعديلات الشكلية',
                       alignLabelWithHint: true,
                     ),
                   ),
@@ -382,7 +390,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                     decoration: InputDecoration(
                       labelText: 'عدد قطع غرفة المواصفات *',
                       helperText: isMobileApp
-                          ? 'مستقل تماما عن عدد القطع القياسي للغرفة'
+                          ? 'هذا العدد مستقل تماما'
                           : 'مستقل تمامًا عن عدد القطع القياسي للغرفة العادية.',
                     ),
                     validator: (v) {
@@ -475,8 +483,13 @@ class _ReadonlyPieceCount extends StatelessWidget {
       readOnly: true,
       initialValue: room == null ? '' : '${room!.totalPieceCount}',
       key: ValueKey(room?.id),
-      decoration: const InputDecoration(
-        labelText: 'عدد القطع الكلي (تلقائي من بيانات الغرفة)',
+      decoration: InputDecoration(
+        labelText:
+            isMobileApp ? 'عدد القطع الكلي (تلقائي)' : 'عدد القطع الكلي (تلقائي من بيانات الغرفة)',
+        // ارتفاع أكبر قليلًا ليظهر حرف الياء كاملًا على الهاتف.
+        contentPadding: isMobileApp
+            ? const EdgeInsets.symmetric(horizontal: 16, vertical: 22)
+            : null,
       ),
     );
   }

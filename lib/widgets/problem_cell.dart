@@ -9,11 +9,20 @@ class ProblemCell extends StatelessWidget {
   final bool editable;
   final Future<void> Function(String newText)? onSave;
 
+  /// نصوص الخلية ونافذتها (الافتراضي: "المشكلة"). تُستخدم الخلية نفسها
+  /// لتعديل المواصفات ووصف الأوردر مباشرة من الجدول.
+  final String title;
+  final String emptyLabel;
+  final String hint;
+
   const ProblemCell({
     super.key,
     required this.text,
     this.editable = false,
     this.onSave,
+    this.title = 'المشكلة',
+    this.emptyLabel = 'إضافة مشكلة',
+    this.hint = 'اكتب سبب القطع الناقصة...',
   });
 
   @override
@@ -28,6 +37,8 @@ class ProblemCell extends StatelessWidget {
           initialText: text,
           editable: editable,
           onSave: onSave,
+          title: title,
+          hint: hint,
         ),
       ),
       child: Padding(
@@ -37,7 +48,7 @@ class ProblemCell extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                isEmpty ? (editable ? 'إضافة مشكلة' : '') : text,
+                isEmpty ? (editable ? emptyLabel : '') : text,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
@@ -62,11 +73,15 @@ class _ProblemDialog extends StatefulWidget {
   final String initialText;
   final bool editable;
   final Future<void> Function(String newText)? onSave;
+  final String title;
+  final String hint;
 
   const _ProblemDialog({
     required this.initialText,
     required this.editable,
     required this.onSave,
+    required this.title,
+    required this.hint,
   });
 
   @override
@@ -87,7 +102,7 @@ class _ProblemDialogState extends State<_ProblemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('المشكلة'),
+      title: Text(widget.title),
       content: SizedBox(
         width: 420,
         child: TextField(
@@ -95,8 +110,8 @@ class _ProblemDialogState extends State<_ProblemDialog> {
           maxLines: 6,
           minLines: 3,
           readOnly: !widget.editable,
-          decoration: const InputDecoration(
-            hintText: 'اكتب سبب القطع الناقصة...',
+          decoration: InputDecoration(
+            hintText: widget.hint,
           ),
         ),
       ),

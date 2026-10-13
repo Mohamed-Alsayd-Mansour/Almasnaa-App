@@ -280,8 +280,36 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           gridText(e.merchantName),
                           gridText(e.customerName),
                           gridOneLine(e.wrapLocation),
-                          gridText(e.hasSpecifications ? e.specificationsText : ''),
-                          gridText(e.orderDescription),
+                          e.hasSpecifications
+                              ? ProblemCell(
+                                  text: e.specificationsText,
+                                  editable: true,
+                                  title: 'المواصفات',
+                                  emptyLabel: 'إضافة مواصفات',
+                                  hint: 'اكتب المواصفات والتعديلات الشكلية...',
+                                  onSave: (newText) => context
+                                      .read<RecordsProvider>()
+                                      .updateSpecifications(
+                                        entryId: e.id,
+                                        newText: newText,
+                                      ),
+                                )
+                              : gridText(''),
+                          e.isOrder
+                              ? ProblemCell(
+                                  text: e.orderDescription,
+                                  editable: true,
+                                  title: 'وصف الأوردر',
+                                  emptyLabel: 'إضافة وصف',
+                                  hint: 'اكتب وصف الأوردر...',
+                                  onSave: (newText) => context
+                                      .read<RecordsProvider>()
+                                      .updateOrderDescription(
+                                        entryId: e.id,
+                                        newText: newText,
+                                      ),
+                                )
+                              : gridText(''),
                           DeficiencyCell(
                             text: e.currentDeficiencies,
                             missingCount: e.currentMissingPiecesCount,

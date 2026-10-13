@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/platform_utils.dart';
 import '../../models/daily_entry.dart';
 import '../../models/person.dart';
 import '../../utils/deficiency_calculator.dart';
@@ -122,12 +123,30 @@ class _FullEditDialogState extends State<_FullEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('تعديل شامل: ${e.displayName}'),
+      // مسافة كافية بين العنوان وأول حقل ليظهر عنوان الحقل كاملًا.
+      titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+      title: isMobileApp
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('تعديل شامل', textAlign: TextAlign.center),
+                const SizedBox(height: 8),
+                Text(
+                  e.displayName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+              ],
+            )
+          : Text('تعديل شامل: ${e.displayName}'),
       content: SizedBox(
         width: 520,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

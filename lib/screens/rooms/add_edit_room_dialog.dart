@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/platform_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/room.dart';
@@ -175,9 +176,10 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
               TextFormField(
                 controller: _partitionCountCtrl,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'عدد قواطيع الغرفة *',
-                  helperText: 'للعرض فقط — لا يؤثر على أي مجموع',
+                  helperText:
+                      isMobileApp ? null : 'للعرض فقط — لا يؤثر على أي مجموع',
                 ),
                 validator: (v) {
                   final n = int.tryParse(v?.trim() ?? '');
@@ -200,13 +202,33 @@ class _AddEditRoomDialogState extends State<AddEditRoomDialog> {
                 },
               ),
               const SizedBox(height: 14),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'عدد القطع الكلي: $_liveTotal    |    عدد ورق الطباعة: $_livePaper',
-                  style: const TextStyle(fontWeight: FontWeight.w800),
+              if (isMobileApp)
+                // على الهاتف: كل مجموع في سطر مستقل وفي المنتصف.
+                Column(
+                  children: [
+                    const SizedBox(height: 6),
+                    Text(
+                      'عدد القطع الكلي: $_liveTotal',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'عدد ورق الطباعة: $_livePaper',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 6),
+                  ],
+                )
+              else
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'عدد القطع الكلي: $_liveTotal    |    عدد ورق الطباعة: $_livePaper',
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ),
-              ),
             ],
           ),
           ),

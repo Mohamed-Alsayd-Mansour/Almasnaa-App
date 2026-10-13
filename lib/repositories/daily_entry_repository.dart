@@ -220,6 +220,34 @@ class DailyEntryRepository {
     return updated;
   }
 
+  /// تعديل نص المواصفات لإدخال واحد (من جدول السجل مباشرة).
+  Future<DailyEntry> updateSpecificationsText({
+    required String entryId,
+    required String newText,
+  }) async {
+    final entries = await _readAllEntries();
+    final idx = entries.indexWhere((e) => e.id == entryId);
+    if (idx == -1) throw StateError('السجل غير موجود.');
+    final updated = entries[idx].withUpdatedSpecifications(newText.trim());
+    entries[idx] = updated;
+    await _writeAllEntries(entries);
+    return updated;
+  }
+
+  /// تعديل وصف الأوردر لإدخال واحد (من جدول السجل مباشرة).
+  Future<DailyEntry> updateOrderDescription({
+    required String entryId,
+    required String newText,
+  }) async {
+    final entries = await _readAllEntries();
+    final idx = entries.indexWhere((e) => e.id == entryId);
+    if (idx == -1) throw StateError('السجل غير موجود.');
+    final updated = entries[idx].withUpdatedOrderDescription(newText.trim());
+    entries[idx] = updated;
+    await _writeAllEntries(entries);
+    return updated;
+  }
+
   /// استبدال إدخال كامل بالنسخة المعدَّلة (التعديل الشامل من تبويب السجل).
   /// تُحفظ النسخة كما هي دون أي تعديل إضافي.
   Future<DailyEntry> replaceEntry(DailyEntry entry) async {

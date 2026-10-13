@@ -104,8 +104,8 @@ class _RoomsScreenState extends State<RoomsScreen> {
               Expanded(
                 child: Consumer<RoomsProvider>(
                   builder: (context, provider, _) => AppSearchField(
-                    label: 'البحث في الغرف',
-                    hint: 'اكتب اسم الغرفة...',
+                    label: isMobileApp ? 'البحث' : 'البحث في الغرف',
+                    hint: isMobileApp ? 'الغرفة' : 'اكتب اسم الغرفة...',
                     onChanged: provider.search,
                   ),
                 ),

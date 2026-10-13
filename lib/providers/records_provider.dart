@@ -122,6 +122,55 @@ class RecordsProvider extends ChangeNotifier {
     }
   }
 
+  /// تعديل نص المواصفات من داخل جدول السجل مباشرة.
+  Future<String?> updateSpecifications({
+    required String entryId,
+    required String newText,
+  }) async {
+    try {
+      final updated = await _repository.updateSpecificationsText(
+        entryId: entryId,
+        newText: newText,
+      );
+      _replaceRow(updated);
+      return null;
+    } catch (e) {
+      return 'تعذر تحديث المواصفات: $e';
+    }
+  }
+
+  /// تعديل وصف الأوردر من داخل جدول السجل مباشرة.
+  Future<String?> updateOrderDescription({
+    required String entryId,
+    required String newText,
+  }) async {
+    if (newText.trim().isEmpty) return 'وصف الأوردر مطلوب.';
+    try {
+      final updated = await _repository.updateOrderDescription(
+        entryId: entryId,
+        newText: newText,
+      );
+      _replaceRow(updated);
+      return null;
+    } catch (e) {
+      return 'تعذر تحديث وصف الأوردر: $e';
+    }
+  }
+
+  void _replaceRow(DailyEntry updated) {
+    results = results
+        .map((r) => r.entry.id == updated.id
+            ? RecordRow(
+                entry: updated,
+                dayName: r.dayName,
+                date: r.date,
+                sessionStatus: r.sessionStatus,
+              )
+            : r)
+        .toList();
+    notifyListeners();
+  }
+
   /// التعديل الشامل لسجل كامل (بعد التحقق من كلمة المرور في الواجهة).
   Future<String?> replaceEntry(DailyEntry updated) async {
     if (updated.roomNameSnapshot.trim().isEmpty) return 'اسم الغرفة مطلوب.';

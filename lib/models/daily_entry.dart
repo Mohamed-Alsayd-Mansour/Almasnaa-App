@@ -184,6 +184,16 @@ class DailyEntry {
     );
   }
 
+  /// نسخة جديدة بعد تعديل نص المواصفات فقط.
+  DailyEntry withUpdatedSpecifications(String newText) {
+    return copyWith(specificationsText: newText);
+  }
+
+  /// نسخة جديدة بعد تعديل وصف الأوردر فقط (يُخزَّن في [roomNameSnapshot]).
+  DailyEntry withUpdatedOrderDescription(String newText) {
+    return copyWith(roomNameSnapshot: newText);
+  }
+
   /// نسخة جديدة بعد تعديل نص المشكلة فقط.
   DailyEntry withUpdatedProblem(String newText) {
     return copyWith(problem: newText);
