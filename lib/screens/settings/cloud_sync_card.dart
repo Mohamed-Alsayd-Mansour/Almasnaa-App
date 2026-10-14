@@ -170,6 +170,11 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
     showSuccessSnackBar(context, 'تم مسح بيانات الاتصال من هذا الجهاز.');
   }
 
+  /// ارتفاع موحَّد للحقول الثلاثة على الهاتف ليظهر حرف الياء كاملًا.
+  EdgeInsetsGeometry? get _fieldPadding => isMobileApp
+      ? const EdgeInsets.symmetric(horizontal: 16, vertical: 22)
+      : null;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -197,15 +202,17 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                     controller: _userCtrl,
                     enabled: !_busy,
                     autocorrect: false,
-                    decoration:
-                        const InputDecoration(labelText: 'اسم المستخدم (GitHub)'),
+                    decoration: InputDecoration(
+                        labelText: 'اسم المستخدم (GitHub)',
+                        contentPadding: _fieldPadding),
                   ),
                   const SizedBox(height: 14),
                   TextField(
                     controller: _repoCtrl,
                     enabled: !_busy,
                     autocorrect: false,
-                    decoration: const InputDecoration(labelText: 'اسم المستودع'),
+                    decoration: InputDecoration(
+                        labelText: 'اسم المستودع', contentPadding: _fieldPadding),
                   ),
                   const SizedBox(height: 14),
                   TextField(
@@ -216,6 +223,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                     enableSuggestions: false,
                     decoration: InputDecoration(
                       labelText: 'رمز الوصول الشخصي (GitHub PAT)',
+                      contentPadding: _fieldPadding,
                       suffixIcon: IconButton(
                         icon: Icon(_hideToken
                             ? Icons.visibility_outlined

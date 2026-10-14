@@ -41,6 +41,10 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
 
   /// غرفة تُدخل بياناتها يدويًا (خارجية أو أوردر) بدل اختيارها من الغرف.
   bool get _manual => _isExternal || _isOrder;
+
+  /// حقل "عدد القطع" اليدوي: للأوردر وللخارجية الكاملة فقط. الخارجية
+  /// "جزء منها" يُؤخذ عددها من "عدد القطع الموجودة".
+  bool get _showManualCount => _isOrder || (_isExternal && _isComplete);
   final _extNameCtrl = TextEditingController();
   final _extCountCtrl = TextEditingController();
   final _merchantCtrl = TextEditingController();
@@ -113,7 +117,9 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
           room: _manual ? null : _selectedRoom,
           isOrder: _isOrder,
           externalRoomName: _extNameCtrl.text,
-          externalPieceCount: int.tryParse(_extCountCtrl.text.trim()) ?? 0,
+          externalPieceCount: _showManualCount
+              ? (int.tryParse(_extCountCtrl.text.trim()) ?? 0)
+              : (int.tryParse(_partCountCtrl.text.trim()) ?? 0),
           merchantName: _merchantCtrl.text,
           customerName: _customerCtrl.text,
           numbering: _numberingCtrl.text,
@@ -274,13 +280,13 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                       (v == null || v.trim().isEmpty) ? 'الترقيم مطلوب' : null,
                 ),
                 const SizedBox(height: 14),
-                if (_manual) ...[
+                if (_showManualCount) ...[
                   TextFormField(
                     controller: _extCountCtrl,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'عدد القطع *'),
                     validator: (v) {
-                      if (!_manual) return null;
+                      if (!_showManualCount) return null;
                       final n = int.tryParse((v ?? '').trim());
                       if (n == null || n <= 0) {
                         return 'أدخل عددًا صحيحًا أكبر من صفر';

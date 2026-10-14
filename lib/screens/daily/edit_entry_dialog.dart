@@ -100,7 +100,11 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
           context, 'أدخل اسم الجزء وعدد القطع الموجودة (أكبر من صفر).');
       return;
     }
-    final extCount = int.tryParse(_extCountCtrl.text.trim()) ?? 0;
+    // الخارجية "جزء منها": العدد يُؤخذ من عدد القطع الموجودة.
+    final countFromPart = _ext && _isPartial;
+    final extCount = countFromPart
+        ? partCount
+        : (int.tryParse(_extCountCtrl.text.trim()) ?? 0);
     if (_manual &&
         (_extNameCtrl.text.trim().isEmpty ||
             extCount <= 0 ||
@@ -177,7 +181,7 @@ class _EditEntryDialogState extends State<EditEntryDialog> {
                 decoration: const InputDecoration(labelText: 'ترقيمها'),
               ),
               const SizedBox(height: 14),
-              if (_manual) ...[
+              if (_manual && !(_ext && _isPartial)) ...[
                 TextField(
                   controller: _extCountCtrl,
                   keyboardType: TextInputType.number,
