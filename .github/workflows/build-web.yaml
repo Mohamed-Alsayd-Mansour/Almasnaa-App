@@ -1,9 +1,8 @@
 name: Build Flutter Web
 
 on:
-  workflow_dispatch: # يتيح لك تشغيل الـ Workflow يدوياً من تبويب Actions
+  workflow_dispatch:
 
-# منح الصلاحيات اللازمة لرفع ملفات الموقع إلى فرع gh-pages
 permissions:
   contents: write
 
@@ -13,33 +12,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. سحب الكود من المستودع
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة فلاتر
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # 3. تثبيت المكتبات وتجهيز الاعتمادات
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. بناء نسخة الويب الخاصة بالإنتاج (Release Mode)
       - name: Build web release
-        run: flutter build web --release
+        run: flutter build web --release --base-href "/Almasnaa-App/"
 
-      # 5. رفع المجلد الناتج كـ Artifact للتحميل المباشر
       - name: Upload Web Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter-web-build
           path: build/web
 
-      # 6. النشر التلقائي على GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
