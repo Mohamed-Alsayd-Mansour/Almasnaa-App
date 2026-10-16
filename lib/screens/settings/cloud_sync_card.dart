@@ -172,7 +172,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
 
   /// ارتفاع موحَّد للحقول الثلاثة على الهاتف ليظهر حرف الياء كاملًا.
   EdgeInsetsGeometry? get _fieldPadding => isMobileApp
-      ? const EdgeInsets.symmetric(horizontal: 16, vertical: 22)
+      ? const EdgeInsets.symmetric(horizontal: 16, vertical: 23)
       : null;
 
   @override
@@ -222,7 +222,14 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                     autocorrect: false,
                     enableSuggestions: false,
                     decoration: InputDecoration(
-                      labelText: 'رمز الوصول الشخصي (GitHub PAT)',
+                      // على الهاتف عنوان أقصر لا يُقتطع بنقاط (...) فيظهر
+                      // حرف الياء وغيره كاملًا دون قصّ.
+                      labelText: isMobileApp
+                          ? 'رمز الوصول الشخصي'
+                          : 'رمز الوصول الشخصي (GitHub PAT)',
+                      labelStyle: isMobileApp
+                          ? const TextStyle(height: 1.7)
+                          : null,
                       contentPadding: _fieldPadding,
                       suffixIcon: IconButton(
                         icon: Icon(_hideToken

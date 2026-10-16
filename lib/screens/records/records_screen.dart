@@ -153,7 +153,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 child: AppSearchField(
                   controller: _keywordCtrl,
                   label: 'بحث شامل في السجل',
-                  hint: 'ابحث بأي كلمة: اسم، غرفة، ترقيم، نواقص...',
+                  hint: isMobileApp
+                      ? 'ابحث بأي كلمة'
+                      : 'ابحث بأي كلمة: اسم، غرفة، ترقيم، نواقص...',
                   onChanged: (v) =>
                       context.read<RecordsProvider>().searchWithKeyword(v),
                 ),

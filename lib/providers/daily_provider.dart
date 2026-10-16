@@ -189,6 +189,45 @@ class DailyProvider extends ChangeNotifier {
     }
   }
 
+  /// تعديل نص المواصفات لإدخال واحد مباشرة من جدول اليومية.
+  Future<String?> updateEntrySpecifications({
+    required String entryId,
+    required String newText,
+  }) async {
+    try {
+      final updated = await _entryRepository.updateSpecificationsText(
+        entryId: entryId,
+        newText: newText,
+      );
+      entries =
+          entries.map((e) => e.id == updated.id ? updated : e).toList();
+      notifyListeners();
+      return null;
+    } catch (e) {
+      return 'تعذر تعديل المواصفات: $e';
+    }
+  }
+
+  /// تعديل وصف الأوردر لإدخال واحد مباشرة من جدول اليومية.
+  Future<String?> updateEntryOrderDescription({
+    required String entryId,
+    required String newText,
+  }) async {
+    if (newText.trim().isEmpty) return 'وصف الأوردر مطلوب.';
+    try {
+      final updated = await _entryRepository.updateOrderDescription(
+        entryId: entryId,
+        newText: newText,
+      );
+      entries =
+          entries.map((e) => e.id == updated.id ? updated : e).toList();
+      notifyListeners();
+      return null;
+    } catch (e) {
+      return 'تعذر تعديل وصف الأوردر: $e';
+    }
+  }
+
   Future<String?> deleteEntry(String entryId) async {
     try {
       await _entryRepository.deleteEntry(entryId);
