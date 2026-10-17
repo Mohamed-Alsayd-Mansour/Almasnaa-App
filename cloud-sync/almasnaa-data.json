@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-17T18:55:30.184161",
+  "exported_at": "2026-10-17T20:18:58.504380",
   "data": {
     "rooms": [
       {
@@ -2365,17 +2365,17 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "عطلان ضلفتين خشب في الدهان",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
         "original_deficiencies": "دولاب كامل بدون ضلفة زجاج وضلفة خشب وقواطيع",
-        "current_deficiencies": "دولاب كامل رقم ٧ بدون ٢ ضلفة زجاج وقواطيع",
+        "current_deficiencies": "",
         "original_missing_count": 1,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-03T11:24:05.987677",
-        "updated_at": "2026-10-09T12:13:25.746517",
-        "last_deficiency_update_at": "2026-10-06T17:43:39.600287"
+        "updated_at": "2026-10-17T20:18:28.187014",
+        "last_deficiency_update_at": "2026-10-17T20:18:22.895991"
       },
       {
         "id": "22fc7864-1c46-4faa-ad10-020f61b2c6a3",
