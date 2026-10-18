@@ -26,14 +26,17 @@ enum RoomEntryStatus {
       };
 }
 
-/// شكل الغرفة في البحث المتقدم: عادية، أو غرفة بوسم "مواصفات".
+/// شكل الغرفة في البحث المتقدم: عادية، أو غرفة بوسم "مواصفات"،
+/// أو إدخال بوسم "جزء من غرفة".
 enum RoomShape {
   regular,
-  specs;
+  specs,
+  partial;
 
   String get label => switch (this) {
         RoomShape.regular => 'عادية',
         RoomShape.specs => 'مواصفات',
+        RoomShape.partial => 'جزء من غرفة',
       };
 }
 

@@ -32,6 +32,9 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
   final _formKey = GlobalKey<FormState>();
   Room? _selectedRoom;
 
+  /// الغرفة المختارة من تبويب "الغرف" عند الملكية "خارجية".
+  Room? _externalRoom;
+
   /// هل الغرفة خارجية؟ (اسمها وعدد قطعها واسم التاجر تُدخل يدويًا).
   bool _isExternal = false;
 
@@ -192,10 +195,35 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   onSelectionChanged: (v) => setState(() {
                     _isExternal = v.first == RoomOwnership.external;
                     _isOrder = v.first == RoomOwnership.order;
+                    // تفريغ الحقول اليدوية/المختارة عند تغيير الملكية.
+                    _externalRoom = null;
+                    _extNameCtrl.clear();
+                    _extCountCtrl.clear();
                   }),
                 ),
                 const SizedBox(height: 14),
-                if (_manual)
+                if (_isExternal)
+                  DropdownButtonFormField<Room>(
+                    value: _externalRoom,
+                    isExpanded: true,
+                    decoration: const InputDecoration(labelText: 'اسم الغرفة *'),
+                    items: rooms
+                        .map((r) => DropdownMenuItem(
+                              value: r,
+                              child: Text(r.name),
+                            ))
+                        .toList(),
+                    onChanged: (r) => setState(() {
+                      _externalRoom = r;
+                      _extNameCtrl.text = r?.name ?? '';
+                      // عدد القطع تلقائي من تبويب الغرف.
+                      _extCountCtrl.text =
+                          r == null ? '' : '${r.totalPieceCount}';
+                    }),
+                    validator: (v) =>
+                        (_isExternal && v == null) ? 'اختر اسم الغرفة' : null,
+                  )
+                else if (_manual)
                   TextFormField(
                     controller: _extNameCtrl,
                     maxLines: _isOrder ? 3 : 1,
@@ -284,7 +312,15 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   TextFormField(
                     controller: _extCountCtrl,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'عدد القطع *'),
+                    // الغرفة الخارجية: العدد تلقائي من تبويب الغرف (للقراءة فقط).
+                    readOnly: _isExternal,
+                    decoration: InputDecoration(
+                      labelText: _isExternal
+                          ? (isMobileApp
+                              ? 'عدد القطع (تلقائي)'
+                              : 'عدد القطع (تلقائي من بيانات الغرفة)')
+                          : 'عدد القطع *',
+                    ),
                     validator: (v) {
                       if (!_showManualCount) return null;
                       final n = int.tryParse((v ?? '').trim());

@@ -7,6 +7,7 @@ import '../../models/person.dart';
 import '../../providers/people_provider.dart';
 import '../../repositories/daily_entry_repository.dart';
 import '../../utils/date_formatter.dart';
+import '../../utils/platform_utils.dart';
 
 /// يفتح ورقة سفلية (Bottom Sheet) لضبط فلاتر البحث المتقدم في السجل،
 /// ويعيد الفلاتر الجديدة عند الضغط على "تطبيق"، أو null عند الإلغاء.
@@ -221,6 +222,11 @@ class _AdvancedFiltersSheetState extends State<_AdvancedFiltersSheet> {
                   label: Text(RoomShape.regular.label),
                   selected: _shape == RoomShape.regular,
                   onSelected: (_) => setState(() => _shape = RoomShape.regular),
+                ),
+                ChoiceChip(
+                  label: Text(isMobileApp ? 'جزء' : RoomShape.partial.label),
+                  selected: _shape == RoomShape.partial,
+                  onSelected: (_) => setState(() => _shape = RoomShape.partial),
                 ),
               ],
             ),

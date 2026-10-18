@@ -19,7 +19,7 @@ class RecordSearchFilters {
   final String? wrapLocation;
   final RoomEntryStatus? status;
 
-  /// شكل الغرفة: عادية / مواصفات (null = الكل).
+  /// شكل الغرفة: عادية / مواصفات / جزء من غرفة (null = الكل).
   final RoomShape? shape;
 
   /// ملكية الغرفة: داخلية / خارجية / أوردر (null = الكل).
@@ -361,6 +361,8 @@ class DailyEntryRepository {
       rows = rows.where((r) => r.entry.hasSpecifications).toList();
     } else if (filters.shape == RoomShape.regular) {
       rows = rows.where((r) => !r.entry.hasSpecifications).toList();
+    } else if (filters.shape == RoomShape.partial) {
+      rows = rows.where((r) => r.entry.isPartial).toList();
     }
 
     if (filters.ownership != null) {
