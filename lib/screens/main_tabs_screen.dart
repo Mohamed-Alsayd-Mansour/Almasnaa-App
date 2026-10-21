@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/daily_provider.dart';
+import '../providers/people_provider.dart';
+import '../providers/records_provider.dart';
+import '../providers/rooms_provider.dart';
+import '../services/live_sync_service.dart';
 
 import 'daily/daily_screen.dart';
 import 'records/records_screen.dart';
@@ -24,7 +31,23 @@ class _MainTabsScreenState extends State<MainTabsScreen>
       TabController(length: _withResearch ? 5 : 4, vsync: this);
 
   @override
+  void initState() {
+    super.initState();
+    // المزامنة اللحظية: إعادة تحميل الشاشات بعد وصول بيانات من السحابة.
+    LiveSyncService.instance.onRemoteApplied = () async {
+      if (!mounted) return;
+      await Future.wait([
+        context.read<RoomsProvider>().loadRooms(),
+        context.read<DailyProvider>().load(),
+        context.read<RecordsProvider>().load(),
+        context.read<PeopleProvider>().load(),
+      ]);
+    };
+  }
+
+  @override
   void dispose() {
+    LiveSyncService.instance.onRemoteApplied = null;
     _tabController.dispose();
     super.dispose();
   }

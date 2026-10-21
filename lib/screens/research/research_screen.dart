@@ -406,6 +406,14 @@ class _ResearchScreenState extends State<ResearchScreen> {
               onPressed: _clearFilters,
               icon: const Icon(Icons.filter_alt_off_outlined),
             ),
+            if (_view == ResearchView.audit &&
+                (_data?.ignoredIssues.isNotEmpty ?? false))
+              OutlinedButton.icon(
+                onPressed: _restoreIgnored,
+                icon: const Icon(Icons.restore),
+                label: Text(
+                    'استرجاع المتجاهَل (${_data!.ignoredIssues.length})'),
+              ),
             IconButton(
               tooltip: 'تحديث البيانات',
               onPressed: _load,
@@ -426,6 +434,30 @@ class _ResearchScreenState extends State<ResearchScreen> {
         ],
       ],
     );
+  }
+
+  Future<void> _restoreIgnored() async {
+    final data = _data;
+    if (data == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('استرجاع الملاحظات المتجاهَلة'),
+        content: Text(
+            'ستعود ${data.ignoredIssues.length} ملاحظة تم تجاهلها للظهور في تدقيق البيانات.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('إلغاء')),
+          ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('استرجاع')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await data.restoreIgnored();
+    if (mounted) setState(() => _recompute(resetSort: false));
   }
 
   /// نافذة تعرض كل حقول الصف المختار (اسم الحقل وقيمته).
@@ -475,6 +507,18 @@ class _ResearchScreenState extends State<ResearchScreen> {
           ),
         ),
         actions: [
+          if (table.view == ResearchView.audit && row.id != null)
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+              onPressed: () async {
+                final data = _data;
+                if (data == null) return;
+                await data.ignoreIssue(row.id!);
+                if (ctx.mounted) Navigator.of(ctx).pop();
+                if (mounted) setState(() => _recompute(resetSort: false));
+              },
+              child: const Text('تجاهل'),
+            ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('إغلاق'),

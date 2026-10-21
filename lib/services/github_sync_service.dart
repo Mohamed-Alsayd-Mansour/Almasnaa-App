@@ -45,6 +45,29 @@ class GithubSyncService {
   static const _kRepo = 'almasnaa_sync_repo';
   static const _kToken = 'almasnaa_sync_token';
   static const _kLastSync = 'almasnaa_sync_last';
+  static const _kLastSha = 'almasnaa_sync_sha';
+  static const _kLive = 'almasnaa_sync_live';
+  static const _kDirty = 'almasnaa_sync_dirty';
+
+  Future<bool> loadLive() async =>
+      (await SharedPreferences.getInstance()).getBool(_kLive) ?? false;
+
+  Future<void> saveLive(bool v) async =>
+      (await SharedPreferences.getInstance()).setBool(_kLive, v);
+
+  /// تغييرات محلية لم تُرفع بعد (تبقى محفوظة حتى بعد إغلاق التطبيق).
+  Future<bool> loadDirty() async =>
+      (await SharedPreferences.getInstance()).getBool(_kDirty) ?? false;
+
+  Future<void> saveDirty(bool v) async =>
+      (await SharedPreferences.getInstance()).setBool(_kDirty, v);
+
+  /// SHA آخر نسخة سحابية تطابقت مع هذا الجهاز (null = لم تتم مزامنة بعد).
+  Future<String?> loadLastSha() async =>
+      (await SharedPreferences.getInstance()).getString(_kLastSha);
+
+  Future<void> saveLastSha(String sha) async =>
+      (await SharedPreferences.getInstance()).setString(_kLastSha, sha);
 
   Future<GithubSyncConfig> loadConfig() async {
     final p = await SharedPreferences.getInstance();
@@ -70,7 +93,7 @@ class GithubSyncService {
 
   Future<void> clearConfig() async {
     final p = await SharedPreferences.getInstance();
-    for (final k in [_kUser, _kRepo, _kToken, _kLastSync]) {
+    for (final k in [_kUser, _kRepo, _kToken, _kLastSync, _kLastSha, _kLive, _kDirty]) {
       await p.remove(k);
     }
   }
@@ -195,8 +218,33 @@ class GithubSyncService {
         if (res.statusCode != 200 && res.statusCode != 201) {
           throw _httpError(res);
         }
+        try {
+          final d = jsonDecode(res.body);
+          final sha = d is Map && d['content'] is Map
+              ? (d['content'] as Map)['sha'] as String?
+              : null;
+          if (sha != null) await saveLastSha(sha);
+        } catch (_) {}
         await _markSynced();
       });
+
+  /// SHA الحالي للملف السحابي، أو null إن لم يوجد ملف بعد.
+  Future<String?> fetchRemoteSha(GithubSyncConfig c) => _guard(() async {
+        final res = await http.get(_fileUri(c), headers: _headers(c));
+        if (res.statusCode == 404) return null;
+        if (res.statusCode != 200) throw _httpError(res);
+        final d = jsonDecode(res.body);
+        return d is Map ? d['sha'] as String? : null;
+      });
+
+  /// يسجّل SHA النسخة السحابية الحالية كنسخة متطابقة مع هذا الجهاز
+  /// (محاولة اختيارية لا ترمي أخطاء).
+  Future<void> recordRemoteSha(GithubSyncConfig c) async {
+    try {
+      final sha = await fetchRemoteSha(c);
+      if (sha != null) await saveLastSha(sha);
+    } catch (_) {}
+  }
 
   /// ينزّل نص JSON من المستودع، أو null إن لم يكن هناك ملف بعد.
   Future<String?> download(GithubSyncConfig c) => _guard(() async {

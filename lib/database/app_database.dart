@@ -22,6 +22,17 @@ class AppDatabase {
 
   SharedPreferences? _prefs;
 
+  final List<void Function()> _changeListeners = [];
+
+  /// يُستدعى بعد أي كتابة/حذف للبيانات (تستخدمه المزامنة اللحظية).
+  void addChangeListener(void Function() l) => _changeListeners.add(l);
+
+  void _notifyChanged() {
+    for (final l in List.of(_changeListeners)) {
+      l();
+    }
+  }
+
   Future<SharedPreferences> get _preferences async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
@@ -41,6 +52,7 @@ class AppDatabase {
   Future<void> writeList(String key, List<Map<String, Object?>> items) async {
     final prefs = await _preferences;
     await prefs.setString(key, jsonEncode(items));
+    _notifyChanged();
   }
 
   /// يحذف المفاتيح المحددة نهائيًا من التخزين المحلي.
@@ -49,5 +61,6 @@ class AppDatabase {
     for (final key in keys) {
       await prefs.remove(key);
     }
+    _notifyChanged();
   }
 }

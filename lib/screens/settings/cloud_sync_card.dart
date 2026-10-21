@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_theme.dart';
 import '../../services/backup_service.dart';
 import '../../services/github_sync_service.dart';
+import '../../services/live_sync_service.dart';
 import '../../utils/date_formatter.dart';
 import '../../utils/platform_utils.dart';
 import '../../widgets/common_widgets.dart';
@@ -28,14 +29,45 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
   bool _loaded = false;
   DateTime? _lastSync;
 
+  final _live = LiveSyncService.instance;
+
   @override
   void initState() {
     super.initState();
+    _live.addListener(_onLiveChanged);
     _load();
+  }
+
+  Future<void> _onLiveChanged() async {
+    final c = await _sync.loadConfig();
+    if (!mounted) return;
+    setState(() => _lastSync = c.lastSyncAt);
+  }
+
+  Future<void> _toggleLive(bool value) async {
+    if (value) {
+      if (!_validate()) return;
+      await _sync.saveConfig(
+        user: _userCtrl.text,
+        repo: _repoCtrl.text,
+        token: _tokenCtrl.text,
+      );
+      if (await _sync.loadLastSha() == null) {
+        if (!mounted) return;
+        showErrorSnackBar(
+          context,
+          'نفّذ أولًا رفعًا أو تنزيلًا يدويًا واحدًا لتحديد النسخة المرجعية، ثم فعّل المزامنة اللحظية.',
+        );
+        return;
+      }
+    }
+    await _live.setEnabled(value);
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _live.removeListener(_onLiveChanged);
     _userCtrl.dispose();
     _repoCtrl.dispose();
     _tokenCtrl.dispose();
@@ -153,6 +185,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
       await _backup.restore(preview);
       await widget.onRestored();
       await _sync.markSynced();
+      await _sync.recordRemoteSha(_config);
       final c = await _sync.loadConfig();
       if (!mounted) return;
       setState(() => _lastSync = c.lastSyncAt);
@@ -161,6 +194,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
   }
 
   Future<void> _signOut() async {
+    await _live.setEnabled(false);
     await _sync.clearConfig();
     _tokenCtrl.clear();
     _userCtrl.text = GithubSyncService.defaultUser;
@@ -185,9 +219,42 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('المزامنة السحابية المجانية',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                            isMobileApp
+                                ? 'المزامنة السحابية'
+                                : 'المزامنة السحابية المجانية',
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w800)),
+                      ),
+                      const SizedBox(width: 8),
+                      Tooltip(
+                        message: 'مزامنة لحظية عند توفر الإنترنت',
+                        child: Switch(
+                          value: _live.enabled,
+                          onChanged: _busy ? null : _toggleLive,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_live.enabled) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      _live.lastError != null
+                          ? 'المزامنة اللحظية: بانتظار الاتصال — ${_live.lastError}'
+                          : (_live.busy
+                              ? 'المزامنة اللحظية: جارٍ التحديث...'
+                              : 'المزامنة اللحظية مفعّلة'),
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: _live.lastError != null
+                            ? Colors.orange.shade800
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                   if (!isMobileApp) ...[
                     const SizedBox(height: 4),
                     const Text(
@@ -264,7 +331,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                           children: [
                             Expanded(
                               child: ElevatedButton.icon(
-                                onPressed: _busy ? null : _upload,
+                                onPressed: (_busy || _live.enabled) ? null : _upload,
                                 icon: const Icon(Icons.cloud_upload_outlined),
                                 label: const Text('الرفع', textAlign: TextAlign.center),
                               ),
@@ -272,7 +339,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                             const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: OutlinedButton.icon(
-                                onPressed: _busy ? null : _download,
+                                onPressed: (_busy || _live.enabled) ? null : _download,
                                 icon: const Icon(Icons.cloud_download_outlined),
                                 label: const Text('التنزيل', textAlign: TextAlign.center),
                               ),
@@ -314,7 +381,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                     runSpacing: AppSpacing.sm,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: _busy ? null : _upload,
+                        onPressed: (_busy || _live.enabled) ? null : _upload,
                         icon: const Icon(Icons.cloud_upload_outlined),
                         label: const Text('رفع إلى السحابة'),
                       ),
@@ -324,7 +391,7 @@ class _CloudSyncCardState extends State<CloudSyncCard> {
                         label: const Text('اختبار الاتصال'),
                       ),
                       OutlinedButton.icon(
-                        onPressed: _busy ? null : _download,
+                        onPressed: (_busy || _live.enabled) ? null : _download,
                         icon: const Icon(Icons.cloud_download_outlined),
                         label: const Text('تنزيل من السحابة'),
                       ),

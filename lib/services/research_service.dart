@@ -1,4 +1,5 @@
 import 'package:flutter/painting.dart' show Color;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../database/app_database.dart';
 import '../models/daily_entry.dart';
@@ -38,6 +39,25 @@ class ResearchData {
   final List<DailyEntry> entries;
   final List<Person> people;
 
+  /// ملاحظات التدقيق التي اختار المستخدم تجاهلها (مفاتيح ثابتة).
+  final Set<String> ignoredIssues;
+
+  static const _kIgnored = 'almasnaa_audit_ignored';
+
+  /// يتجاهل ملاحظة تدقيق نهائيًا (محليًا على هذا الجهاز).
+  Future<void> ignoreIssue(String key) async {
+    ignoredIssues.add(key);
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList(_kIgnored, ignoredIssues.toList());
+  }
+
+  /// يعيد إظهار كل الملاحظات المتجاهَلة.
+  Future<void> restoreIgnored() async {
+    ignoredIssues.clear();
+    final p = await SharedPreferences.getInstance();
+    await p.remove(_kIgnored);
+  }
+
   final Map<String, DailySession> _sessionsById;
   final Map<String, Room> _roomsById;
 
@@ -46,7 +66,9 @@ class ResearchData {
     required this.sessions,
     required this.entries,
     required this.people,
-  })  : _sessionsById = {for (final s in sessions) s.id: s},
+    Set<String>? ignoredIssues,
+  })  : ignoredIssues = ignoredIssues ?? <String>{},
+        _sessionsById = {for (final s in sessions) s.id: s},
         _roomsById = {for (final r in rooms) r.id: r};
 
   DailySession? sessionOf(DailyEntry e) => _sessionsById[e.dailySessionId];
@@ -105,8 +127,13 @@ class ResearchData {
         .toList();
     final people =
         (await db.readList(AppDatabase.peopleKey)).map(Person.fromMap).toList();
+    final prefs = await SharedPreferences.getInstance();
     return ResearchData(
-        rooms: rooms, sessions: sessions, entries: entries, people: people);
+        rooms: rooms,
+        sessions: sessions,
+        entries: entries,
+        people: people,
+        ignoredIssues: (prefs.getStringList(_kIgnored) ?? const <String>[]).toSet());
   }
 }
 
@@ -319,10 +346,14 @@ class ResearchRow {
   final Map<String, num> sort;
   final Color? tint;
 
+  /// معرّف ثابت اختياري (يُستخدم لتجاهل ملاحظة تدقيق).
+  final String? id;
+
   const ResearchRow({
     required this.text,
     this.sort = const {},
     this.tint,
+    this.id,
   });
 
   String value(String key) => text[key] ?? '';
@@ -450,8 +481,8 @@ class ResearchService {
       count == 0 ? '0' : (total / count).toStringAsFixed(1);
 
   static ResearchRow _row(Map<String, String> text,
-          {Map<String, num> sort = const {}, Color? tint}) =>
-      ResearchRow(text: text, sort: sort, tint: tint);
+          {Map<String, num> sort = const {}, Color? tint, String? id}) =>
+      ResearchRow(text: text, sort: sort, tint: tint, id: id);
 
   static ResearchRow _footer(Map<String, String> text) =>
       ResearchRow(text: text, tint: _footerTint);
@@ -1534,7 +1565,8 @@ class ResearchService {
         }, sort: {
           'sev': i.severity,
           'date': i.date?.millisecondsSinceEpoch ?? 0,
-        }, tint: i.severity == 1 ? _redTint : (i.severity == 2 ? _amberTint : null)),
+        }, tint: i.severity == 1 ? _redTint : (i.severity == 2 ? _amberTint : null),
+            id: i.key),
     ];
 
     final byType = <String, int>{};
@@ -1779,7 +1811,7 @@ class ResearchService {
             details: 'الاسم مسجّل أكثر من مرة ضمن نفس الدور.'));
       }
     }
-    return out;
+    return out.where((i) => !d.ignoredIssues.contains(i.key)).toList();
   }
 }
 
@@ -1791,6 +1823,10 @@ class _Issue {
   final String room;
   final String who;
   final String details;
+
+  /// مفتاح ثابت للملاحظة (يعتمد على نوعها وعناصرها ونصها).
+  String get key =>
+      '$type|$room|$who|$details|${date?.toIso8601String().substring(0, 10) ?? ''}';
 
   const _Issue({
     required this.severity,

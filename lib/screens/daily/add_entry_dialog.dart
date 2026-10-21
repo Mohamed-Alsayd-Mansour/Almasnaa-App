@@ -332,8 +332,8 @@ class _AddEntryDialogState extends State<AddEntryDialog> {
                   ),
                   const SizedBox(height: 14),
                 ],
-                // اسم الزبون: إلزامي-بديل للأوردر (زبون أو تاجر)، واختياري للداخلية.
-                if (!_isExternal) ...[
+                // اسم الزبون: إلزامي-بديل للأوردر (زبون أو تاجر)، واختياري للداخلية والخارجية.
+                ...[
                   TextFormField(
                     controller: _customerCtrl,
                     decoration: InputDecoration(

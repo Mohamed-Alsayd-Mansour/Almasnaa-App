@@ -14,6 +14,7 @@ import 'providers/people_provider.dart';
 import 'providers/records_provider.dart';
 import 'providers/rooms_provider.dart';
 import 'screens/splash_screen.dart';
+import 'services/live_sync_service.dart';
 import 'utils/platform_utils.dart';
 
 /// window_manager يعمل على الديسكتوب فقط
@@ -43,6 +44,7 @@ Future<void> main() async {
     );
   }
 
+  await LiveSyncService.instance.init();
   runApp(const AlmasnaaApp());
 }
 
