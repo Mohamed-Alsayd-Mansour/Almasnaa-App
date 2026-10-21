@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-21T12:52:27.557921",
+  "exported_at": "2026-10-21T18:56:07.371033",
   "data": {
     "rooms": [
       {
@@ -891,8 +891,8 @@
         "day_name": "الأربعاء",
         "date": "2026-10-21T07:55:28.569878",
         "start_time": "2026-10-21T07:55:28.569878",
-        "end_time": null,
-        "status": "active"
+        "end_time": "2026-10-21T18:55:58.692872",
+        "status": "closed"
       }
     ],
     "entries": [
@@ -6612,17 +6612,17 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "عطلانة كهربا",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
         "original_deficiencies": "برنيطة ١",
-        "current_deficiencies": "برنيطة ١",
+        "current_deficiencies": "",
         "original_missing_count": 1,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-20T18:24:59.149562",
-        "updated_at": "2026-10-20T19:15:10.515131",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-21T13:46:17.658960",
+        "last_deficiency_update_at": "2026-10-21T13:46:14.056639"
       },
       {
         "id": "e5a44082-11f0-4e2f-8ce1-72c2647fee31",
@@ -6644,17 +6644,17 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "عطلانة كهربا",
+        "problem": "",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
         "original_deficiencies": "برنيطة ٢",
-        "current_deficiencies": "برنيطة ٢",
+        "current_deficiencies": "",
         "original_missing_count": 1,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-21T09:16:13.272242",
-        "updated_at": "2026-10-21T09:16:13.272242",
-        "last_deficiency_update_at": null
+        "updated_at": "2026-10-21T13:46:10.517704",
+        "last_deficiency_update_at": "2026-10-21T13:46:06.119996"
       },
       {
         "id": "a1fc9c70-1821-4e11-8360-d09eaaaff2a6",
@@ -6719,6 +6719,134 @@
         "created_at": "2026-10-21T11:17:40.506816",
         "updated_at": "2026-10-21T11:17:40.506816",
         "last_deficiency_update_at": null
+      },
+      {
+        "id": "5b5bd8fc-17d9-49bd-a3f0-b132b480f312",
+        "daily_session_id": "96fc7a2c-bb17-487f-8a95-af01803cdff6",
+        "room_id": "c98015bb-fe9e-4c7c-a611-73a35ef93a09",
+        "room_name_snapshot": "دولاب أطفال دبي معدل ميني",
+        "piece_count_snapshot": 18,
+        "is_external": false,
+        "is_order": false,
+        "merchant_name": "",
+        "customer_name": "",
+        "numbering": "4",
+        "carpenter": "أحمد عويس",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ياسر",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "problem": "الجمب رجع الكابينة",
+        "is_partial": true,
+        "part_name": "دولاب",
+        "partial_piece_count": 10,
+        "original_deficiencies": "جمب ٤",
+        "current_deficiencies": "جمب ٤",
+        "original_missing_count": 1,
+        "current_missing_count": 1,
+        "created_at": "2026-10-21T13:36:28.260082",
+        "updated_at": "2026-10-21T14:32:13.505249",
+        "last_deficiency_update_at": "2026-10-21T14:32:13.505249"
+      },
+      {
+        "id": "c392cf52-6949-4205-ba67-a25c07e54716",
+        "daily_session_id": "96fc7a2c-bb17-487f-8a95-af01803cdff6",
+        "room_id": "1c40f08c-9396-4a8e-bc02-32072ab47085",
+        "room_name_snapshot": "أطفال مساطر ٢م",
+        "piece_count_snapshot": 21,
+        "is_external": false,
+        "is_order": false,
+        "merchant_name": "",
+        "customer_name": "",
+        "numbering": "14",
+        "carpenter": "عمار ياسر",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "الصياد",
+        "repairer": "هشام",
+        "wrap_location": "باكية 33 × أبو العز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "problem": "",
+        "is_partial": false,
+        "part_name": "",
+        "partial_piece_count": 0,
+        "original_deficiencies": "",
+        "current_deficiencies": "",
+        "original_missing_count": 0,
+        "current_missing_count": 0,
+        "created_at": "2026-10-21T14:35:29.943609",
+        "updated_at": "2026-10-21T14:35:29.943609",
+        "last_deficiency_update_at": null
+      },
+      {
+        "id": "5530ecd6-ce5f-449a-bacd-07e1e7f54103",
+        "daily_session_id": "96fc7a2c-bb17-487f-8a95-af01803cdff6",
+        "room_id": "35bbc66a-e9d8-438e-bee3-541a0af0a255",
+        "room_name_snapshot": "أطفال بنوكيو رمادي ٢م",
+        "piece_count_snapshot": 24,
+        "is_external": false,
+        "is_order": false,
+        "merchant_name": "",
+        "customer_name": "",
+        "numbering": "7",
+        "carpenter": "حسان",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ياسر",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "problem": "الضلفة عطلانة  رم",
+        "is_partial": false,
+        "part_name": "",
+        "partial_piece_count": 0,
+        "original_deficiencies": "ضلفة خشب ٧ - برنيطة ٧ - حرف ٧",
+        "current_deficiencies": "ضلفة خشب ٧",
+        "original_missing_count": 3,
+        "current_missing_count": 1,
+        "created_at": "2026-10-21T17:22:50.284255",
+        "updated_at": "2026-10-21T18:55:39.771604",
+        "last_deficiency_update_at": "2026-10-21T18:55:06.522366"
+      },
+      {
+        "id": "868924cf-ae72-4cba-8e35-eb3e3efec05d",
+        "daily_session_id": "96fc7a2c-bb17-487f-8a95-af01803cdff6",
+        "room_id": "35bbc66a-e9d8-438e-bee3-541a0af0a255",
+        "room_name_snapshot": "أطفال بنوكيو رمادي ٢م",
+        "piece_count_snapshot": 24,
+        "is_external": false,
+        "is_order": false,
+        "merchant_name": "",
+        "customer_name": "",
+        "numbering": "10",
+        "carpenter": "أحمد عويس",
+        "service": "الكابينة",
+        "installer": "منصور",
+        "supervisor": "قدري",
+        "repairer": "ياسر",
+        "wrap_location": "التجهيز",
+        "has_specifications": false,
+        "specifications_text": "",
+        "special_piece_count": 0,
+        "problem": "الضلفة عطلانة رم",
+        "is_partial": false,
+        "part_name": "",
+        "partial_piece_count": 0,
+        "original_deficiencies": "ضلفة خشب ١٠ - حرف ١٠ - برنيطة ١٠",
+        "current_deficiencies": "ضلفة خشب ١٠",
+        "original_missing_count": 3,
+        "current_missing_count": 1,
+        "created_at": "2026-10-21T17:25:18.836124",
+        "updated_at": "2026-10-21T18:55:30.420395",
+        "last_deficiency_update_at": "2026-10-21T18:55:23.077241"
       }
     ],
     "people": [
@@ -7206,295 +7334,313 @@
         "id": "4ac3ebfa-4819-4785-90c4-58abae90bb0b",
         "name": "باكية 2 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "c354e705-6367-49ee-a7a8-e13ee66b41cc",
         "name": "باكية 3 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "40955511-163d-4ceb-bbe7-f075e7206b07",
         "name": "باكية 4 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "ab3f7f4a-3297-43ed-a58e-f3f345b154df",
         "name": "باكية 5 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "7a54934a-aca5-45c0-b160-7c6a2ef809fa",
         "name": "باكية 6 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "7d302edd-2215-412c-b999-584bce719290",
         "name": "باكية 7 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "a6a38fd9-37a2-41a4-82e9-955aabed3137",
         "name": "باكية 8 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "4060dd3b-c136-45d3-9d46-a1457a13eb53",
         "name": "باكية 9 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "1b79ef2c-dd22-406b-9ed0-a787957e91b8",
         "name": "باكية 10 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "d6626800-9530-4fd9-aea6-478e967145c3",
         "name": "باكية 11 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "9ce83dba-4589-414c-bce9-6f30246d0675",
         "name": "باكية 12 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "e17d5632-1186-4ae6-ac3d-9543df4c7f98",
         "name": "باكية 13 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "af6b28de-68c6-4d45-8401-13381448d179",
         "name": "باكية 14 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "764ef322-ca11-4f17-9861-65d7d0b1eecc",
         "name": "باكية 15 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "d757523e-e8b9-440f-bec9-a619eaa3eeb0",
         "name": "باكية 16 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "09d59dff-dae7-46c3-9a59-3a7944fb4c1e",
         "name": "باكية 17 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "6c19eed8-2c3b-4dfc-a431-5c449cf9ea72",
         "name": "باكية 18 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "cf66cb92-7116-47dd-a161-dbbb386eea18",
         "name": "باكية 19 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "8cdeb21b-451a-4a14-956e-cc1786841e3c",
         "name": "باكية 20 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "18b1f762-b0a8-46bd-81f8-d8b7d670027c",
         "name": "باكية 21 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "8769feed-87bf-4846-bef2-57764843bc94",
         "name": "باكية 22 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "730b331f-6a26-46c0-9087-b2625417e5be",
         "name": "باكية 23 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "c5d94706-1af7-467b-9db0-b301fe4de804",
         "name": "باكية 24 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "198b4b70-aed2-462c-890e-af56d7ebf6da",
         "name": "باكية 25 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "f0413992-de6f-456e-ac21-3841fb2fb218",
         "name": "باكية 26 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "1d8eba4b-d9c7-4d74-8a90-7937763f0da5",
         "name": "باكية 27 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "828b6020-5ab8-4613-ab46-ec654d7ac861",
         "name": "باكية 28 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "814833bc-9717-46ba-83df-ebcf0cd71dc3",
         "name": "باكية 29 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "71f1ba41-ad22-4e4f-8c18-a83ae926233f",
         "name": "باكية 30 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "cdea37c4-958e-4dea-a830-4c26f5be22d6",
         "name": "باكية 31 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "77ccd3be-ce7d-4852-94de-80719c801e5a",
         "name": "باكية 32 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "bef1d771-2ef3-49b2-8c00-e503c350dd5b",
         "name": "باكية 33 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "c6fbb525-af15-4816-9cd4-c498a84e5d5f",
         "name": "باكية 34 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "bf03b3fc-056a-4c53-a6e8-ab8f493004d8",
         "name": "باكية 35 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "26801402-ce51-4514-99f0-97d6d2c51143",
         "name": "باكية 36 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "db3ef771-469a-478a-bcdd-635e6849353b",
         "name": "باكية 37 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "1a042f67-8b4e-446a-9ac1-27226ebf832c",
         "name": "باكية 38 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "bb66d3b7-ee39-4ac2-b89c-ebdf46494ce8",
         "name": "باكية 39 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "fb91c755-02de-4711-b2e0-6e1cb446f85b",
         "name": "باكية 40 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "ad900768-5388-4218-8d3b-70c445956d45",
         "name": "باكية 41 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "76d44337-53e8-484c-b432-190059e40a8e",
         "name": "باكية 42 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "f3ff961f-cdf1-42d9-ad1b-9d5ef221b741",
         "name": "باكية 43 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "6cdb7f4d-f95d-4203-a87d-d6c6125ad96a",
         "name": "باكية 44 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "69ae1e31-6de9-45bd-868a-d725a2985232",
         "name": "باكية 45 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "06f9e849-9dd9-4a3b-b110-8905801afcad",
         "name": "باكية 46 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "de5c5793-6ea8-4d0d-bc66-3db8254bcbbd",
         "name": "باكية 47 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "43691c5e-6ef9-46d1-9a28-66a6a2477ac6",
         "name": "باكية 48 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "1fb0f089-59ce-47f4-8d38-0191a432c40a",
         "name": "باكية 49 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
       },
       {
         "id": "765486b0-ed16-4868-b93d-80b39bd0594f",
         "name": "باكية 50 × المصنع القديم",
         "role": "wrapLocation",
-        "created_at": "2026-10-11T16:45:00.000000"
+        "created_at": "2026-10-11T16:45:00.000"
+      },
+      {
+        "id": "e109d265-95fa-4d84-9963-ef654318bf06",
+        "name": "عمار ياسر",
+        "role": "carpenter",
+        "created_at": "2026-10-21T14:31:42.502712"
+      },
+      {
+        "id": "a94f8465-a46b-488e-87cd-9e18323fe972",
+        "name": "الصياد",
+        "role": "supervisor",
+        "created_at": "2026-10-21T14:31:49.948219"
+      },
+      {
+        "id": "7087b390-e397-4769-b392-1f688b9f2a69",
+        "name": "حسان",
+        "role": "carpenter",
+        "created_at": "2026-10-21T17:23:12.637978"
       }
     ]
   }
