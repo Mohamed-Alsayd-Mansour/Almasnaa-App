@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-27T19:31:44.008424",
+  "exported_at": "2026-10-27T19:33:22.083770",
   "data": {
     "rooms": [
       {
@@ -6759,17 +6759,17 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "الجمب رجع الكابينة",
+        "problem": "",
         "is_partial": true,
         "part_name": "دولاب",
         "partial_piece_count": 10,
         "original_deficiencies": "جمب ٤",
-        "current_deficiencies": "جمب ٤",
+        "current_deficiencies": "",
         "original_missing_count": 1,
-        "current_missing_count": 1,
+        "current_missing_count": 0,
         "created_at": "2026-10-21T13:36:28.260082",
-        "updated_at": "2026-10-21T14:32:13.505249",
-        "last_deficiency_update_at": "2026-10-21T14:32:13.505249"
+        "updated_at": "2026-10-27T19:32:19.304153",
+        "last_deficiency_update_at": "2026-10-27T19:32:13.285322"
       },
       {
         "id": "c392cf52-6949-4205-ba67-a25c07e54716",
