@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-10-31T18:34:58.293169",
+  "exported_at": "2026-10-31T20:24:04.731724",
   "data": {
     "rooms": [
       {
@@ -7705,9 +7705,9 @@
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
-        "original_deficiencies": "دولاب كامل رقم ١٣ + زجاجة دوسيه التسريحة",
+        "original_deficiencies": "دولاب كامل رقم ١٣ - زجاجة دوسيه التسريحة - ٢ اسطامة ٣٦",
         "current_deficiencies": "دولاب كامل رقم ١٣ - زجاجة دوسيه التسريحة - ٢ اسطامة ٣٦",
-        "original_missing_count": 1,
+        "original_missing_count": 3,
         "current_missing_count": 3,
         "created_at": "2026-10-31T08:49:58.388142",
         "updated_at": "2026-10-31T09:47:04.173687",
