@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-11-04T19:00:01.092448",
+  "exported_at": "2026-11-04T20:00:21.766644",
   "data": {
     "rooms": [
       {
@@ -8932,9 +8932,9 @@
         "is_partial": true,
         "part_name": "فارغة و ٢ سرير",
         "partial_piece_count": 12,
-        "original_deficiencies": "",
+        "original_deficiencies": "٢ سرير كبير ٨،٧",
         "current_deficiencies": "٢ سرير كبير ٨،٧",
-        "original_missing_count": 0,
+        "original_missing_count": 1,
         "current_missing_count": 1,
         "created_at": "2026-11-04T14:47:05.853538",
         "updated_at": "2026-11-04T18:27:28.855308",
@@ -8964,9 +8964,9 @@
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
-        "original_deficiencies": "",
+        "original_deficiencies": "٢ جمب ١٠ - قاطوع فوق الإدراج ١٠ - ٤ اسطامة ٦،٥ - دوسيه التسريحة - وحدة إدراج التسريحة - سرير كبير ٦",
         "current_deficiencies": "٢ جمب ١٠ - قاطوع فوق الإدراج ١٠ - ٤ اسطامة ٦،٥ - دوسيه التسريحة - وحدة إدراج التسريحة - سرير كبير ٦",
-        "original_missing_count": 0,
+        "original_missing_count": 6,
         "current_missing_count": 6,
         "created_at": "2026-11-04T14:48:56.669376",
         "updated_at": "2026-11-04T18:29:42.522783",
