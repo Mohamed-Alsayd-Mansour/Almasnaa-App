@@ -1,7 +1,7 @@
 {
   "app": "almasnaa",
   "version": 1,
-  "exported_at": "2026-11-07T22:30:29.843124",
+  "exported_at": "2026-11-07T22:44:29.170362",
   "data": {
     "rooms": [
       {
@@ -9616,7 +9616,7 @@
         "has_specifications": false,
         "specifications_text": "",
         "special_piece_count": 0,
-        "problem": "",
+        "problem": "رم",
         "is_partial": false,
         "part_name": "",
         "partial_piece_count": 0,
@@ -9625,7 +9625,7 @@
         "original_missing_count": 2,
         "current_missing_count": 2,
         "created_at": "2026-11-07T17:57:57.297550",
-        "updated_at": "2026-11-07T17:57:57.297550",
+        "updated_at": "2026-11-07T22:44:20.401770",
         "last_deficiency_update_at": null
       }
     ],
